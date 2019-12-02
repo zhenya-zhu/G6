@@ -27,18 +27,24 @@ workbox.core.clientsClaim();
  */
 self.__precacheManifest = [
   {
-    "url": "webpack-runtime-a5f734f406f7c990668c.js"
+    "url": "webpack-runtime-abca9d5026f62c0dc137.js"
   },
   {
-    "url": "styles.29aefa19aeed3182ae59.css"
+    "url": "styles.123649065f5e2dbab284.css"
+  },
+  {
+    "url": "styles-b87dc5109f3b7bdb356e.js"
   },
   {
     "url": "offline-plugin-app-shell-fallback/index.html",
-    "revision": "eb7a8ffdce5b84f6eeae23e20cd2b012"
+    "revision": "827ec7e0b96ba735e7ae9e7910b64bd6"
+  },
+  {
+    "url": "component---node-modules-gatsby-plugin-offline-3-0-22-gatsby-plugin-offline-app-shell-js-b316f2fb732ed591a15f.js"
   },
   {
     "url": "page-data/offline-plugin-app-shell-fallback/page-data.json",
-    "revision": "bbe6def3220149d590dc234ee9358475"
+    "revision": "36759892523a3f4cbb30386a933840df"
   },
   {
     "url": "manifest.webmanifest",
@@ -91,7 +97,7 @@ function handleAPIRequest({ event }) {
   const params = pathname.match(/:(.+)/)[1]
   const data = {}
 
-  if (params.includes(`=`)) {
+  if (params.indexOf(`=`) !== -1) {
     params.split(`&`).forEach(param => {
       const [key, val] = param.split(`=`)
       data[key] = val
@@ -135,7 +141,7 @@ const navigationRoute = new NavigationRoute(async ({ event }) => {
   // Check for resources + the app bundle
   // The latter may not exist if the SW is updating to a new version
   const resources = await idbKeyval.get(`resources:${pathname}`)
-  if (!resources || !(await caches.match(`/app-d48b2f686d96cdc957f3.js`))) {
+  if (!resources || !(await caches.match(`/app-6d67406ea6d0c3fa1de5.js`))) {
     return await fetch(event.request)
   }
 
