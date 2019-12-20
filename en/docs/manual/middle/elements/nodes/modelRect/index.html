@@ -56,12 +56,13 @@
 <ul>
 <li><a href="/en/docs/manual/middle/elements/nodes/modelRect/#style">style</a></li>
 <li><a href="/en/docs/manual/middle/elements/nodes/modelRect/#labelcfg">labelCfg</a></li>
+<li><a href="/en/docs/manual/middle/elements/nodes/modelRect/#descriptioncfg">descriptionCfg</a></li>
 <li><a href="/en/docs/manual/middle/elements/nodes/modelRect/#linkpoints">linkPoints</a></li>
 <li><a href="/en/docs/manual/middle/elements/nodes/modelRect/#prerect">preRect</a></li>
 <li><a href="/en/docs/manual/middle/elements/nodes/modelRect/#logoicon--stateicon">logoIcon / stateIcon</a></li>
 </ul>
 </li>
-</ul></div></div></div><div class="markdown-module--main--9Zdhz"><h1>ModelRect<a href="https://github.com/antvis/g6/edit/master/docs/manual/middle/elements/nodes/modelRect.en.md" target="_blank" rel="noopener noreferrer" class="markdown-module--editOnGtiHubButton--1T_TG"><i aria-label="icon: edit" class="anticon anticon-edit"><svg viewBox="64 64 896 896" focusable="false" class="" data-icon="edit" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 0 0 0-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 0 0 9.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"></path></svg></i></a></h1><div class="markdown-module--meta--11swc"><span class="ant-tag">7 min read</span></div><div class="markdown-module--content--1VMQF"><p>A built-in node modelRect has the default style as below, the label is drawed on the center of it.
+</ul></div></div></div><div class="markdown-module--main--9Zdhz"><h1>ModelRect<a href="https://github.com/antvis/g6/edit/master/docs/manual/middle/elements/nodes/modelRect.en.md" target="_blank" rel="noopener noreferrer" class="markdown-module--editOnGtiHubButton--1T_TG"><i aria-label="icon: edit" class="anticon anticon-edit"><svg viewBox="64 64 896 896" focusable="false" class="" data-icon="edit" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 0 0 0-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 0 0 9.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"></path></svg></i></a></h1><div class="markdown-module--meta--11swc"><span class="ant-tag">8 min read</span></div><div class="markdown-module--content--1VMQF"><p>A built-in node modelRect has the default style as below, the label is drawed on the center of it.
 <br /></p>
 <img src='https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*XZiKQbvTSS0AAAAAAAAAAABkARQnAQ' width='223' height='102' />
 <img src='https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*tCcvRrNkAgUAAAAAAAAAAABkARQnAQ' width='223' height='98' />
@@ -160,6 +161,18 @@
 <td><strong>Object</strong></td>
 <td><strong>Special property for modelRect</strong></td>
 </tr>
+<tr>
+<td><strong>description</strong></td>
+<td><strong>The description text below the label</strong></td>
+<td><strong>String</strong></td>
+<td><strong>Special property for modelRect</strong></td>
+</tr>
+<tr>
+<td><strong>descriptionCfg</strong></td>
+<td><strong>The configuration for description text</strong></td>
+<td><strong>Object</strong></td>
+<td><strong>Special property for modelRect</strong></td>
+</tr>
 </tbody>
 </table>
 <div class="gatsby-highlight" data-language="javascript"><pre class="language-javascript"><code class="language-javascript">    <span class="token comment">// The configuration of the logo icon in the node</span>
@@ -230,6 +243,43 @@ graph<span class="token punctuation">.</span><span class="token function">render
       style<span class="token punctuation">:</span> <span class="token punctuation">{</span>
         fill<span class="token punctuation">:</span> <span class="token string">'#9254de'</span><span class="token punctuation">,</span>
         fontSize<span class="token punctuation">:</span> <span class="token number">18</span><span class="token punctuation">,</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// ...</span>
+</code></pre></div>
+<h3 id="descriptioncfg"><a href="#descriptioncfg" aria-label="descriptioncfg permalink" class="anchor"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>descriptionCfg</h3>
+<p><code class="language-text">descriptionCfg</code> is an object to configure the label of the node. The <a href="/en/docs/manual/middle/elements/nodes/defaultNode/#label-and-labelcfg">Node Common Label Configurations</a> are available. Besides, descriptionCfg has special attribute:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Type</th>
+<th>Remark</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>paddingTop</td>
+<td>The padding from the description to the label text</td>
+<td>Number</td>
+<td><code class="language-text">0</code> by default</td>
+</tr>
+</tbody>
+</table>
+<p>Base on the code in <a href="#style">style</a> section, we add <code class="language-text">descriptionCfg</code> to <code class="language-text">defaultNode</code></p>
+<div class="gatsby-highlight" data-language="javascript"><pre class="language-javascript"><code class="language-javascript"><span class="token keyword">const</span> data <span class="token operator">=</span> <span class="token punctuation">{</span>
+  <span class="token comment">// ... data</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> graph <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">G6<span class="token punctuation">.</span>Graph</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  <span class="token comment">// ... Other configurations for graph</span>
+  defaultNode<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token comment">// ... Other properties for node</span>
+    descriptionCfg<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+      style<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+        fill<span class="token punctuation">:</span> <span class="token string">'#f00'</span><span class="token punctuation">,</span>
       <span class="token punctuation">}</span><span class="token punctuation">,</span>
     <span class="token punctuation">}</span><span class="token punctuation">,</span>
   <span class="token punctuation">}</span><span class="token punctuation">,</span>
