@@ -45,6 +45,7 @@ import {
   ModeController,
   StateController,
   ViewController,
+  InteractionController
 } from './controller';
 import PluginBase from '../plugins/base';
 import createDom from '@antv/dom-util/lib/create-dom';
@@ -118,6 +119,7 @@ export default class Graph extends EventEmitter implements IGraph {
     const layoutController = new LayoutController(this);
     const stateController = new StateController(this);
     const customGroupControll = new CustomGroup(this);
+    const interactionController = new InteractionController(this)
 
     this.set({
       eventController,
@@ -127,6 +129,7 @@ export default class Graph extends EventEmitter implements IGraph {
       layoutController,
       stateController,
       customGroupControll,
+      interactionController
     });
 
     this.initPlugin();
