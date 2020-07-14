@@ -86,11 +86,17 @@ const Eva = () => {
                 node.degree++;
               }
             });
+
           });
+          console.log('eva data', data.nodes.length, data.edges.length)
           mapNodeSize(data.nodes, 'degree', [1, 15]);
           // console.log(data.nodes);
           graph.data(data);
           graph.render();
+
+          // 关闭了局部刷新，否则会导致渲染异常
+          graph.get('canvas').set('localRefresh', false)
+         
           graph.on('node:mouseenter', e => {
             const { item } = e;
             graph.setItemState(item, 'hover', true);
