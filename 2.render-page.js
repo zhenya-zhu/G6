@@ -1,10 +1,10 @@
 exports.ids = [2];
 exports.modules = {
 
-/***/ "../../node_modules/monaco-editor/esm/vs/language/typescript/languageFeatures.js":
-/*!******************************************************************************************************************!*\
-  !*** /Users/shiwu/Documents/GitHub/G6/node_modules/monaco-editor/esm/vs/language/typescript/languageFeatures.js ***!
-  \******************************************************************************************************************/
+/***/ "./node_modules/_monaco-editor@0.22.1@monaco-editor/esm/vs/language/typescript/languageFeatures.js":
+/*!*********************************************************************************************************!*\
+  !*** ./node_modules/_monaco-editor@0.22.1@monaco-editor/esm/vs/language/typescript/languageFeatures.js ***!
+  \*********************************************************************************************************/
 /*! exports provided: flattenDiagnosticMessageText, Adapter, LibFiles, DiagnosticsAdapter, SuggestAdapter, SignatureHelpAdapter, QuickInfoAdapter, OccurrencesAdapter, DefinitionAdapter, ReferenceAdapter, OutlineAdapter, Kind, FormatHelper, FormatAdapter, FormatOnTypeAdapter, CodeActionAdaptor, RenameAdapter */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -27,8 +27,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FormatOnTypeAdapter", function() { return FormatOnTypeAdapter; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CodeActionAdaptor", function() { return CodeActionAdaptor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RenameAdapter", function() { return RenameAdapter; });
-/* harmony import */ var _lib_lib_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/lib.index.js */ "../../node_modules/monaco-editor/esm/vs/language/typescript/lib/lib.index.js");
-/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "../../node_modules/monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
+/* harmony import */ var _lib_lib_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/lib.index.js */ "./node_modules/_monaco-editor@0.22.1@monaco-editor/esm/vs/language/typescript/lib/lib.index.js");
+/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "./node_modules/_monaco-editor@0.22.1@monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -167,7 +167,7 @@ var LibFiles = /** @class */ (function () {
             return model;
         }
         if (this.isLibFile(uri) && this._hasFetchedLibFiles) {
-            return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].createModel(this._libFiles[uri.path.slice(1)], 'javascript', uri);
+            return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].createModel(this._libFiles[uri.path.slice(1)], 'typescript', uri);
         }
         return null;
     };
@@ -570,7 +570,28 @@ var SignatureHelpAdapter = /** @class */ (function (_super) {
         _this.signatureHelpTriggerCharacters = ['(', ','];
         return _this;
     }
-    SignatureHelpAdapter.prototype.provideSignatureHelp = function (model, position, token) {
+    SignatureHelpAdapter._toSignatureHelpTriggerReason = function (context) {
+        switch (context.triggerKind) {
+            case _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SignatureHelpTriggerKind.TriggerCharacter:
+                if (context.triggerCharacter) {
+                    if (context.isRetrigger) {
+                        return { kind: 'retrigger', triggerCharacter: context.triggerCharacter };
+                    }
+                    else {
+                        return { kind: 'characterTyped', triggerCharacter: context.triggerCharacter };
+                    }
+                }
+                else {
+                    return { kind: 'invoked' };
+                }
+            case _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SignatureHelpTriggerKind.ContentChange:
+                return context.isRetrigger ? { kind: 'retrigger' } : { kind: 'invoked' };
+            case _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SignatureHelpTriggerKind.Invoke:
+            default:
+                return { kind: 'invoked' };
+        }
+    };
+    SignatureHelpAdapter.prototype.provideSignatureHelp = function (model, position, token, context) {
         return __awaiter(this, void 0, void 0, function () {
             var resource, offset, worker, info, ret;
             return __generator(this, function (_a) {
@@ -581,7 +602,9 @@ var SignatureHelpAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
-                        return [4 /*yield*/, worker.getSignatureHelpItems(resource.toString(), offset)];
+                        return [4 /*yield*/, worker.getSignatureHelpItems(resource.toString(), offset, {
+                                triggerReason: SignatureHelpAdapter._toSignatureHelpTriggerReason(context)
+                            })];
                     case 2:
                         info = _a.sent();
                         if (!info || model.isDisposed()) {
@@ -976,6 +999,9 @@ var FormatAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getFormattingEditsForRange(resource.toString(), startOffset, endOffset, FormatHelper._convertOptions(options))];
                     case 2:
                         edits = _a.sent();
@@ -1114,7 +1140,7 @@ var RenameAdapter = /** @class */ (function (_super) {
     }
     RenameAdapter.prototype.provideRenameEdits = function (model, position, newName, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var resource, fileName, offset, worker, renameInfo, renameLocations, edits, _i, renameLocations_1, renameLocation;
+            var resource, fileName, offset, worker, renameInfo, renameLocations, edits, _i, renameLocations_1, renameLocation, resource_1, model_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1151,13 +1177,20 @@ var RenameAdapter = /** @class */ (function (_super) {
                         edits = [];
                         for (_i = 0, renameLocations_1 = renameLocations; _i < renameLocations_1.length; _i++) {
                             renameLocation = renameLocations_1[_i];
-                            edits.push({
-                                resource: _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["Uri"].parse(renameLocation.fileName),
-                                edit: {
-                                    range: this._textSpanToRange(model, renameLocation.textSpan),
-                                    text: newName
-                                }
-                            });
+                            resource_1 = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["Uri"].parse(renameLocation.fileName);
+                            model_1 = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].getModel(resource_1);
+                            if (model_1) {
+                                edits.push({
+                                    resource: resource_1,
+                                    edit: {
+                                        range: this._textSpanToRange(model_1, renameLocation.textSpan),
+                                        text: newName
+                                    }
+                                });
+                            }
+                            else {
+                                throw new Error("Unknown URI " + resource_1 + ".");
+                            }
                         }
                         return [2 /*return*/, { edits: edits }];
                 }
@@ -1171,10 +1204,10 @@ var RenameAdapter = /** @class */ (function (_super) {
 
 /***/ }),
 
-/***/ "../../node_modules/monaco-editor/esm/vs/language/typescript/lib/lib.index.js":
-/*!***************************************************************************************************************!*\
-  !*** /Users/shiwu/Documents/GitHub/G6/node_modules/monaco-editor/esm/vs/language/typescript/lib/lib.index.js ***!
-  \***************************************************************************************************************/
+/***/ "./node_modules/_monaco-editor@0.22.1@monaco-editor/esm/vs/language/typescript/lib/lib.index.js":
+/*!******************************************************************************************************!*\
+  !*** ./node_modules/_monaco-editor@0.22.1@monaco-editor/esm/vs/language/typescript/lib/lib.index.js ***!
+  \******************************************************************************************************/
 /*! exports provided: libFileSet */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1231,6 +1264,7 @@ libFileSet['lib.es2020.d.ts'] = true;
 libFileSet['lib.es2020.full.d.ts'] = true;
 libFileSet['lib.es2020.intl.d.ts'] = true;
 libFileSet['lib.es2020.promise.d.ts'] = true;
+libFileSet['lib.es2020.sharedmemory.d.ts'] = true;
 libFileSet['lib.es2020.string.d.ts'] = true;
 libFileSet['lib.es2020.symbol.wellknown.d.ts'] = true;
 libFileSet['lib.es5.d.ts'] = true;
@@ -1240,17 +1274,19 @@ libFileSet['lib.esnext.full.d.ts'] = true;
 libFileSet['lib.esnext.intl.d.ts'] = true;
 libFileSet['lib.esnext.promise.d.ts'] = true;
 libFileSet['lib.esnext.string.d.ts'] = true;
+libFileSet['lib.esnext.weakref.d.ts'] = true;
 libFileSet['lib.scripthost.d.ts'] = true;
 libFileSet['lib.webworker.d.ts'] = true;
 libFileSet['lib.webworker.importscripts.d.ts'] = true;
+libFileSet['lib.webworker.iterable.d.ts'] = true;
 
 
 /***/ }),
 
-/***/ "../../node_modules/monaco-editor/esm/vs/language/typescript/tsMode.js":
-/*!********************************************************************************************************!*\
-  !*** /Users/shiwu/Documents/GitHub/G6/node_modules/monaco-editor/esm/vs/language/typescript/tsMode.js ***!
-  \********************************************************************************************************/
+/***/ "./node_modules/_monaco-editor@0.22.1@monaco-editor/esm/vs/language/typescript/tsMode.js":
+/*!***********************************************************************************************!*\
+  !*** ./node_modules/_monaco-editor@0.22.1@monaco-editor/esm/vs/language/typescript/tsMode.js ***!
+  \***********************************************************************************************/
 /*! exports provided: setupTypeScript, setupJavaScript, getJavaScriptWorker, getTypeScriptWorker */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1260,9 +1296,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setupJavaScript", function() { return setupJavaScript; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getJavaScriptWorker", function() { return getJavaScriptWorker; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTypeScriptWorker", function() { return getTypeScriptWorker; });
-/* harmony import */ var _workerManager_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./workerManager.js */ "../../node_modules/monaco-editor/esm/vs/language/typescript/workerManager.js");
-/* harmony import */ var _languageFeatures_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./languageFeatures.js */ "../../node_modules/monaco-editor/esm/vs/language/typescript/languageFeatures.js");
-/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "../../node_modules/monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
+/* harmony import */ var _workerManager_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./workerManager.js */ "./node_modules/_monaco-editor@0.22.1@monaco-editor/esm/vs/language/typescript/workerManager.js");
+/* harmony import */ var _languageFeatures_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./languageFeatures.js */ "./node_modules/_monaco-editor@0.22.1@monaco-editor/esm/vs/language/typescript/languageFeatures.js");
+/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "./node_modules/_monaco-editor@0.22.1@monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -1323,17 +1359,17 @@ function setupMode(defaults, modeId) {
 
 /***/ }),
 
-/***/ "../../node_modules/monaco-editor/esm/vs/language/typescript/workerManager.js":
-/*!***************************************************************************************************************!*\
-  !*** /Users/shiwu/Documents/GitHub/G6/node_modules/monaco-editor/esm/vs/language/typescript/workerManager.js ***!
-  \***************************************************************************************************************/
+/***/ "./node_modules/_monaco-editor@0.22.1@monaco-editor/esm/vs/language/typescript/workerManager.js":
+/*!******************************************************************************************************!*\
+  !*** ./node_modules/_monaco-editor@0.22.1@monaco-editor/esm/vs/language/typescript/workerManager.js ***!
+  \******************************************************************************************************/
 /*! exports provided: WorkerManager */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WorkerManager", function() { return WorkerManager; });
-/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "../../node_modules/monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
+/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "./node_modules/_monaco-editor@0.22.1@monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
