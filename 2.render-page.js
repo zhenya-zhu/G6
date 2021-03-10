@@ -1,9 +1,9 @@
 exports.ids = [2];
 exports.modules = {
 
-/***/ "./node_modules/_monaco-editor@0.22.3@monaco-editor/esm/vs/language/typescript/languageFeatures.js":
+/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/languageFeatures.js":
 /*!*********************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.22.3@monaco-editor/esm/vs/language/typescript/languageFeatures.js ***!
+  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/languageFeatures.js ***!
   \*********************************************************************************************************/
 /*! exports provided: flattenDiagnosticMessageText, Adapter, LibFiles, DiagnosticsAdapter, SuggestAdapter, SignatureHelpAdapter, QuickInfoAdapter, OccurrencesAdapter, DefinitionAdapter, ReferenceAdapter, OutlineAdapter, Kind, FormatHelper, FormatAdapter, FormatOnTypeAdapter, CodeActionAdaptor, RenameAdapter */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -27,8 +27,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FormatOnTypeAdapter", function() { return FormatOnTypeAdapter; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CodeActionAdaptor", function() { return CodeActionAdaptor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RenameAdapter", function() { return RenameAdapter; });
-/* harmony import */ var _lib_lib_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/lib.index.js */ "./node_modules/_monaco-editor@0.22.3@monaco-editor/esm/vs/language/typescript/lib/lib.index.js");
-/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "./node_modules/_monaco-editor@0.22.3@monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
+/* harmony import */ var _lib_lib_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/lib.index.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/lib/lib.index.js");
+/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -42,6 +42,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -436,6 +438,9 @@ var SuggestAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getCompletionsAtPosition(resource.toString(), offset)];
                     case 2:
                         info = _a.sent();
@@ -602,6 +607,9 @@ var SignatureHelpAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getSignatureHelpItems(resource.toString(), offset, {
                                 triggerReason: SignatureHelpAdapter._toSignatureHelpTriggerReason(context)
                             })];
@@ -669,6 +677,9 @@ var QuickInfoAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getQuickInfoAtPosition(resource.toString(), offset)];
                     case 2:
                         info = _a.sent();
@@ -714,6 +725,9 @@ var OccurrencesAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getOccurrencesAtPosition(resource.toString(), offset)];
                     case 2:
                         entries = _a.sent();
@@ -754,6 +768,9 @@ var DefinitionAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getDefinitionAtPosition(resource.toString(), offset)];
                     case 2:
                         entries = _a.sent();
@@ -807,6 +824,9 @@ var ReferenceAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getReferencesAtPosition(resource.toString(), offset)];
                     case 2:
                         entries = _a.sent();
@@ -858,6 +878,9 @@ var OutlineAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getNavigationBarItems(resource.toString())];
                     case 2:
                         items = _a.sent();
@@ -1040,6 +1063,9 @@ var FormatOnTypeAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getFormattingEditsAfterKeystroke(resource.toString(), offset, ch, FormatHelper._convertOptions(options))];
                     case 2:
                         edits = _a.sent();
@@ -1084,6 +1110,9 @@ var CodeActionAdaptor = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getCodeFixesAtPosition(resource.toString(), start, end, errorCodes, formatOptions)];
                     case 2:
                         codeFixes = _a.sent();
@@ -1150,6 +1179,9 @@ var RenameAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getRenameInfo(fileName, offset, {
                                 allowRenameOfImportPath: false
                             })];
@@ -1204,9 +1236,9 @@ var RenameAdapter = /** @class */ (function (_super) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.22.3@monaco-editor/esm/vs/language/typescript/lib/lib.index.js":
+/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/lib/lib.index.js":
 /*!******************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.22.3@monaco-editor/esm/vs/language/typescript/lib/lib.index.js ***!
+  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/lib/lib.index.js ***!
   \******************************************************************************************************/
 /*! exports provided: libFileSet */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -1283,9 +1315,9 @@ libFileSet['lib.webworker.iterable.d.ts'] = true;
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.22.3@monaco-editor/esm/vs/language/typescript/tsMode.js":
+/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/tsMode.js":
 /*!***********************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.22.3@monaco-editor/esm/vs/language/typescript/tsMode.js ***!
+  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/tsMode.js ***!
   \***********************************************************************************************/
 /*! exports provided: setupTypeScript, setupJavaScript, getJavaScriptWorker, getTypeScriptWorker */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -1296,9 +1328,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setupJavaScript", function() { return setupJavaScript; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getJavaScriptWorker", function() { return getJavaScriptWorker; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTypeScriptWorker", function() { return getTypeScriptWorker; });
-/* harmony import */ var _workerManager_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./workerManager.js */ "./node_modules/_monaco-editor@0.22.3@monaco-editor/esm/vs/language/typescript/workerManager.js");
-/* harmony import */ var _languageFeatures_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./languageFeatures.js */ "./node_modules/_monaco-editor@0.22.3@monaco-editor/esm/vs/language/typescript/languageFeatures.js");
-/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "./node_modules/_monaco-editor@0.22.3@monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
+/* harmony import */ var _workerManager_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./workerManager.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/workerManager.js");
+/* harmony import */ var _languageFeatures_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./languageFeatures.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/languageFeatures.js");
+/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -1359,9 +1391,9 @@ function setupMode(defaults, modeId) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.22.3@monaco-editor/esm/vs/language/typescript/workerManager.js":
+/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/workerManager.js":
 /*!******************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.22.3@monaco-editor/esm/vs/language/typescript/workerManager.js ***!
+  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/workerManager.js ***!
   \******************************************************************************************************/
 /*! exports provided: WorkerManager */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -1369,7 +1401,7 @@ function setupMode(defaults, modeId) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WorkerManager", function() { return WorkerManager; });
-/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "./node_modules/_monaco-editor@0.22.3@monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
+/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
