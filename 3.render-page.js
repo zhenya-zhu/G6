@@ -1,121 +1,439 @@
 exports.ids = [3];
 exports.modules = {
 
-/***/ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/workers/algorithm.js":
-/*!*************************************************************************************!*\
-  !*** ./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/workers/algorithm.js ***!
-  \*************************************************************************************/
-/*! exports provided: getAdjMatrix, breadthFirstSearch, connectedComponent, getDegree, getInDegree, getOutDegree, detectCycle, depthFirstSearch, dijkstra, findAllPath, findShortestPath, floydWarshall, labelPropagation, louvain, minimumSpanningTree, pageRank, GADDI, getNeighbors */
+/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/basic-languages/javascript/javascript.js":
+/*!**********************************************************************************************************!*\
+  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/basic-languages/javascript/javascript.js ***!
+  \**********************************************************************************************************/
+/*! exports provided: conf, language */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _adjacent_matrix__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../adjacent-matrix */ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/adjacent-matrix.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getAdjMatrix", function() { return _adjacent_matrix__WEBPACK_IMPORTED_MODULE_0__["default"]; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "conf", function() { return conf; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "language", function() { return language; });
+/* harmony import */ var _typescript_typescript_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../typescript/typescript.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/basic-languages/typescript/typescript.js");
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
-/* harmony import */ var _bfs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../bfs */ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/bfs.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "breadthFirstSearch", function() { return _bfs__WEBPACK_IMPORTED_MODULE_1__["default"]; });
-
-/* harmony import */ var _connected_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../connected-component */ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/connected-component.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "connectedComponent", function() { return _connected_component__WEBPACK_IMPORTED_MODULE_2__["default"]; });
-
-/* harmony import */ var _degree__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../degree */ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/degree.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getDegree", function() { return _degree__WEBPACK_IMPORTED_MODULE_3__["default"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getInDegree", function() { return _degree__WEBPACK_IMPORTED_MODULE_3__["getInDegree"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getOutDegree", function() { return _degree__WEBPACK_IMPORTED_MODULE_3__["getOutDegree"]; });
-
-/* harmony import */ var _detect_cycle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../detect-cycle */ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/detect-cycle.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "detectCycle", function() { return _detect_cycle__WEBPACK_IMPORTED_MODULE_4__["default"]; });
-
-/* harmony import */ var _dfs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../dfs */ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/dfs.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "depthFirstSearch", function() { return _dfs__WEBPACK_IMPORTED_MODULE_5__["default"]; });
-
-/* harmony import */ var _dijkstra__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../dijkstra */ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/dijkstra.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "dijkstra", function() { return _dijkstra__WEBPACK_IMPORTED_MODULE_6__["default"]; });
-
-/* harmony import */ var _find_path__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../find-path */ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/find-path.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "findAllPath", function() { return _find_path__WEBPACK_IMPORTED_MODULE_7__["findAllPath"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "findShortestPath", function() { return _find_path__WEBPACK_IMPORTED_MODULE_7__["findShortestPath"]; });
-
-/* harmony import */ var _floydWarshall__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../floydWarshall */ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/floydWarshall.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "floydWarshall", function() { return _floydWarshall__WEBPACK_IMPORTED_MODULE_8__["default"]; });
-
-/* harmony import */ var _label_propagation__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../label-propagation */ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/label-propagation.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "labelPropagation", function() { return _label_propagation__WEBPACK_IMPORTED_MODULE_9__["default"]; });
-
-/* harmony import */ var _louvain__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../louvain */ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/louvain.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "louvain", function() { return _louvain__WEBPACK_IMPORTED_MODULE_10__["default"]; });
-
-/* harmony import */ var _mts__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../mts */ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/mts.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "minimumSpanningTree", function() { return _mts__WEBPACK_IMPORTED_MODULE_11__["default"]; });
-
-/* harmony import */ var _pageRank__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../pageRank */ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/pageRank.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "pageRank", function() { return _pageRank__WEBPACK_IMPORTED_MODULE_12__["default"]; });
-
-/* harmony import */ var _gaddi__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../gaddi */ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/gaddi.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GADDI", function() { return _gaddi__WEBPACK_IMPORTED_MODULE_13__["default"]; });
-
-/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../util */ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/util.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getNeighbors", function() { return _util__WEBPACK_IMPORTED_MODULE_14__["getNeighbors"]; });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+var conf = _typescript_typescript_js__WEBPACK_IMPORTED_MODULE_0__["conf"];
+var language = {
+    // Set defaultToken to invalid to see what you do not tokenize yet
+    defaultToken: 'invalid',
+    tokenPostfix: '.js',
+    keywords: [
+        'break',
+        'case',
+        'catch',
+        'class',
+        'continue',
+        'const',
+        'constructor',
+        'debugger',
+        'default',
+        'delete',
+        'do',
+        'else',
+        'export',
+        'extends',
+        'false',
+        'finally',
+        'for',
+        'from',
+        'function',
+        'get',
+        'if',
+        'import',
+        'in',
+        'instanceof',
+        'let',
+        'new',
+        'null',
+        'return',
+        'set',
+        'super',
+        'switch',
+        'symbol',
+        'this',
+        'throw',
+        'true',
+        'try',
+        'typeof',
+        'undefined',
+        'var',
+        'void',
+        'while',
+        'with',
+        'yield',
+        'async',
+        'await',
+        'of'
+    ],
+    typeKeywords: [],
+    operators: _typescript_typescript_js__WEBPACK_IMPORTED_MODULE_0__["language"].operators,
+    symbols: _typescript_typescript_js__WEBPACK_IMPORTED_MODULE_0__["language"].symbols,
+    escapes: _typescript_typescript_js__WEBPACK_IMPORTED_MODULE_0__["language"].escapes,
+    digits: _typescript_typescript_js__WEBPACK_IMPORTED_MODULE_0__["language"].digits,
+    octaldigits: _typescript_typescript_js__WEBPACK_IMPORTED_MODULE_0__["language"].octaldigits,
+    binarydigits: _typescript_typescript_js__WEBPACK_IMPORTED_MODULE_0__["language"].binarydigits,
+    hexdigits: _typescript_typescript_js__WEBPACK_IMPORTED_MODULE_0__["language"].hexdigits,
+    regexpctl: _typescript_typescript_js__WEBPACK_IMPORTED_MODULE_0__["language"].regexpctl,
+    regexpesc: _typescript_typescript_js__WEBPACK_IMPORTED_MODULE_0__["language"].regexpesc,
+    tokenizer: _typescript_typescript_js__WEBPACK_IMPORTED_MODULE_0__["language"].tokenizer
+};
 
 
 /***/ }),
 
-/***/ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/workers/index.worker.js":
-/*!****************************************************************************************!*\
-  !*** ./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/workers/index.worker.js ***!
-  \****************************************************************************************/
-/*! exports provided: default */
+/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/basic-languages/typescript/typescript.js":
+/*!**********************************************************************************************************!*\
+  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/basic-languages/typescript/typescript.js ***!
+  \**********************************************************************************************************/
+/*! exports provided: conf, language */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _algorithm__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./algorithm */ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/workers/algorithm.js");
-/* harmony import */ var _constant__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./constant */ "./node_modules/_@antv_algorithm@0.1.3@@antv/algorithm/es/workers/constant.js");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "conf", function() { return conf; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "language", function() { return language; });
+/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../fillers/monaco-editor-core.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/basic-languages/fillers/monaco-editor-core.js");
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
+var conf = {
+    wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
+    comments: {
+        lineComment: '//',
+        blockComment: ['/*', '*/']
+    },
+    brackets: [
+        ['{', '}'],
+        ['[', ']'],
+        ['(', ')']
+    ],
+    onEnterRules: [
+        {
+            // e.g. /** | */
+            beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
+            afterText: /^\s*\*\/$/,
+            action: {
+                indentAction: _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_0__["languages"].IndentAction.IndentOutdent,
+                appendText: ' * '
+            }
+        },
+        {
+            // e.g. /** ...|
+            beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
+            action: {
+                indentAction: _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_0__["languages"].IndentAction.None,
+                appendText: ' * '
+            }
+        },
+        {
+            // e.g.  * ...|
+            beforeText: /^(\t|(\ \ ))*\ \*(\ ([^\*]|\*(?!\/))*)?$/,
+            action: {
+                indentAction: _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_0__["languages"].IndentAction.None,
+                appendText: '* '
+            }
+        },
+        {
+            // e.g.  */|
+            beforeText: /^(\t|(\ \ ))*\ \*\/\s*$/,
+            action: {
+                indentAction: _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_0__["languages"].IndentAction.None,
+                removeText: 1
+            }
+        }
+    ],
+    autoClosingPairs: [
+        { open: '{', close: '}' },
+        { open: '[', close: ']' },
+        { open: '(', close: ')' },
+        { open: '"', close: '"', notIn: ['string'] },
+        { open: "'", close: "'", notIn: ['string', 'comment'] },
+        { open: '`', close: '`', notIn: ['string', 'comment'] },
+        { open: '/**', close: ' */', notIn: ['string'] }
+    ],
+    folding: {
+        markers: {
+            start: new RegExp('^\\s*//\\s*#?region\\b'),
+            end: new RegExp('^\\s*//\\s*#?endregion\\b')
+        }
+    }
+};
+var language = {
+    // Set defaultToken to invalid to see what you do not tokenize yet
+    defaultToken: 'invalid',
+    tokenPostfix: '.ts',
+    keywords: [
+        // Should match the keys of textToKeywordObj in
+        // https://github.com/microsoft/TypeScript/blob/master/src/compiler/scanner.ts
+        'abstract',
+        'any',
+        'as',
+        'asserts',
+        'bigint',
+        'boolean',
+        'break',
+        'case',
+        'catch',
+        'class',
+        'continue',
+        'const',
+        'constructor',
+        'debugger',
+        'declare',
+        'default',
+        'delete',
+        'do',
+        'else',
+        'enum',
+        'export',
+        'extends',
+        'false',
+        'finally',
+        'for',
+        'from',
+        'function',
+        'get',
+        'if',
+        'implements',
+        'import',
+        'in',
+        'infer',
+        'instanceof',
+        'interface',
+        'is',
+        'keyof',
+        'let',
+        'module',
+        'namespace',
+        'never',
+        'new',
+        'null',
+        'number',
+        'object',
+        'package',
+        'private',
+        'protected',
+        'public',
+        'readonly',
+        'require',
+        'global',
+        'return',
+        'set',
+        'static',
+        'string',
+        'super',
+        'switch',
+        'symbol',
+        'this',
+        'throw',
+        'true',
+        'try',
+        'type',
+        'typeof',
+        'undefined',
+        'unique',
+        'unknown',
+        'var',
+        'void',
+        'while',
+        'with',
+        'yield',
+        'async',
+        'await',
+        'of'
+    ],
+    operators: [
+        '<=',
+        '>=',
+        '==',
+        '!=',
+        '===',
+        '!==',
+        '=>',
+        '+',
+        '-',
+        '**',
+        '*',
+        '/',
+        '%',
+        '++',
+        '--',
+        '<<',
+        '</',
+        '>>',
+        '>>>',
+        '&',
+        '|',
+        '^',
+        '!',
+        '~',
+        '&&',
+        '||',
+        '??',
+        '?',
+        ':',
+        '=',
+        '+=',
+        '-=',
+        '*=',
+        '**=',
+        '/=',
+        '%=',
+        '<<=',
+        '>>=',
+        '>>>=',
+        '&=',
+        '|=',
+        '^=',
+        '@'
+    ],
+    // we include these common regular expressions
+    symbols: /[=><!~?:&|+\-*\/\^%]+/,
+    escapes: /\\(?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
+    digits: /\d+(_+\d+)*/,
+    octaldigits: /[0-7]+(_+[0-7]+)*/,
+    binarydigits: /[0-1]+(_+[0-1]+)*/,
+    hexdigits: /[[0-9a-fA-F]+(_+[0-9a-fA-F]+)*/,
+    regexpctl: /[(){}\[\]\$\^|\-*+?\.]/,
+    regexpesc: /\\(?:[bBdDfnrstvwWn0\\\/]|@regexpctl|c[A-Z]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4})/,
+    // The main tokenizer for our languages
+    tokenizer: {
+        root: [[/[{}]/, 'delimiter.bracket'], { include: 'common' }],
+        common: [
+            // identifiers and keywords
+            [
+                /[a-z_$][\w$]*/,
+                {
+                    cases: {
+                        '@keywords': 'keyword',
+                        '@default': 'identifier'
+                    }
+                }
+            ],
+            [/[A-Z][\w\$]*/, 'type.identifier'],
+            // [/[A-Z][\w\$]*/, 'identifier'],
+            // whitespace
+            { include: '@whitespace' },
+            // regular expression: ensure it is terminated before beginning (otherwise it is an opeator)
+            [
+                /\/(?=([^\\\/]|\\.)+\/([gimsuy]*)(\s*)(\.|;|,|\)|\]|\}|$))/,
+                { token: 'regexp', bracket: '@open', next: '@regexp' }
+            ],
+            // delimiters and operators
+            [/[()\[\]]/, '@brackets'],
+            [/[<>](?!@symbols)/, '@brackets'],
+            [/!(?=([^=]|$))/, 'delimiter'],
+            [
+                /@symbols/,
+                {
+                    cases: {
+                        '@operators': 'delimiter',
+                        '@default': ''
+                    }
+                }
+            ],
+            // numbers
+            [/(@digits)[eE]([\-+]?(@digits))?/, 'number.float'],
+            [/(@digits)\.(@digits)([eE][\-+]?(@digits))?/, 'number.float'],
+            [/0[xX](@hexdigits)n?/, 'number.hex'],
+            [/0[oO]?(@octaldigits)n?/, 'number.octal'],
+            [/0[bB](@binarydigits)n?/, 'number.binary'],
+            [/(@digits)n?/, 'number'],
+            // delimiter: after number because of .\d floats
+            [/[;,.]/, 'delimiter'],
+            // strings
+            [/"([^"\\]|\\.)*$/, 'string.invalid'],
+            [/'([^'\\]|\\.)*$/, 'string.invalid'],
+            [/"/, 'string', '@string_double'],
+            [/'/, 'string', '@string_single'],
+            [/`/, 'string', '@string_backtick']
+        ],
+        whitespace: [
+            [/[ \t\r\n]+/, ''],
+            [/\/\*\*(?!\/)/, 'comment.doc', '@jsdoc'],
+            [/\/\*/, 'comment', '@comment'],
+            [/\/\/.*$/, 'comment']
+        ],
+        comment: [
+            [/[^\/*]+/, 'comment'],
+            [/\*\//, 'comment', '@pop'],
+            [/[\/*]/, 'comment']
+        ],
+        jsdoc: [
+            [/[^\/*]+/, 'comment.doc'],
+            [/\*\//, 'comment.doc', '@pop'],
+            [/[\/*]/, 'comment.doc']
+        ],
+        // We match regular expression quite precisely
+        regexp: [
+            [
+                /(\{)(\d+(?:,\d*)?)(\})/,
+                ['regexp.escape.control', 'regexp.escape.control', 'regexp.escape.control']
+            ],
+            [
+                /(\[)(\^?)(?=(?:[^\]\\\/]|\\.)+)/,
+                ['regexp.escape.control', { token: 'regexp.escape.control', next: '@regexrange' }]
+            ],
+            [/(\()(\?:|\?=|\?!)/, ['regexp.escape.control', 'regexp.escape.control']],
+            [/[()]/, 'regexp.escape.control'],
+            [/@regexpctl/, 'regexp.escape.control'],
+            [/[^\\\/]/, 'regexp'],
+            [/@regexpesc/, 'regexp.escape'],
+            [/\\\./, 'regexp.invalid'],
+            [
+                /(\/)([gimsuy]*)/,
+                [{ token: 'regexp', bracket: '@close', next: '@pop' }, 'keyword.other']
+            ]
+        ],
+        regexrange: [
+            [/-/, 'regexp.escape.control'],
+            [/\^/, 'regexp.invalid'],
+            [/@regexpesc/, 'regexp.escape'],
+            [/[^\]]/, 'regexp'],
+            [
+                /\]/,
+                {
+                    token: 'regexp.escape.control',
+                    next: '@pop',
+                    bracket: '@close'
+                }
+            ]
+        ],
+        string_double: [
+            [/[^\\"]+/, 'string'],
+            [/@escapes/, 'string.escape'],
+            [/\\./, 'string.escape.invalid'],
+            [/"/, 'string', '@pop']
+        ],
+        string_single: [
+            [/[^\\']+/, 'string'],
+            [/@escapes/, 'string.escape'],
+            [/\\./, 'string.escape.invalid'],
+            [/'/, 'string', '@pop']
+        ],
+        string_backtick: [
+            [/\$\{/, { token: 'delimiter.bracket', next: '@bracketCounting' }],
+            [/[^\\`$]+/, 'string'],
+            [/@escapes/, 'string.escape'],
+            [/\\./, 'string.escape.invalid'],
+            [/`/, 'string', '@pop']
+        ],
+        bracketCounting: [
+            [/\{/, 'delimiter.bracket', '@bracketCounting'],
+            [/\}/, 'delimiter.bracket', '@pop'],
+            { include: 'common' }
+        ]
+    }
+};
 
-var ctx = self;
-
-ctx.onmessage = function (event) {
-  var _a = event.data,
-      type = _a.type,
-      data = _a.data;
-
-  if (typeof _algorithm__WEBPACK_IMPORTED_MODULE_0__[type] === 'function') {
-    var result = _algorithm__WEBPACK_IMPORTED_MODULE_0__[type].apply(_algorithm__WEBPACK_IMPORTED_MODULE_0__, data);
-    ctx.postMessage({
-      type: _constant__WEBPACK_IMPORTED_MODULE_1__["MESSAGE"].SUCCESS,
-      data: result
-    });
-    return;
-  }
-
-  ctx.postMessage({
-    type: _constant__WEBPACK_IMPORTED_MODULE_1__["MESSAGE"].FAILURE
-  });
-}; // https://stackoverflow.com/questions/50210416/webpack-worker-loader-fails-to-compile-typescript-worker
-
-
-/* harmony default export */ __webpack_exports__["default"] = (null);
 
 /***/ })
 
