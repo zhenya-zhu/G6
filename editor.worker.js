@@ -81,313 +81,14 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/editor.worker.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/editor.worker.js");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/arrays.js":
-/*!***************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/arrays.js ***!
-  \***************************************************************************************/
-/*! exports provided: tail, tail2, equals, binarySearch, findFirstInSorted, quickSelect, mergeSort, groupBy, coalesce, isFalsyOrEmpty, isNonEmptyArray, distinct, distinctES6, firstOrDefault, flatten, range, arrayInsert, pushToStart, pushToEnd, asArray */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "tail", function() { return tail; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "tail2", function() { return tail2; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "equals", function() { return equals; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "binarySearch", function() { return binarySearch; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findFirstInSorted", function() { return findFirstInSorted; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "quickSelect", function() { return quickSelect; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mergeSort", function() { return mergeSort; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "groupBy", function() { return groupBy; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "coalesce", function() { return coalesce; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isFalsyOrEmpty", function() { return isFalsyOrEmpty; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isNonEmptyArray", function() { return isNonEmptyArray; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "distinct", function() { return distinct; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "distinctES6", function() { return distinctES6; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "firstOrDefault", function() { return firstOrDefault; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "flatten", function() { return flatten; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "range", function() { return range; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrayInsert", function() { return arrayInsert; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pushToStart", function() { return pushToStart; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pushToEnd", function() { return pushToEnd; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "asArray", function() { return asArray; });
-/**
- * Returns the last element of an array.
- * @param array The array.
- * @param n Which element from the end (default is zero).
- */
-function tail(array, n = 0) {
-    return array[array.length - (1 + n)];
-}
-function tail2(arr) {
-    if (arr.length === 0) {
-        throw new Error('Invalid tail call');
-    }
-    return [arr.slice(0, arr.length - 1), arr[arr.length - 1]];
-}
-function equals(one, other, itemEquals = (a, b) => a === b) {
-    if (one === other) {
-        return true;
-    }
-    if (!one || !other) {
-        return false;
-    }
-    if (one.length !== other.length) {
-        return false;
-    }
-    for (let i = 0, len = one.length; i < len; i++) {
-        if (!itemEquals(one[i], other[i])) {
-            return false;
-        }
-    }
-    return true;
-}
-function binarySearch(array, key, comparator) {
-    let low = 0, high = array.length - 1;
-    while (low <= high) {
-        const mid = ((low + high) / 2) | 0;
-        const comp = comparator(array[mid], key);
-        if (comp < 0) {
-            low = mid + 1;
-        }
-        else if (comp > 0) {
-            high = mid - 1;
-        }
-        else {
-            return mid;
-        }
-    }
-    return -(low + 1);
-}
-/**
- * Takes a sorted array and a function p. The array is sorted in such a way that all elements where p(x) is false
- * are located before all elements where p(x) is true.
- * @returns the least x for which p(x) is true or array.length if no element fullfills the given function.
- */
-function findFirstInSorted(array, p) {
-    let low = 0, high = array.length;
-    if (high === 0) {
-        return 0; // no children
-    }
-    while (low < high) {
-        const mid = Math.floor((low + high) / 2);
-        if (p(array[mid])) {
-            high = mid;
-        }
-        else {
-            low = mid + 1;
-        }
-    }
-    return low;
-}
-function quickSelect(nth, data, compare) {
-    nth = nth | 0;
-    if (nth >= data.length) {
-        throw new TypeError('invalid index');
-    }
-    let pivotValue = data[Math.floor(data.length * Math.random())];
-    let lower = [];
-    let higher = [];
-    let pivots = [];
-    for (let value of data) {
-        const val = compare(value, pivotValue);
-        if (val < 0) {
-            lower.push(value);
-        }
-        else if (val > 0) {
-            higher.push(value);
-        }
-        else {
-            pivots.push(value);
-        }
-    }
-    if (nth < lower.length) {
-        return quickSelect(nth, lower, compare);
-    }
-    else if (nth < lower.length + pivots.length) {
-        return pivots[0];
-    }
-    else {
-        return quickSelect(nth - (lower.length + pivots.length), higher, compare);
-    }
-}
-/**
- * Like `Array#sort` but always stable. Usually runs a little slower `than Array#sort`
- * so only use this when actually needing stable sort.
- */
-function mergeSort(data, compare) {
-    _sort(data, compare, 0, data.length - 1, []);
-    return data;
-}
-function _merge(a, compare, lo, mid, hi, aux) {
-    let leftIdx = lo, rightIdx = mid + 1;
-    for (let i = lo; i <= hi; i++) {
-        aux[i] = a[i];
-    }
-    for (let i = lo; i <= hi; i++) {
-        if (leftIdx > mid) {
-            // left side consumed
-            a[i] = aux[rightIdx++];
-        }
-        else if (rightIdx > hi) {
-            // right side consumed
-            a[i] = aux[leftIdx++];
-        }
-        else if (compare(aux[rightIdx], aux[leftIdx]) < 0) {
-            // right element is less -> comes first
-            a[i] = aux[rightIdx++];
-        }
-        else {
-            // left element comes first (less or equal)
-            a[i] = aux[leftIdx++];
-        }
-    }
-}
-function _sort(a, compare, lo, hi, aux) {
-    if (hi <= lo) {
-        return;
-    }
-    const mid = lo + ((hi - lo) / 2) | 0;
-    _sort(a, compare, lo, mid, aux);
-    _sort(a, compare, mid + 1, hi, aux);
-    if (compare(a[mid], a[mid + 1]) <= 0) {
-        // left and right are sorted and if the last-left element is less
-        // or equals than the first-right element there is nothing else
-        // to do
-        return;
-    }
-    _merge(a, compare, lo, mid, hi, aux);
-}
-function groupBy(data, compare) {
-    const result = [];
-    let currentGroup = undefined;
-    for (const element of mergeSort(data.slice(0), compare)) {
-        if (!currentGroup || compare(currentGroup[0], element) !== 0) {
-            currentGroup = [element];
-            result.push(currentGroup);
-        }
-        else {
-            currentGroup.push(element);
-        }
-    }
-    return result;
-}
-/**
- * @returns New array with all falsy values removed. The original array IS NOT modified.
- */
-function coalesce(array) {
-    return array.filter(e => !!e);
-}
-/**
- * @returns false if the provided object is an array and not empty.
- */
-function isFalsyOrEmpty(obj) {
-    return !Array.isArray(obj) || obj.length === 0;
-}
-function isNonEmptyArray(obj) {
-    return Array.isArray(obj) && obj.length > 0;
-}
-/**
- * Removes duplicates from the given array. The optional keyFn allows to specify
- * how elements are checked for equalness by returning a unique string for each.
- */
-function distinct(array, keyFn) {
-    if (!keyFn) {
-        return array.filter((element, position) => {
-            return array.indexOf(element) === position;
-        });
-    }
-    const seen = Object.create(null);
-    return array.filter((elem) => {
-        const key = keyFn(elem);
-        if (seen[key]) {
-            return false;
-        }
-        seen[key] = true;
-        return true;
-    });
-}
-function distinctES6(array) {
-    const seen = new Set();
-    return array.filter(element => {
-        if (seen.has(element)) {
-            return false;
-        }
-        seen.add(element);
-        return true;
-    });
-}
-function firstOrDefault(array, notFoundValue) {
-    return array.length > 0 ? array[0] : notFoundValue;
-}
-function flatten(arr) {
-    return [].concat(...arr);
-}
-function range(arg, to) {
-    let from = typeof to === 'number' ? arg : 0;
-    if (typeof to === 'number') {
-        from = arg;
-    }
-    else {
-        from = 0;
-        to = arg;
-    }
-    const result = [];
-    if (from <= to) {
-        for (let i = from; i < to; i++) {
-            result.push(i);
-        }
-    }
-    else {
-        for (let i = from; i > to; i--) {
-            result.push(i);
-        }
-    }
-    return result;
-}
-/**
- * Insert `insertArr` inside `target` at `insertIndex`.
- * Please don't touch unless you understand https://jsperf.com/inserting-an-array-within-an-array
- */
-function arrayInsert(target, insertIndex, insertArr) {
-    const before = target.slice(0, insertIndex);
-    const after = target.slice(insertIndex);
-    return before.concat(insertArr, after);
-}
-/**
- * Pushes an element to the start of the array, if found.
- */
-function pushToStart(arr, value) {
-    const index = arr.indexOf(value);
-    if (index > -1) {
-        arr.splice(index, 1);
-        arr.unshift(value);
-    }
-}
-/**
- * Pushes an element to the end of the array, if found.
- */
-function pushToEnd(arr, value) {
-    const index = arr.indexOf(value);
-    if (index > -1) {
-        arr.splice(index, 1);
-        arr.push(value);
-    }
-}
-function asArray(x) {
-    return Array.isArray(x) ? x : [x];
-}
-
-
-/***/ }),
-
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/cancellation.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/cancellation.js":
 /*!*********************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/cancellation.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/cancellation.js ***!
   \*********************************************************************************************/
 /*! exports provided: CancellationToken, CancellationTokenSource */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -396,7 +97,7 @@ function asArray(x) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CancellationToken", function() { return CancellationToken; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CancellationTokenSource", function() { return CancellationTokenSource; });
-/* harmony import */ var _event_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./event.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/event.js");
+/* harmony import */ var _event_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./event.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/event.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -511,9 +212,9 @@ class CancellationTokenSource {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/diff/diff.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/diff/diff.js":
 /*!******************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/diff/diff.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/diff/diff.js ***!
   \******************************************************************************************/
 /*! exports provided: StringDiffSequence, stringDiff, Debug, MyArray, LcsDiff */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -525,8 +226,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Debug", function() { return Debug; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MyArray", function() { return MyArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LcsDiff", function() { return LcsDiff; });
-/* harmony import */ var _diffChange_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./diffChange.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/diff/diffChange.js");
-/* harmony import */ var _hash_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../hash.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/hash.js");
+/* harmony import */ var _diffChange_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./diffChange.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/diff/diffChange.js");
+/* harmony import */ var _hash_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../hash.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/hash.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -1167,12 +868,8 @@ class LcsDiff {
             let modifiedStop = 0;
             if (i > 0) {
                 const prevChange = changes[i - 1];
-                if (prevChange.originalLength > 0) {
-                    originalStop = prevChange.originalStart + prevChange.originalLength;
-                }
-                if (prevChange.modifiedLength > 0) {
-                    modifiedStop = prevChange.modifiedStart + prevChange.modifiedLength;
-                }
+                originalStop = prevChange.originalStart + prevChange.originalLength;
+                modifiedStop = prevChange.modifiedStart + prevChange.modifiedLength;
             }
             const checkOriginal = change.originalLength > 0;
             const checkModified = change.modifiedLength > 0;
@@ -1190,7 +887,9 @@ class LcsDiff {
                 if (checkModified && !this.ModifiedElementsAreEqual(modifiedStart, modifiedStart + change.modifiedLength)) {
                     break;
                 }
-                const score = this._boundaryScore(originalStart, change.originalLength, modifiedStart, change.modifiedLength);
+                const touchingPreviousChange = (originalStart === originalStop && modifiedStart === modifiedStop);
+                const score = ((touchingPreviousChange ? 5 : 0)
+                    + this._boundaryScore(originalStart, change.originalLength, modifiedStart, change.modifiedLength));
                 if (score > bestScore) {
                     bestScore = score;
                     bestDelta = delta;
@@ -1198,6 +897,13 @@ class LcsDiff {
             }
             change.originalStart -= bestDelta;
             change.modifiedStart -= bestDelta;
+            const mergedChangeArr = [null];
+            if (i > 0 && this.ChangesOverlap(changes[i - 1], changes[i], mergedChangeArr)) {
+                changes[i - 1] = mergedChangeArr[0];
+                changes.splice(i, 1);
+                i++;
+                continue;
+            }
         }
         // There could be multiple longest common substrings.
         // Give preference to the ones containing longer lines
@@ -1403,9 +1109,9 @@ class LcsDiff {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/diff/diffChange.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/diff/diffChange.js":
 /*!************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/diff/diffChange.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/diff/diffChange.js ***!
   \************************************************************************************************/
 /*! exports provided: DiffChange */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -1449,9 +1155,9 @@ class DiffChange {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/errors.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/errors.js":
 /*!***************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/errors.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/errors.js ***!
   \***************************************************************************************/
 /*! exports provided: ErrorHandler, errorHandler, onUnexpectedError, onUnexpectedExternalError, transformErrorForSerialization, isPromiseCanceledError, canceled, illegalArgument, illegalState */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -1558,9 +1264,9 @@ function illegalState(name) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/event.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/event.js":
 /*!**************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/event.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/event.js ***!
   \**************************************************************************************/
 /*! exports provided: Event, Emitter, PauseableEmitter, EventBufferer, Relay */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -1572,10 +1278,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PauseableEmitter", function() { return PauseableEmitter; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EventBufferer", function() { return EventBufferer; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Relay", function() { return Relay; });
-/* harmony import */ var _errors_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./errors.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/errors.js");
-/* harmony import */ var _lifecycle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./lifecycle.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/lifecycle.js");
-/* harmony import */ var _linkedList_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./linkedList.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/linkedList.js");
-/* harmony import */ var _stopwatch_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./stopwatch.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/stopwatch.js");
+/* harmony import */ var _errors_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./errors.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/errors.js");
+/* harmony import */ var _lifecycle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./lifecycle.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/lifecycle.js");
+/* harmony import */ var _linkedList_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./linkedList.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/linkedList.js");
+/* harmony import */ var _stopwatch_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./stopwatch.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/stopwatch.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -2190,9 +1896,9 @@ class Relay {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/hash.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/hash.js":
 /*!*************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/hash.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/hash.js ***!
   \*************************************************************************************/
 /*! exports provided: hash, doHash, stringHash, toHexString, StringSHA1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -2204,7 +1910,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "stringHash", function() { return stringHash; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toHexString", function() { return toHexString; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StringSHA1", function() { return StringSHA1; });
-/* harmony import */ var _strings_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./strings.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/strings.js");
+/* harmony import */ var _strings_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./strings.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/strings.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -2467,9 +2173,9 @@ StringSHA1._bigBlock32 = new DataView(new ArrayBuffer(320)); // 80 * 4 = 320
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/iterator.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/iterator.js":
 /*!*****************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/iterator.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/iterator.js ***!
   \*****************************************************************************************/
 /*! exports provided: Iterable */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -2629,9 +2335,9 @@ var Iterable;
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/keyCodes.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/keyCodes.js":
 /*!*****************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/keyCodes.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/keyCodes.js ***!
   \*****************************************************************************************/
 /*! exports provided: KeyCodeUtils, KeyChord, createKeybinding, createSimpleKeybinding, SimpleKeybinding, ChordKeybinding, ResolvedKeybindingPart, ResolvedKeybinding */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -2646,7 +2352,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChordKeybinding", function() { return ChordKeybinding; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ResolvedKeybindingPart", function() { return ResolvedKeybindingPart; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ResolvedKeybinding", function() { return ResolvedKeybinding; });
-/* harmony import */ var _errors_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./errors.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/errors.js");
+/* harmony import */ var _errors_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./errors.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/errors.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -2902,9 +2608,9 @@ class ResolvedKeybinding {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/lifecycle.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/lifecycle.js":
 /*!******************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/lifecycle.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/lifecycle.js ***!
   \******************************************************************************************/
 /*! exports provided: trackDisposable, MultiDisposeError, isDisposable, dispose, combinedDisposable, toDisposable, DisposableStore, Disposable, MutableDisposable, ImmortalReference */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -2921,7 +2627,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Disposable", function() { return Disposable; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MutableDisposable", function() { return MutableDisposable; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ImmortalReference", function() { return ImmortalReference; });
-/* harmony import */ var _iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./iterator.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/iterator.js");
+/* harmony import */ var _iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./iterator.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/iterator.js");
 
 /**
  * Enables logging of potentially leaked disposables.
@@ -3130,9 +2836,9 @@ class ImmortalReference {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/linkedList.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/linkedList.js":
 /*!*******************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/linkedList.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/linkedList.js ***!
   \*******************************************************************************************/
 /*! exports provided: LinkedList */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -3261,9 +2967,9 @@ class LinkedList {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/path.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/path.js":
 /*!*************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/path.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/path.js ***!
   \*************************************************************************************/
 /*! exports provided: win32, posix, normalize, resolve, relative, dirname, basename, extname, sep */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -3279,7 +2985,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "basename", function() { return basename; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "extname", function() { return extname; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sep", function() { return sep; });
-/* harmony import */ var _process_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./process.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/process.js");
+/* harmony import */ var _process_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./process.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/process.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -4663,15 +4369,16 @@ const sep = (_process_js__WEBPACK_IMPORTED_MODULE_0__["platform"] === 'win32' ? 
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/platform.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/platform.js":
 /*!*****************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/platform.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/platform.js ***!
   \*****************************************************************************************/
-/*! exports provided: isElectronSandboxed, browserCodeLoadingCacheStrategy, isPreferringBrowserCodeLoad, isWindows, isMacintosh, isLinux, isNative, isWeb, isIOS, userAgent, globals, setImmediate, OS, isLittleEndian */
+/*! exports provided: globals, isElectronSandboxed, browserCodeLoadingCacheStrategy, isPreferringBrowserCodeLoad, isWindows, isMacintosh, isLinux, isNative, isWeb, isIOS, userAgent, setImmediate, OS, isLittleEndian */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "globals", function() { return globals; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isElectronSandboxed", function() { return isElectronSandboxed; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "browserCodeLoadingCacheStrategy", function() { return browserCodeLoadingCacheStrategy; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isPreferringBrowserCodeLoad", function() { return isPreferringBrowserCodeLoad; });
@@ -4682,7 +4389,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isWeb", function() { return isWeb; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isIOS", function() { return isIOS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "userAgent", function() { return userAgent; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "globals", function() { return globals; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setImmediate", function() { return setImmediate; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OS", function() { return OS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isLittleEndian", function() { return isLittleEndian; });
@@ -4703,15 +4409,15 @@ let _locale = undefined;
 let _language = LANGUAGE_DEFAULT;
 let _translationsConfigFile = undefined;
 let _userAgent = undefined;
-const _globals = (typeof self === 'object' ? self : typeof global === 'object' ? global : {});
+const globals = (typeof self === 'object' ? self : typeof global === 'object' ? global : {});
 let nodeProcess = undefined;
-if (typeof process !== 'undefined') {
+if (typeof globals.vscode !== 'undefined' && typeof globals.vscode.process !== 'undefined') {
+    // Native environment (sandboxed)
+    nodeProcess = globals.vscode.process;
+}
+else if (typeof process !== 'undefined') {
     // Native environment (non-sandboxed)
     nodeProcess = process;
-}
-else if (typeof _globals.vscode !== 'undefined') {
-    // Native environment (sandboxed)
-    nodeProcess = _globals.vscode.process;
 }
 const isElectronRenderer = typeof ((_a = nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.versions) === null || _a === void 0 ? void 0 : _a.electron) === 'string' && nodeProcess.type === 'renderer';
 const isElectronSandboxed = isElectronRenderer && (nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.sandboxed);
@@ -4721,7 +4427,7 @@ const browserCodeLoadingCacheStrategy = (() => {
         return 'bypassHeatCheck';
     }
     // Otherwise, only enabled conditionally
-    const env = nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.env['ENABLE_VSCODE_BROWSER_CODE_LOADING'];
+    const env = nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.env['VSCODE_BROWSER_CODE_LOADING'];
     if (typeof env === 'string') {
         if (env === 'none' || env === 'code' || env === 'bypassHeatCheck' || env === 'bypassHeatCheckAndEagerCompile') {
             return env;
@@ -4786,7 +4492,6 @@ const isNative = _isNative;
 const isWeb = _isWeb;
 const isIOS = _isIOS;
 const userAgent = _userAgent;
-const globals = _globals;
 const setImmediate = (function defineSetImmediate() {
     if (globals.setImmediate) {
         return globals.setImmediate.bind(globals);
@@ -4815,7 +4520,7 @@ const setImmediate = (function defineSetImmediate() {
             globals.postMessage({ vscodeSetImmediateId: myId }, '*');
         };
     }
-    if (nodeProcess && typeof nodeProcess.nextTick === 'function') {
+    if (typeof (nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.nextTick) === 'function') {
         return nodeProcess.nextTick.bind(nodeProcess);
     }
     const _promise = Promise.resolve();
@@ -4839,9 +4544,9 @@ function isLittleEndian() {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/process.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/process.js":
 /*!****************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/process.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/process.js ***!
   \****************************************************************************************/
 /*! exports provided: cwd, env, platform */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -4851,26 +4556,30 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cwd", function() { return cwd; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "env", function() { return env; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "platform", function() { return platform; });
-/* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./platform.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/platform.js");
+/* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./platform.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/platform.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 let safeProcess;
-// Native node.js environment
-if (typeof process !== 'undefined') {
-    safeProcess = process;
-}
 // Native sandbox environment
-else if (typeof _platform_js__WEBPACK_IMPORTED_MODULE_0__["globals"].vscode !== 'undefined') {
+if (typeof _platform_js__WEBPACK_IMPORTED_MODULE_0__["globals"].vscode !== 'undefined' && typeof _platform_js__WEBPACK_IMPORTED_MODULE_0__["globals"].vscode.process !== 'undefined') {
+    const sandboxProcess = _platform_js__WEBPACK_IMPORTED_MODULE_0__["globals"].vscode.process;
     safeProcess = {
-        // Supported
-        get platform() { return _platform_js__WEBPACK_IMPORTED_MODULE_0__["globals"].vscode.process.platform; },
-        get env() { return _platform_js__WEBPACK_IMPORTED_MODULE_0__["globals"].vscode.process.env; },
-        nextTick(callback) { return Object(_platform_js__WEBPACK_IMPORTED_MODULE_0__["setImmediate"])(callback); },
-        // Unsupported
-        cwd() { return _platform_js__WEBPACK_IMPORTED_MODULE_0__["globals"].vscode.process.env['VSCODE_CWD'] || _platform_js__WEBPACK_IMPORTED_MODULE_0__["globals"].vscode.process.execPath.substr(0, _platform_js__WEBPACK_IMPORTED_MODULE_0__["globals"].vscode.process.execPath.lastIndexOf(_platform_js__WEBPACK_IMPORTED_MODULE_0__["globals"].vscode.process.platform === 'win32' ? '\\' : '/')); }
+        get platform() { return sandboxProcess.platform; },
+        get env() { return sandboxProcess.env; },
+        cwd() { return sandboxProcess.cwd(); },
+        nextTick(callback) { return Object(_platform_js__WEBPACK_IMPORTED_MODULE_0__["setImmediate"])(callback); }
+    };
+}
+// Native node.js environment
+else if (typeof process !== 'undefined') {
+    safeProcess = {
+        get platform() { return process.platform; },
+        get env() { return ({}); },
+        cwd() { return ({})['VSCODE_CWD'] || process.cwd(); },
+        nextTick(callback) { return process.nextTick(callback); }
     };
 }
 // Web environment
@@ -4884,16 +4593,32 @@ else {
         cwd() { return '/'; }
     };
 }
+/**
+ * Provides safe access to the `cwd` property in node.js, sandboxed or web
+ * environments.
+ *
+ * Note: in web, this property is hardcoded to be `/`.
+ */
 const cwd = safeProcess.cwd;
+/**
+ * Provides safe access to the `env` property in node.js, sandboxed or web
+ * environments.
+ *
+ * Note: in web, this property is hardcoded to be `{}`.
+ */
 const env = safeProcess.env;
+/**
+ * Provides safe access to the `platform` property in node.js, sandboxed or web
+ * environments.
+ */
 const platform = safeProcess.platform;
 
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/stopwatch.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/stopwatch.js":
 /*!******************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/stopwatch.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/stopwatch.js ***!
   \******************************************************************************************/
 /*! exports provided: StopWatch */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -4901,7 +4626,7 @@ const platform = safeProcess.platform;
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StopWatch", function() { return StopWatch; });
-/* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./platform.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/platform.js");
+/* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./platform.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/platform.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -4934,9 +4659,9 @@ class StopWatch {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/strings.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/strings.js":
 /*!****************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/strings.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/strings.js ***!
   \****************************************************************************************/
 /*! exports provided: isFalsyOrWhitespace, format, escape, escapeRegExpCharacters, trim, ltrim, rtrim, convertSimple2RegExpPattern, stripWildcards, createRegExp, regExpLeadsToEndlessLoop, regExpFlags, splitLines, firstNonWhitespaceIndex, getLeadingWhitespace, lastNonWhitespaceIndex, compare, compareSubstring, compareIgnoreCase, compareSubstringIgnoreCase, isLowerAsciiLetter, isUpperAsciiLetter, equalsIgnoreCase, startsWithIgnoreCase, commonPrefixLength, commonSuffixLength, isHighSurrogate, isLowSurrogate, computeCodePoint, getNextCodePoint, nextCharLength, prevCharLength, decodeUTF8, containsRTL, containsEmoji, isBasicASCII, UNUSUAL_LINE_TERMINATORS, containsUnusualLineTerminators, containsFullWidthCharacter, isFullWidthCharacter, isEmojiImprecise, UTF8_BOM_CHARACTER, startsWithUTF8BOM, containsUppercaseCharacter, singleLetterHash, getGraphemeBreakType, breakBetweenGraphemeBreakType */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -5705,9 +5430,9 @@ function getGraphemeBreakRawData() {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/types.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/types.js":
 /*!**************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/types.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/types.js ***!
   \**************************************************************************************/
 /*! exports provided: isArray, isString, isObject, isNumber, isBoolean, isUndefined, isUndefinedOrNull, assertType, assertIsDefined, isFunction, validateConstraints, validateConstraint, getAllPropertyNames, getAllMethodNames, createProxyObject, withNullAsUndefined */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -5873,9 +5598,9 @@ function withNullAsUndefined(x) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/uint.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/uint.js":
 /*!*************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/uint.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/uint.js ***!
   \*************************************************************************************/
 /*! exports provided: toUint8, toUint32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -5910,9 +5635,9 @@ function toUint32(v) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/uri.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/uri.js":
 /*!************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/uri.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/uri.js ***!
   \************************************************************************************/
 /*! exports provided: URI, uriToFsPath */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -5921,8 +5646,8 @@ function toUint32(v) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "URI", function() { return URI; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "uriToFsPath", function() { return uriToFsPath; });
-/* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./platform.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/platform.js");
-/* harmony import */ var _path_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./path.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/path.js");
+/* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./platform.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/platform.js");
+/* harmony import */ var _path_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./path.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/path.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6514,9 +6239,9 @@ function percentDecode(str) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/worker/simpleWorker.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/worker/simpleWorker.js":
 /*!****************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/worker/simpleWorker.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/worker/simpleWorker.js ***!
   \****************************************************************************************************/
 /*! exports provided: logOnceWebWorkerWarning, SimpleWorkerClient, SimpleWorkerServer, create */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -6527,10 +6252,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SimpleWorkerClient", function() { return SimpleWorkerClient; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SimpleWorkerServer", function() { return SimpleWorkerServer; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "create", function() { return create; });
-/* harmony import */ var _errors_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../errors.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/errors.js");
-/* harmony import */ var _lifecycle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../lifecycle.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/lifecycle.js");
-/* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../platform.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/platform.js");
-/* harmony import */ var _types_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../types.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/types.js");
+/* harmony import */ var _errors_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../errors.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/errors.js");
+/* harmony import */ var _lifecycle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../lifecycle.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/lifecycle.js");
+/* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../platform.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/platform.js");
+/* harmony import */ var _types_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../types.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/types.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6814,9 +6539,9 @@ function create(postMessage) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/characterClassifier.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/characterClassifier.js":
 /*!***********************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/characterClassifier.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/characterClassifier.js ***!
   \***********************************************************************************************************/
 /*! exports provided: CharacterClassifier, CharacterSet */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -6825,7 +6550,7 @@ function create(postMessage) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CharacterClassifier", function() { return CharacterClassifier; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CharacterSet", function() { return CharacterSet; });
-/* harmony import */ var _base_common_uint_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/uint.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/uint.js");
+/* harmony import */ var _base_common_uint_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/uint.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/uint.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6881,9 +6606,9 @@ class CharacterSet {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/position.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/position.js":
 /*!************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/position.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/position.js ***!
   \************************************************************************************************/
 /*! exports provided: Position */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -7029,9 +6754,9 @@ class Position {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/range.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/range.js":
 /*!*********************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/range.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/range.js ***!
   \*********************************************************************************************/
 /*! exports provided: Range */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -7039,7 +6764,7 @@ class Position {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Range", function() { return Range; });
-/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./position.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/position.js");
+/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./position.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/position.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7404,9 +7129,9 @@ class Range {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/selection.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/selection.js":
 /*!*************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/selection.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/selection.js ***!
   \*************************************************************************************************/
 /*! exports provided: Selection */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -7414,8 +7139,8 @@ class Range {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Selection", function() { return Selection; });
-/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./position.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/position.js");
-/* harmony import */ var _range_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./range.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/range.js");
+/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./position.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/position.js");
+/* harmony import */ var _range_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./range.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/range.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7545,9 +7270,9 @@ class Selection extends _range_js__WEBPACK_IMPORTED_MODULE_1__["Range"] {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/token.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/token.js":
 /*!*********************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/token.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/token.js ***!
   \*********************************************************************************************/
 /*! exports provided: Token, TokenizationResult, TokenizationResult2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -7587,9 +7312,9 @@ class TokenizationResult2 {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/diff/diffComputer.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/diff/diffComputer.js":
 /*!****************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/diff/diffComputer.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/diff/diffComputer.js ***!
   \****************************************************************************************************/
 /*! exports provided: DiffComputer */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -7597,8 +7322,8 @@ class TokenizationResult2 {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DiffComputer", function() { return DiffComputer; });
-/* harmony import */ var _base_common_diff_diff_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/diff/diff.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/diff/diff.js");
-/* harmony import */ var _base_common_strings_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../base/common/strings.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/strings.js");
+/* harmony import */ var _base_common_diff_diff_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/diff/diff.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/diff/diff.js");
+/* harmony import */ var _base_common_strings_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../base/common/strings.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/strings.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7998,9 +7723,9 @@ function createContinueProcessingPredicate(maximumRuntime) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/model/mirrorTextModel.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/model/mirrorTextModel.js":
 /*!********************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/model/mirrorTextModel.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/model/mirrorTextModel.js ***!
   \********************************************************************************************************/
 /*! exports provided: MirrorTextModel */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -8008,9 +7733,9 @@ function createContinueProcessingPredicate(maximumRuntime) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MirrorTextModel", function() { return MirrorTextModel; });
-/* harmony import */ var _base_common_strings_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/strings.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/strings.js");
-/* harmony import */ var _core_position_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../core/position.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/position.js");
-/* harmony import */ var _viewModel_prefixSumComputer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../viewModel/prefixSumComputer.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/viewModel/prefixSumComputer.js");
+/* harmony import */ var _base_common_strings_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/strings.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/strings.js");
+/* harmony import */ var _core_position_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../core/position.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/position.js");
+/* harmony import */ var _viewModel_prefixSumComputer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../viewModel/prefixSumComputer.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/viewModel/prefixSumComputer.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8029,6 +7754,9 @@ class MirrorTextModel {
     }
     dispose() {
         this._lines.length = 0;
+    }
+    get version() {
+        return this._versionId;
     }
     getText() {
         if (this._cachedTextValue === null) {
@@ -8126,9 +7854,9 @@ class MirrorTextModel {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/model/wordHelper.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/model/wordHelper.js":
 /*!***************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/model/wordHelper.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/model/wordHelper.js ***!
   \***************************************************************************************************/
 /*! exports provided: USUAL_WORD_SEPARATORS, DEFAULT_WORD_REGEXP, ensureValidWordDefinition, getWordAtText */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -8259,9 +7987,9 @@ function _findRegexMatchEnclosingPosition(wordDefinition, text, pos, stopPos) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/modes/linkComputer.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/modes/linkComputer.js":
 /*!*****************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/modes/linkComputer.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/modes/linkComputer.js ***!
   \*****************************************************************************************************/
 /*! exports provided: Uint8Matrix, StateMachine, LinkComputer, computeLinks */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -8272,7 +8000,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StateMachine", function() { return StateMachine; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LinkComputer", function() { return LinkComputer; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "computeLinks", function() { return computeLinks; });
-/* harmony import */ var _core_characterClassifier_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core/characterClassifier.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/characterClassifier.js");
+/* harmony import */ var _core_characterClassifier_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core/characterClassifier.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/characterClassifier.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8541,9 +8269,9 @@ function computeLinks(model) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/modes/supports/inplaceReplaceSupport.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/modes/supports/inplaceReplaceSupport.js":
 /*!***********************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/modes/supports/inplaceReplaceSupport.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/modes/supports/inplaceReplaceSupport.js ***!
   \***********************************************************************************************************************/
 /*! exports provided: BasicInplaceReplace */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -8640,9 +8368,9 @@ BasicInplaceReplace.INSTANCE = new BasicInplaceReplace();
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js":
 /*!**************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js ***!
   \**************************************************************************************************************/
 /*! exports provided: EditorSimpleWorker, create */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -8651,20 +8379,19 @@ BasicInplaceReplace.INSTANCE = new BasicInplaceReplace();
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EditorSimpleWorker", function() { return EditorSimpleWorker; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "create", function() { return create; });
-/* harmony import */ var _base_common_arrays_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/arrays.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/arrays.js");
-/* harmony import */ var _base_common_diff_diff_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../base/common/diff/diff.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/diff/diff.js");
-/* harmony import */ var _base_common_platform_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../base/common/platform.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/platform.js");
-/* harmony import */ var _base_common_uri_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../base/common/uri.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/uri.js");
-/* harmony import */ var _core_position_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../core/position.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/position.js");
-/* harmony import */ var _core_range_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../core/range.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/range.js");
-/* harmony import */ var _diff_diffComputer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../diff/diffComputer.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/diff/diffComputer.js");
-/* harmony import */ var _model_mirrorTextModel_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../model/mirrorTextModel.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/model/mirrorTextModel.js");
-/* harmony import */ var _model_wordHelper_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../model/wordHelper.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/model/wordHelper.js");
-/* harmony import */ var _modes_linkComputer_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../modes/linkComputer.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/modes/linkComputer.js");
-/* harmony import */ var _modes_supports_inplaceReplaceSupport_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../modes/supports/inplaceReplaceSupport.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/modes/supports/inplaceReplaceSupport.js");
-/* harmony import */ var _standalone_standaloneBase_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../standalone/standaloneBase.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/standalone/standaloneBase.js");
-/* harmony import */ var _base_common_types_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../base/common/types.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/types.js");
-/* harmony import */ var _base_common_stopwatch_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../base/common/stopwatch.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/stopwatch.js");
+/* harmony import */ var _base_common_diff_diff_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/diff/diff.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/diff/diff.js");
+/* harmony import */ var _base_common_platform_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../base/common/platform.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/platform.js");
+/* harmony import */ var _base_common_uri_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../base/common/uri.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/uri.js");
+/* harmony import */ var _core_position_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../core/position.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/position.js");
+/* harmony import */ var _core_range_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../core/range.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/range.js");
+/* harmony import */ var _diff_diffComputer_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../diff/diffComputer.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/diff/diffComputer.js");
+/* harmony import */ var _model_mirrorTextModel_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../model/mirrorTextModel.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/model/mirrorTextModel.js");
+/* harmony import */ var _model_wordHelper_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../model/wordHelper.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/model/wordHelper.js");
+/* harmony import */ var _modes_linkComputer_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../modes/linkComputer.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/modes/linkComputer.js");
+/* harmony import */ var _modes_supports_inplaceReplaceSupport_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../modes/supports/inplaceReplaceSupport.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/modes/supports/inplaceReplaceSupport.js");
+/* harmony import */ var _standalone_standaloneBase_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../standalone/standaloneBase.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/standalone/standaloneBase.js");
+/* harmony import */ var _base_common_types_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../base/common/types.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/types.js");
+/* harmony import */ var _base_common_stopwatch_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../base/common/stopwatch.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/stopwatch.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8691,16 +8418,12 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
-
 /**
  * @internal
  */
-class MirrorModel extends _model_mirrorTextModel_js__WEBPACK_IMPORTED_MODULE_7__["MirrorTextModel"] {
+class MirrorModel extends _model_mirrorTextModel_js__WEBPACK_IMPORTED_MODULE_6__["MirrorTextModel"] {
     get uri() {
         return this._uri;
-    }
-    get version() {
-        return this._versionId;
     }
     get eol() {
         return this._eol;
@@ -8718,9 +8441,9 @@ class MirrorModel extends _model_mirrorTextModel_js__WEBPACK_IMPORTED_MODULE_7__
         return this._lines[lineNumber - 1];
     }
     getWordAtPosition(position, wordDefinition) {
-        let wordAtText = Object(_model_wordHelper_js__WEBPACK_IMPORTED_MODULE_8__["getWordAtText"])(position.column, Object(_model_wordHelper_js__WEBPACK_IMPORTED_MODULE_8__["ensureValidWordDefinition"])(wordDefinition), this._lines[position.lineNumber - 1], 0);
+        let wordAtText = Object(_model_wordHelper_js__WEBPACK_IMPORTED_MODULE_7__["getWordAtText"])(position.column, Object(_model_wordHelper_js__WEBPACK_IMPORTED_MODULE_7__["ensureValidWordDefinition"])(wordDefinition), this._lines[position.lineNumber - 1], 0);
         if (wordAtText) {
-            return new _core_range_js__WEBPACK_IMPORTED_MODULE_5__["Range"](position.lineNumber, wordAtText.startColumn, position.lineNumber, wordAtText.endColumn);
+            return new _core_range_js__WEBPACK_IMPORTED_MODULE_4__["Range"](position.lineNumber, wordAtText.startColumn, position.lineNumber, wordAtText.endColumn);
         }
         return null;
     }
@@ -8830,7 +8553,7 @@ class MirrorModel extends _model_mirrorTextModel_js__WEBPACK_IMPORTED_MODULE_7__
         return range;
     }
     _validatePosition(position) {
-        if (!_core_position_js__WEBPACK_IMPORTED_MODULE_4__["Position"].isIPosition(position)) {
+        if (!_core_position_js__WEBPACK_IMPORTED_MODULE_3__["Position"].isIPosition(position)) {
             throw new Error('bad position');
         }
         let { lineNumber, column } = position;
@@ -8886,7 +8609,7 @@ class EditorSimpleWorker {
         return all;
     }
     acceptNewModel(data) {
-        this._models[data.url] = new MirrorModel(_base_common_uri_js__WEBPACK_IMPORTED_MODULE_3__["URI"].parse(data.url), data.lines, data.EOL, data.versionId);
+        this._models[data.url] = new MirrorModel(_base_common_uri_js__WEBPACK_IMPORTED_MODULE_2__["URI"].parse(data.url), data.lines, data.EOL, data.versionId);
     }
     acceptModelChanged(strURL, e) {
         if (!this._models[strURL]) {
@@ -8911,7 +8634,7 @@ class EditorSimpleWorker {
             }
             const originalLines = original.getLinesContent();
             const modifiedLines = modified.getLinesContent();
-            const diffComputer = new _diff_diffComputer_js__WEBPACK_IMPORTED_MODULE_6__["DiffComputer"](originalLines, modifiedLines, {
+            const diffComputer = new _diff_diffComputer_js__WEBPACK_IMPORTED_MODULE_5__["DiffComputer"](originalLines, modifiedLines, {
                 shouldComputeCharChanges: true,
                 shouldPostProcessCharChanges: true,
                 shouldIgnoreTrimWhitespace: ignoreTrimWhitespace,
@@ -8950,9 +8673,9 @@ class EditorSimpleWorker {
             }
             const result = [];
             let lastEol = undefined;
-            edits = Object(_base_common_arrays_js__WEBPACK_IMPORTED_MODULE_0__["mergeSort"])(edits, (a, b) => {
+            edits = edits.slice(0).sort((a, b) => {
                 if (a.range && b.range) {
-                    return _core_range_js__WEBPACK_IMPORTED_MODULE_5__["Range"].compareRangesUsingStarts(a.range, b.range);
+                    return _core_range_js__WEBPACK_IMPORTED_MODULE_4__["Range"].compareRangesUsingStarts(a.range, b.range);
                 }
                 // eol only changes should go to the end
                 let aRng = a.range ? 0 : 1;
@@ -8963,7 +8686,7 @@ class EditorSimpleWorker {
                 if (typeof eol === 'number') {
                     lastEol = eol;
                 }
-                if (_core_range_js__WEBPACK_IMPORTED_MODULE_5__["Range"].isEmpty(range) && !text) {
+                if (_core_range_js__WEBPACK_IMPORTED_MODULE_4__["Range"].isEmpty(range) && !text) {
                     // empty change
                     continue;
                 }
@@ -8979,8 +8702,8 @@ class EditorSimpleWorker {
                     continue;
                 }
                 // compute diff between original and edit.text
-                const changes = Object(_base_common_diff_diff_js__WEBPACK_IMPORTED_MODULE_1__["stringDiff"])(original, text, false);
-                const editOffset = model.offsetAt(_core_range_js__WEBPACK_IMPORTED_MODULE_5__["Range"].lift(range).getStartPosition());
+                const changes = Object(_base_common_diff_diff_js__WEBPACK_IMPORTED_MODULE_0__["stringDiff"])(original, text, false);
+                const editOffset = model.offsetAt(_core_range_js__WEBPACK_IMPORTED_MODULE_4__["Range"].lift(range).getStartPosition());
                 for (const change of changes) {
                     const start = model.positionAt(editOffset + change.originalStart);
                     const end = model.positionAt(editOffset + change.originalStart + change.originalLength);
@@ -9006,12 +8729,12 @@ class EditorSimpleWorker {
             if (!model) {
                 return null;
             }
-            return Object(_modes_linkComputer_js__WEBPACK_IMPORTED_MODULE_9__["computeLinks"])(model);
+            return Object(_modes_linkComputer_js__WEBPACK_IMPORTED_MODULE_8__["computeLinks"])(model);
         });
     }
     textualSuggest(modelUrls, leadingWord, wordDef, wordDefFlags) {
         return __awaiter(this, void 0, void 0, function* () {
-            const sw = new _base_common_stopwatch_js__WEBPACK_IMPORTED_MODULE_13__["StopWatch"](true);
+            const sw = new _base_common_stopwatch_js__WEBPACK_IMPORTED_MODULE_12__["StopWatch"](true);
             const wordDefRegExp = new RegExp(wordDef, wordDefFlags);
             const seen = new Set();
             outer: for (let url of modelUrls) {
@@ -9086,7 +8809,7 @@ class EditorSimpleWorker {
                 return null;
             }
             let word = model.getValueInRange(wordRange);
-            let result = _modes_supports_inplaceReplaceSupport_js__WEBPACK_IMPORTED_MODULE_10__["BasicInplaceReplace"].INSTANCE.navigateValueSet(range, selectionText, wordRange, word, up);
+            let result = _modes_supports_inplaceReplaceSupport_js__WEBPACK_IMPORTED_MODULE_9__["BasicInplaceReplace"].INSTANCE.navigateValueSet(range, selectionText, wordRange, word, up);
             return result;
         });
     }
@@ -9095,7 +8818,7 @@ class EditorSimpleWorker {
         const proxyMethodRequest = (method, args) => {
             return this._host.fhr(method, args);
         };
-        const foreignHost = _base_common_types_js__WEBPACK_IMPORTED_MODULE_12__["createProxyObject"](foreignHostMethods, proxyMethodRequest);
+        const foreignHost = _base_common_types_js__WEBPACK_IMPORTED_MODULE_11__["createProxyObject"](foreignHostMethods, proxyMethodRequest);
         let ctx = {
             host: foreignHost,
             getMirrorModels: () => {
@@ -9105,7 +8828,7 @@ class EditorSimpleWorker {
         if (this._foreignModuleFactory) {
             this._foreignModule = this._foreignModuleFactory(ctx, createData);
             // static foreing module
-            return Promise.resolve(_base_common_types_js__WEBPACK_IMPORTED_MODULE_12__["getAllMethodNames"](this._foreignModule));
+            return Promise.resolve(_base_common_types_js__WEBPACK_IMPORTED_MODULE_11__["getAllMethodNames"](this._foreignModule));
         }
         // ESM-comment-begin
         // 		return new Promise<any>((resolve, reject) => {
@@ -9148,15 +8871,15 @@ function create(host) {
 }
 if (typeof importScripts === 'function') {
     // Running in a web worker
-    _base_common_platform_js__WEBPACK_IMPORTED_MODULE_2__["globals"].monaco = Object(_standalone_standaloneBase_js__WEBPACK_IMPORTED_MODULE_11__["createMonacoBaseAPI"])();
+    _base_common_platform_js__WEBPACK_IMPORTED_MODULE_1__["globals"].monaco = Object(_standalone_standaloneBase_js__WEBPACK_IMPORTED_MODULE_10__["createMonacoBaseAPI"])();
 }
 
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/standalone/standaloneBase.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/standalone/standaloneBase.js":
 /*!************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/standalone/standaloneBase.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/standalone/standaloneBase.js ***!
   \************************************************************************************************************/
 /*! exports provided: KeyMod, createMonacoBaseAPI */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -9165,15 +8888,15 @@ if (typeof importScripts === 'function') {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "KeyMod", function() { return KeyMod; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createMonacoBaseAPI", function() { return createMonacoBaseAPI; });
-/* harmony import */ var _base_common_cancellation_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/cancellation.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/cancellation.js");
-/* harmony import */ var _base_common_event_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../base/common/event.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/event.js");
-/* harmony import */ var _base_common_keyCodes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../base/common/keyCodes.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/keyCodes.js");
-/* harmony import */ var _base_common_uri_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../base/common/uri.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/uri.js");
-/* harmony import */ var _core_position_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../core/position.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/position.js");
-/* harmony import */ var _core_range_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../core/range.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/range.js");
-/* harmony import */ var _core_selection_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../core/selection.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/selection.js");
-/* harmony import */ var _core_token_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../core/token.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/core/token.js");
-/* harmony import */ var _standaloneEnums_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./standaloneEnums.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/standalone/standaloneEnums.js");
+/* harmony import */ var _base_common_cancellation_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/cancellation.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/cancellation.js");
+/* harmony import */ var _base_common_event_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../base/common/event.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/event.js");
+/* harmony import */ var _base_common_keyCodes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../base/common/keyCodes.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/keyCodes.js");
+/* harmony import */ var _base_common_uri_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../base/common/uri.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/uri.js");
+/* harmony import */ var _core_position_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../core/position.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/position.js");
+/* harmony import */ var _core_range_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../core/range.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/range.js");
+/* harmony import */ var _core_selection_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../core/selection.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/selection.js");
+/* harmony import */ var _core_token_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../core/token.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/core/token.js");
+/* harmony import */ var _standaloneEnums_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./standaloneEnums.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/standalone/standaloneEnums.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9218,9 +8941,9 @@ function createMonacoBaseAPI() {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/standalone/standaloneEnums.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/standalone/standaloneEnums.js":
 /*!*************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/standalone/standaloneEnums.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/standalone/standaloneEnums.js ***!
   \*************************************************************************************************************/
 /*! exports provided: AccessibilitySupport, CompletionItemInsertTextRule, CompletionItemKind, CompletionItemTag, CompletionTriggerKind, ContentWidgetPositionPreference, CursorChangeReason, DefaultEndOfLine, DocumentHighlightKind, EditorAutoIndentStrategy, EditorOption, EndOfLinePreference, EndOfLineSequence, IndentAction, InlineHintKind, KeyCode, MarkerSeverity, MarkerTag, MinimapPosition, MouseTargetType, OverlayWidgetPositionPreference, OverviewRulerLane, RenderLineNumbersType, RenderMinimap, ScrollType, ScrollbarVisibility, SelectionDirection, SignatureHelpTriggerKind, SymbolKind, SymbolTag, TextEditorCursorBlinkingStyle, TextEditorCursorStyle, TrackedRangeStickiness, WrappingIndent */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -9434,126 +9157,129 @@ var EditorOption;
     EditorOption[EditorOption["accessibilityPageSize"] = 3] = "accessibilityPageSize";
     EditorOption[EditorOption["ariaLabel"] = 4] = "ariaLabel";
     EditorOption[EditorOption["autoClosingBrackets"] = 5] = "autoClosingBrackets";
-    EditorOption[EditorOption["autoClosingOvertype"] = 6] = "autoClosingOvertype";
-    EditorOption[EditorOption["autoClosingQuotes"] = 7] = "autoClosingQuotes";
-    EditorOption[EditorOption["autoIndent"] = 8] = "autoIndent";
-    EditorOption[EditorOption["automaticLayout"] = 9] = "automaticLayout";
-    EditorOption[EditorOption["autoSurround"] = 10] = "autoSurround";
-    EditorOption[EditorOption["codeLens"] = 11] = "codeLens";
-    EditorOption[EditorOption["codeLensFontFamily"] = 12] = "codeLensFontFamily";
-    EditorOption[EditorOption["codeLensFontSize"] = 13] = "codeLensFontSize";
-    EditorOption[EditorOption["colorDecorators"] = 14] = "colorDecorators";
-    EditorOption[EditorOption["columnSelection"] = 15] = "columnSelection";
-    EditorOption[EditorOption["comments"] = 16] = "comments";
-    EditorOption[EditorOption["contextmenu"] = 17] = "contextmenu";
-    EditorOption[EditorOption["copyWithSyntaxHighlighting"] = 18] = "copyWithSyntaxHighlighting";
-    EditorOption[EditorOption["cursorBlinking"] = 19] = "cursorBlinking";
-    EditorOption[EditorOption["cursorSmoothCaretAnimation"] = 20] = "cursorSmoothCaretAnimation";
-    EditorOption[EditorOption["cursorStyle"] = 21] = "cursorStyle";
-    EditorOption[EditorOption["cursorSurroundingLines"] = 22] = "cursorSurroundingLines";
-    EditorOption[EditorOption["cursorSurroundingLinesStyle"] = 23] = "cursorSurroundingLinesStyle";
-    EditorOption[EditorOption["cursorWidth"] = 24] = "cursorWidth";
-    EditorOption[EditorOption["disableLayerHinting"] = 25] = "disableLayerHinting";
-    EditorOption[EditorOption["disableMonospaceOptimizations"] = 26] = "disableMonospaceOptimizations";
-    EditorOption[EditorOption["dragAndDrop"] = 27] = "dragAndDrop";
-    EditorOption[EditorOption["emptySelectionClipboard"] = 28] = "emptySelectionClipboard";
-    EditorOption[EditorOption["extraEditorClassName"] = 29] = "extraEditorClassName";
-    EditorOption[EditorOption["fastScrollSensitivity"] = 30] = "fastScrollSensitivity";
-    EditorOption[EditorOption["find"] = 31] = "find";
-    EditorOption[EditorOption["fixedOverflowWidgets"] = 32] = "fixedOverflowWidgets";
-    EditorOption[EditorOption["folding"] = 33] = "folding";
-    EditorOption[EditorOption["foldingStrategy"] = 34] = "foldingStrategy";
-    EditorOption[EditorOption["foldingHighlight"] = 35] = "foldingHighlight";
-    EditorOption[EditorOption["unfoldOnClickAfterEndOfLine"] = 36] = "unfoldOnClickAfterEndOfLine";
-    EditorOption[EditorOption["fontFamily"] = 37] = "fontFamily";
-    EditorOption[EditorOption["fontInfo"] = 38] = "fontInfo";
-    EditorOption[EditorOption["fontLigatures"] = 39] = "fontLigatures";
-    EditorOption[EditorOption["fontSize"] = 40] = "fontSize";
-    EditorOption[EditorOption["fontWeight"] = 41] = "fontWeight";
-    EditorOption[EditorOption["formatOnPaste"] = 42] = "formatOnPaste";
-    EditorOption[EditorOption["formatOnType"] = 43] = "formatOnType";
-    EditorOption[EditorOption["glyphMargin"] = 44] = "glyphMargin";
-    EditorOption[EditorOption["gotoLocation"] = 45] = "gotoLocation";
-    EditorOption[EditorOption["hideCursorInOverviewRuler"] = 46] = "hideCursorInOverviewRuler";
-    EditorOption[EditorOption["highlightActiveIndentGuide"] = 47] = "highlightActiveIndentGuide";
-    EditorOption[EditorOption["hover"] = 48] = "hover";
-    EditorOption[EditorOption["inDiffEditor"] = 49] = "inDiffEditor";
-    EditorOption[EditorOption["letterSpacing"] = 50] = "letterSpacing";
-    EditorOption[EditorOption["lightbulb"] = 51] = "lightbulb";
-    EditorOption[EditorOption["lineDecorationsWidth"] = 52] = "lineDecorationsWidth";
-    EditorOption[EditorOption["lineHeight"] = 53] = "lineHeight";
-    EditorOption[EditorOption["lineNumbers"] = 54] = "lineNumbers";
-    EditorOption[EditorOption["lineNumbersMinChars"] = 55] = "lineNumbersMinChars";
-    EditorOption[EditorOption["linkedEditing"] = 56] = "linkedEditing";
-    EditorOption[EditorOption["links"] = 57] = "links";
-    EditorOption[EditorOption["matchBrackets"] = 58] = "matchBrackets";
-    EditorOption[EditorOption["minimap"] = 59] = "minimap";
-    EditorOption[EditorOption["mouseStyle"] = 60] = "mouseStyle";
-    EditorOption[EditorOption["mouseWheelScrollSensitivity"] = 61] = "mouseWheelScrollSensitivity";
-    EditorOption[EditorOption["mouseWheelZoom"] = 62] = "mouseWheelZoom";
-    EditorOption[EditorOption["multiCursorMergeOverlapping"] = 63] = "multiCursorMergeOverlapping";
-    EditorOption[EditorOption["multiCursorModifier"] = 64] = "multiCursorModifier";
-    EditorOption[EditorOption["multiCursorPaste"] = 65] = "multiCursorPaste";
-    EditorOption[EditorOption["occurrencesHighlight"] = 66] = "occurrencesHighlight";
-    EditorOption[EditorOption["overviewRulerBorder"] = 67] = "overviewRulerBorder";
-    EditorOption[EditorOption["overviewRulerLanes"] = 68] = "overviewRulerLanes";
-    EditorOption[EditorOption["padding"] = 69] = "padding";
-    EditorOption[EditorOption["parameterHints"] = 70] = "parameterHints";
-    EditorOption[EditorOption["peekWidgetDefaultFocus"] = 71] = "peekWidgetDefaultFocus";
-    EditorOption[EditorOption["definitionLinkOpensInPeek"] = 72] = "definitionLinkOpensInPeek";
-    EditorOption[EditorOption["quickSuggestions"] = 73] = "quickSuggestions";
-    EditorOption[EditorOption["quickSuggestionsDelay"] = 74] = "quickSuggestionsDelay";
-    EditorOption[EditorOption["readOnly"] = 75] = "readOnly";
-    EditorOption[EditorOption["renameOnType"] = 76] = "renameOnType";
-    EditorOption[EditorOption["renderControlCharacters"] = 77] = "renderControlCharacters";
-    EditorOption[EditorOption["renderIndentGuides"] = 78] = "renderIndentGuides";
-    EditorOption[EditorOption["renderFinalNewline"] = 79] = "renderFinalNewline";
-    EditorOption[EditorOption["renderLineHighlight"] = 80] = "renderLineHighlight";
-    EditorOption[EditorOption["renderLineHighlightOnlyWhenFocus"] = 81] = "renderLineHighlightOnlyWhenFocus";
-    EditorOption[EditorOption["renderValidationDecorations"] = 82] = "renderValidationDecorations";
-    EditorOption[EditorOption["renderWhitespace"] = 83] = "renderWhitespace";
-    EditorOption[EditorOption["revealHorizontalRightPadding"] = 84] = "revealHorizontalRightPadding";
-    EditorOption[EditorOption["roundedSelection"] = 85] = "roundedSelection";
-    EditorOption[EditorOption["rulers"] = 86] = "rulers";
-    EditorOption[EditorOption["scrollbar"] = 87] = "scrollbar";
-    EditorOption[EditorOption["scrollBeyondLastColumn"] = 88] = "scrollBeyondLastColumn";
-    EditorOption[EditorOption["scrollBeyondLastLine"] = 89] = "scrollBeyondLastLine";
-    EditorOption[EditorOption["scrollPredominantAxis"] = 90] = "scrollPredominantAxis";
-    EditorOption[EditorOption["selectionClipboard"] = 91] = "selectionClipboard";
-    EditorOption[EditorOption["selectionHighlight"] = 92] = "selectionHighlight";
-    EditorOption[EditorOption["selectOnLineNumbers"] = 93] = "selectOnLineNumbers";
-    EditorOption[EditorOption["showFoldingControls"] = 94] = "showFoldingControls";
-    EditorOption[EditorOption["showUnused"] = 95] = "showUnused";
-    EditorOption[EditorOption["snippetSuggestions"] = 96] = "snippetSuggestions";
-    EditorOption[EditorOption["smartSelect"] = 97] = "smartSelect";
-    EditorOption[EditorOption["smoothScrolling"] = 98] = "smoothScrolling";
-    EditorOption[EditorOption["stickyTabStops"] = 99] = "stickyTabStops";
-    EditorOption[EditorOption["stopRenderingLineAfter"] = 100] = "stopRenderingLineAfter";
-    EditorOption[EditorOption["suggest"] = 101] = "suggest";
-    EditorOption[EditorOption["suggestFontSize"] = 102] = "suggestFontSize";
-    EditorOption[EditorOption["suggestLineHeight"] = 103] = "suggestLineHeight";
-    EditorOption[EditorOption["suggestOnTriggerCharacters"] = 104] = "suggestOnTriggerCharacters";
-    EditorOption[EditorOption["suggestSelection"] = 105] = "suggestSelection";
-    EditorOption[EditorOption["tabCompletion"] = 106] = "tabCompletion";
-    EditorOption[EditorOption["tabIndex"] = 107] = "tabIndex";
-    EditorOption[EditorOption["unusualLineTerminators"] = 108] = "unusualLineTerminators";
-    EditorOption[EditorOption["useTabStops"] = 109] = "useTabStops";
-    EditorOption[EditorOption["wordSeparators"] = 110] = "wordSeparators";
-    EditorOption[EditorOption["wordWrap"] = 111] = "wordWrap";
-    EditorOption[EditorOption["wordWrapBreakAfterCharacters"] = 112] = "wordWrapBreakAfterCharacters";
-    EditorOption[EditorOption["wordWrapBreakBeforeCharacters"] = 113] = "wordWrapBreakBeforeCharacters";
-    EditorOption[EditorOption["wordWrapColumn"] = 114] = "wordWrapColumn";
-    EditorOption[EditorOption["wordWrapOverride1"] = 115] = "wordWrapOverride1";
-    EditorOption[EditorOption["wordWrapOverride2"] = 116] = "wordWrapOverride2";
-    EditorOption[EditorOption["wrappingIndent"] = 117] = "wrappingIndent";
-    EditorOption[EditorOption["wrappingStrategy"] = 118] = "wrappingStrategy";
-    EditorOption[EditorOption["showDeprecated"] = 119] = "showDeprecated";
-    EditorOption[EditorOption["inlineHints"] = 120] = "inlineHints";
-    EditorOption[EditorOption["editorClassName"] = 121] = "editorClassName";
-    EditorOption[EditorOption["pixelRatio"] = 122] = "pixelRatio";
-    EditorOption[EditorOption["tabFocusMode"] = 123] = "tabFocusMode";
-    EditorOption[EditorOption["layoutInfo"] = 124] = "layoutInfo";
-    EditorOption[EditorOption["wrappingInfo"] = 125] = "wrappingInfo";
+    EditorOption[EditorOption["autoClosingDelete"] = 6] = "autoClosingDelete";
+    EditorOption[EditorOption["autoClosingOvertype"] = 7] = "autoClosingOvertype";
+    EditorOption[EditorOption["autoClosingQuotes"] = 8] = "autoClosingQuotes";
+    EditorOption[EditorOption["autoIndent"] = 9] = "autoIndent";
+    EditorOption[EditorOption["automaticLayout"] = 10] = "automaticLayout";
+    EditorOption[EditorOption["autoSurround"] = 11] = "autoSurround";
+    EditorOption[EditorOption["codeLens"] = 12] = "codeLens";
+    EditorOption[EditorOption["codeLensFontFamily"] = 13] = "codeLensFontFamily";
+    EditorOption[EditorOption["codeLensFontSize"] = 14] = "codeLensFontSize";
+    EditorOption[EditorOption["colorDecorators"] = 15] = "colorDecorators";
+    EditorOption[EditorOption["columnSelection"] = 16] = "columnSelection";
+    EditorOption[EditorOption["comments"] = 17] = "comments";
+    EditorOption[EditorOption["contextmenu"] = 18] = "contextmenu";
+    EditorOption[EditorOption["copyWithSyntaxHighlighting"] = 19] = "copyWithSyntaxHighlighting";
+    EditorOption[EditorOption["cursorBlinking"] = 20] = "cursorBlinking";
+    EditorOption[EditorOption["cursorSmoothCaretAnimation"] = 21] = "cursorSmoothCaretAnimation";
+    EditorOption[EditorOption["cursorStyle"] = 22] = "cursorStyle";
+    EditorOption[EditorOption["cursorSurroundingLines"] = 23] = "cursorSurroundingLines";
+    EditorOption[EditorOption["cursorSurroundingLinesStyle"] = 24] = "cursorSurroundingLinesStyle";
+    EditorOption[EditorOption["cursorWidth"] = 25] = "cursorWidth";
+    EditorOption[EditorOption["disableLayerHinting"] = 26] = "disableLayerHinting";
+    EditorOption[EditorOption["disableMonospaceOptimizations"] = 27] = "disableMonospaceOptimizations";
+    EditorOption[EditorOption["domReadOnly"] = 28] = "domReadOnly";
+    EditorOption[EditorOption["dragAndDrop"] = 29] = "dragAndDrop";
+    EditorOption[EditorOption["emptySelectionClipboard"] = 30] = "emptySelectionClipboard";
+    EditorOption[EditorOption["extraEditorClassName"] = 31] = "extraEditorClassName";
+    EditorOption[EditorOption["fastScrollSensitivity"] = 32] = "fastScrollSensitivity";
+    EditorOption[EditorOption["find"] = 33] = "find";
+    EditorOption[EditorOption["fixedOverflowWidgets"] = 34] = "fixedOverflowWidgets";
+    EditorOption[EditorOption["folding"] = 35] = "folding";
+    EditorOption[EditorOption["foldingStrategy"] = 36] = "foldingStrategy";
+    EditorOption[EditorOption["foldingHighlight"] = 37] = "foldingHighlight";
+    EditorOption[EditorOption["unfoldOnClickAfterEndOfLine"] = 38] = "unfoldOnClickAfterEndOfLine";
+    EditorOption[EditorOption["fontFamily"] = 39] = "fontFamily";
+    EditorOption[EditorOption["fontInfo"] = 40] = "fontInfo";
+    EditorOption[EditorOption["fontLigatures"] = 41] = "fontLigatures";
+    EditorOption[EditorOption["fontSize"] = 42] = "fontSize";
+    EditorOption[EditorOption["fontWeight"] = 43] = "fontWeight";
+    EditorOption[EditorOption["formatOnPaste"] = 44] = "formatOnPaste";
+    EditorOption[EditorOption["formatOnType"] = 45] = "formatOnType";
+    EditorOption[EditorOption["glyphMargin"] = 46] = "glyphMargin";
+    EditorOption[EditorOption["gotoLocation"] = 47] = "gotoLocation";
+    EditorOption[EditorOption["hideCursorInOverviewRuler"] = 48] = "hideCursorInOverviewRuler";
+    EditorOption[EditorOption["highlightActiveIndentGuide"] = 49] = "highlightActiveIndentGuide";
+    EditorOption[EditorOption["hover"] = 50] = "hover";
+    EditorOption[EditorOption["inDiffEditor"] = 51] = "inDiffEditor";
+    EditorOption[EditorOption["letterSpacing"] = 52] = "letterSpacing";
+    EditorOption[EditorOption["lightbulb"] = 53] = "lightbulb";
+    EditorOption[EditorOption["lineDecorationsWidth"] = 54] = "lineDecorationsWidth";
+    EditorOption[EditorOption["lineHeight"] = 55] = "lineHeight";
+    EditorOption[EditorOption["lineNumbers"] = 56] = "lineNumbers";
+    EditorOption[EditorOption["lineNumbersMinChars"] = 57] = "lineNumbersMinChars";
+    EditorOption[EditorOption["linkedEditing"] = 58] = "linkedEditing";
+    EditorOption[EditorOption["links"] = 59] = "links";
+    EditorOption[EditorOption["matchBrackets"] = 60] = "matchBrackets";
+    EditorOption[EditorOption["minimap"] = 61] = "minimap";
+    EditorOption[EditorOption["mouseStyle"] = 62] = "mouseStyle";
+    EditorOption[EditorOption["mouseWheelScrollSensitivity"] = 63] = "mouseWheelScrollSensitivity";
+    EditorOption[EditorOption["mouseWheelZoom"] = 64] = "mouseWheelZoom";
+    EditorOption[EditorOption["multiCursorMergeOverlapping"] = 65] = "multiCursorMergeOverlapping";
+    EditorOption[EditorOption["multiCursorModifier"] = 66] = "multiCursorModifier";
+    EditorOption[EditorOption["multiCursorPaste"] = 67] = "multiCursorPaste";
+    EditorOption[EditorOption["occurrencesHighlight"] = 68] = "occurrencesHighlight";
+    EditorOption[EditorOption["overviewRulerBorder"] = 69] = "overviewRulerBorder";
+    EditorOption[EditorOption["overviewRulerLanes"] = 70] = "overviewRulerLanes";
+    EditorOption[EditorOption["padding"] = 71] = "padding";
+    EditorOption[EditorOption["parameterHints"] = 72] = "parameterHints";
+    EditorOption[EditorOption["peekWidgetDefaultFocus"] = 73] = "peekWidgetDefaultFocus";
+    EditorOption[EditorOption["definitionLinkOpensInPeek"] = 74] = "definitionLinkOpensInPeek";
+    EditorOption[EditorOption["quickSuggestions"] = 75] = "quickSuggestions";
+    EditorOption[EditorOption["quickSuggestionsDelay"] = 76] = "quickSuggestionsDelay";
+    EditorOption[EditorOption["readOnly"] = 77] = "readOnly";
+    EditorOption[EditorOption["renameOnType"] = 78] = "renameOnType";
+    EditorOption[EditorOption["renderControlCharacters"] = 79] = "renderControlCharacters";
+    EditorOption[EditorOption["renderIndentGuides"] = 80] = "renderIndentGuides";
+    EditorOption[EditorOption["renderFinalNewline"] = 81] = "renderFinalNewline";
+    EditorOption[EditorOption["renderLineHighlight"] = 82] = "renderLineHighlight";
+    EditorOption[EditorOption["renderLineHighlightOnlyWhenFocus"] = 83] = "renderLineHighlightOnlyWhenFocus";
+    EditorOption[EditorOption["renderValidationDecorations"] = 84] = "renderValidationDecorations";
+    EditorOption[EditorOption["renderWhitespace"] = 85] = "renderWhitespace";
+    EditorOption[EditorOption["revealHorizontalRightPadding"] = 86] = "revealHorizontalRightPadding";
+    EditorOption[EditorOption["roundedSelection"] = 87] = "roundedSelection";
+    EditorOption[EditorOption["rulers"] = 88] = "rulers";
+    EditorOption[EditorOption["scrollbar"] = 89] = "scrollbar";
+    EditorOption[EditorOption["scrollBeyondLastColumn"] = 90] = "scrollBeyondLastColumn";
+    EditorOption[EditorOption["scrollBeyondLastLine"] = 91] = "scrollBeyondLastLine";
+    EditorOption[EditorOption["scrollPredominantAxis"] = 92] = "scrollPredominantAxis";
+    EditorOption[EditorOption["selectionClipboard"] = 93] = "selectionClipboard";
+    EditorOption[EditorOption["selectionHighlight"] = 94] = "selectionHighlight";
+    EditorOption[EditorOption["selectOnLineNumbers"] = 95] = "selectOnLineNumbers";
+    EditorOption[EditorOption["showFoldingControls"] = 96] = "showFoldingControls";
+    EditorOption[EditorOption["showUnused"] = 97] = "showUnused";
+    EditorOption[EditorOption["snippetSuggestions"] = 98] = "snippetSuggestions";
+    EditorOption[EditorOption["smartSelect"] = 99] = "smartSelect";
+    EditorOption[EditorOption["smoothScrolling"] = 100] = "smoothScrolling";
+    EditorOption[EditorOption["stickyTabStops"] = 101] = "stickyTabStops";
+    EditorOption[EditorOption["stopRenderingLineAfter"] = 102] = "stopRenderingLineAfter";
+    EditorOption[EditorOption["suggest"] = 103] = "suggest";
+    EditorOption[EditorOption["suggestFontSize"] = 104] = "suggestFontSize";
+    EditorOption[EditorOption["suggestLineHeight"] = 105] = "suggestLineHeight";
+    EditorOption[EditorOption["suggestOnTriggerCharacters"] = 106] = "suggestOnTriggerCharacters";
+    EditorOption[EditorOption["suggestSelection"] = 107] = "suggestSelection";
+    EditorOption[EditorOption["tabCompletion"] = 108] = "tabCompletion";
+    EditorOption[EditorOption["tabIndex"] = 109] = "tabIndex";
+    EditorOption[EditorOption["unusualLineTerminators"] = 110] = "unusualLineTerminators";
+    EditorOption[EditorOption["useShadowDOM"] = 111] = "useShadowDOM";
+    EditorOption[EditorOption["useTabStops"] = 112] = "useTabStops";
+    EditorOption[EditorOption["wordSeparators"] = 113] = "wordSeparators";
+    EditorOption[EditorOption["wordWrap"] = 114] = "wordWrap";
+    EditorOption[EditorOption["wordWrapBreakAfterCharacters"] = 115] = "wordWrapBreakAfterCharacters";
+    EditorOption[EditorOption["wordWrapBreakBeforeCharacters"] = 116] = "wordWrapBreakBeforeCharacters";
+    EditorOption[EditorOption["wordWrapColumn"] = 117] = "wordWrapColumn";
+    EditorOption[EditorOption["wordWrapOverride1"] = 118] = "wordWrapOverride1";
+    EditorOption[EditorOption["wordWrapOverride2"] = 119] = "wordWrapOverride2";
+    EditorOption[EditorOption["wrappingIndent"] = 120] = "wrappingIndent";
+    EditorOption[EditorOption["wrappingStrategy"] = 121] = "wrappingStrategy";
+    EditorOption[EditorOption["showDeprecated"] = 122] = "showDeprecated";
+    EditorOption[EditorOption["inlineHints"] = 123] = "inlineHints";
+    EditorOption[EditorOption["editorClassName"] = 124] = "editorClassName";
+    EditorOption[EditorOption["pixelRatio"] = 125] = "pixelRatio";
+    EditorOption[EditorOption["tabFocusMode"] = 126] = "tabFocusMode";
+    EditorOption[EditorOption["layoutInfo"] = 127] = "layoutInfo";
+    EditorOption[EditorOption["wrappingInfo"] = 128] = "wrappingInfo";
 })(EditorOption || (EditorOption = {}));
 /**
  * End of line character preference.
@@ -9624,6 +9350,7 @@ var InlineHintKind;
  */
 var KeyCode;
 (function (KeyCode) {
+    KeyCode[KeyCode["DependsOnKbLayout"] = -1] = "DependsOnKbLayout";
     /**
      * Placed first to cover the 0 value of the enum.
      */
@@ -10086,9 +9813,9 @@ var WrappingIndent;
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/viewModel/prefixSumComputer.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/viewModel/prefixSumComputer.js":
 /*!**************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/viewModel/prefixSumComputer.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/viewModel/prefixSumComputer.js ***!
   \**************************************************************************************************************/
 /*! exports provided: PrefixSumIndexOfResult, PrefixSumComputer */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -10097,7 +9824,7 @@ var WrappingIndent;
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PrefixSumIndexOfResult", function() { return PrefixSumIndexOfResult; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PrefixSumComputer", function() { return PrefixSumComputer; });
-/* harmony import */ var _base_common_uint_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/uint.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/uint.js");
+/* harmony import */ var _base_common_uint_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/uint.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/uint.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10237,9 +9964,9 @@ class PrefixSumComputer {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/editor.worker.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/editor.worker.js":
 /*!*****************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/editor.worker.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/editor.worker.js ***!
   \*****************************************************************************************/
 /*! exports provided: initialize */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -10247,8 +9974,8 @@ class PrefixSumComputer {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "initialize", function() { return initialize; });
-/* harmony import */ var _base_common_worker_simpleWorker_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/common/worker/simpleWorker.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/base/common/worker/simpleWorker.js");
-/* harmony import */ var _common_services_editorSimpleWorker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common/services/editorSimpleWorker.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js");
+/* harmony import */ var _base_common_worker_simpleWorker_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/common/worker/simpleWorker.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/base/common/worker/simpleWorker.js");
+/* harmony import */ var _common_services_editorSimpleWorker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common/services/editorSimpleWorker.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.

@@ -1,9 +1,9 @@
 exports.ids = [2];
 exports.modules = {
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/languageFeatures.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/language/typescript/languageFeatures.js":
 /*!*********************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/languageFeatures.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/language/typescript/languageFeatures.js ***!
   \*********************************************************************************************************/
 /*! exports provided: flattenDiagnosticMessageText, Adapter, LibFiles, DiagnosticsAdapter, SuggestAdapter, SignatureHelpAdapter, QuickInfoAdapter, OccurrencesAdapter, DefinitionAdapter, ReferenceAdapter, OutlineAdapter, Kind, FormatHelper, FormatAdapter, FormatOnTypeAdapter, CodeActionAdaptor, RenameAdapter */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -27,8 +27,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FormatOnTypeAdapter", function() { return FormatOnTypeAdapter; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CodeActionAdaptor", function() { return CodeActionAdaptor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RenameAdapter", function() { return RenameAdapter; });
-/* harmony import */ var _lib_lib_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/lib.index.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/lib/lib.index.js");
-/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
+/* harmony import */ var _lib_lib_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/lib.index.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/language/typescript/lib/lib.index.js");
+/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -235,18 +235,45 @@ var DiagnosticsAdapter = /** @class */ (function (_super) {
             if (model.getModeId() !== _selector) {
                 return;
             }
+            var maybeValidate = function () {
+                var onlyVisible = _this._defaults.getDiagnosticsOptions().onlyVisible;
+                if (onlyVisible) {
+                    if (model.isAttachedToEditor()) {
+                        _this._doValidate(model);
+                    }
+                }
+                else {
+                    _this._doValidate(model);
+                }
+            };
             var handle;
             var changeSubscription = model.onDidChangeContent(function () {
                 clearTimeout(handle);
-                handle = setTimeout(function () { return _this._doValidate(model); }, 500);
+                handle = setTimeout(maybeValidate, 500);
+            });
+            var visibleSubscription = model.onDidChangeAttached(function () {
+                var onlyVisible = _this._defaults.getDiagnosticsOptions().onlyVisible;
+                if (onlyVisible) {
+                    if (model.isAttachedToEditor()) {
+                        // this model is now attached to an editor
+                        // => compute diagnostics
+                        maybeValidate();
+                    }
+                    else {
+                        // this model is no longer attached to an editor
+                        // => clear existing diagnostics
+                        _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].setModelMarkers(model, _this._selector, []);
+                    }
+                }
             });
             _this._listener[model.uri.toString()] = {
                 dispose: function () {
                     changeSubscription.dispose();
+                    visibleSubscription.dispose();
                     clearTimeout(handle);
                 }
             };
-            _this._doValidate(model);
+            maybeValidate();
         };
         var onModelRemoved = function (model) {
             _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].setModelMarkers(model, _this._selector, []);
@@ -256,7 +283,7 @@ var DiagnosticsAdapter = /** @class */ (function (_super) {
                 delete _this._listener[key];
             }
         };
-        _this._disposables.push(_fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].onDidCreateModel(onModelAdd));
+        _this._disposables.push(_fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].onDidCreateModel(function (model) { return onModelAdd(model); }));
         _this._disposables.push(_fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].onWillDisposeModel(onModelRemoved));
         _this._disposables.push(_fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].onDidChangeModelLanguage(function (event) {
             onModelRemoved(event.model);
@@ -280,7 +307,7 @@ var DiagnosticsAdapter = /** @class */ (function (_super) {
         };
         _this._disposables.push(_this._defaults.onDidChange(recomputeDiagostics));
         _this._disposables.push(_this._defaults.onDidExtraLibsChange(recomputeDiagostics));
-        _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].getModels().forEach(onModelAdd);
+        _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].getModels().forEach(function (model) { return onModelAdd(model); });
         return _this;
     }
     DiagnosticsAdapter.prototype.dispose = function () {
@@ -1236,9 +1263,9 @@ var RenameAdapter = /** @class */ (function (_super) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/lib/lib.index.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/language/typescript/lib/lib.index.js":
 /*!******************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/lib/lib.index.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/language/typescript/lib/lib.index.js ***!
   \******************************************************************************************************/
 /*! exports provided: libFileSet */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -1315,9 +1342,9 @@ libFileSet['lib.webworker.iterable.d.ts'] = true;
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/tsMode.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/language/typescript/tsMode.js":
 /*!***********************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/tsMode.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/language/typescript/tsMode.js ***!
   \***********************************************************************************************/
 /*! exports provided: setupTypeScript, setupJavaScript, getJavaScriptWorker, getTypeScriptWorker */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -1328,9 +1355,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setupJavaScript", function() { return setupJavaScript; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getJavaScriptWorker", function() { return getJavaScriptWorker; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTypeScriptWorker", function() { return getTypeScriptWorker; });
-/* harmony import */ var _workerManager_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./workerManager.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/workerManager.js");
-/* harmony import */ var _languageFeatures_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./languageFeatures.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/languageFeatures.js");
-/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
+/* harmony import */ var _workerManager_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./workerManager.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/language/typescript/workerManager.js");
+/* harmony import */ var _languageFeatures_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./languageFeatures.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/language/typescript/languageFeatures.js");
+/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -1391,9 +1418,9 @@ function setupMode(defaults, modeId) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/workerManager.js":
+/***/ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/language/typescript/workerManager.js":
 /*!******************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/workerManager.js ***!
+  !*** ./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/language/typescript/workerManager.js ***!
   \******************************************************************************************************/
 /*! exports provided: WorkerManager */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -1401,7 +1428,7 @@ function setupMode(defaults, modeId) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WorkerManager", function() { return WorkerManager; });
-/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "./node_modules/_monaco-editor@0.23.0@monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
+/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "./node_modules/_monaco-editor@0.24.0@monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
