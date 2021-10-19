@@ -81,15 +81,300 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/json.worker.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "../../node_modules/monaco-editor/esm/vs/language/json/json.worker.js");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/cancellation.js":
-/*!*********************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/cancellation.js ***!
-  \*********************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/arrays.js":
+/*!********************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/arrays.js ***!
+  \********************************************************************************************/
+/*! exports provided: tail, tail2, equals, binarySearch, findFirstInSorted, mergeSort, groupBy, coalesce, isFalsyOrEmpty, isNonEmptyArray, distinct, distinctES6, firstIndex, first, firstOrDefault, flatten, range, arrayInsert, pushToStart, pushToEnd, asArray */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "tail", function() { return tail; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "tail2", function() { return tail2; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "equals", function() { return equals; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "binarySearch", function() { return binarySearch; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findFirstInSorted", function() { return findFirstInSorted; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mergeSort", function() { return mergeSort; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "groupBy", function() { return groupBy; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "coalesce", function() { return coalesce; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isFalsyOrEmpty", function() { return isFalsyOrEmpty; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isNonEmptyArray", function() { return isNonEmptyArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "distinct", function() { return distinct; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "distinctES6", function() { return distinctES6; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "firstIndex", function() { return firstIndex; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "first", function() { return first; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "firstOrDefault", function() { return firstOrDefault; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "flatten", function() { return flatten; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "range", function() { return range; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrayInsert", function() { return arrayInsert; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pushToStart", function() { return pushToStart; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pushToEnd", function() { return pushToEnd; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "asArray", function() { return asArray; });
+/**
+ * Returns the last element of an array.
+ * @param array The array.
+ * @param n Which element from the end (default is zero).
+ */
+function tail(array, n = 0) {
+    return array[array.length - (1 + n)];
+}
+function tail2(arr) {
+    if (arr.length === 0) {
+        throw new Error('Invalid tail call');
+    }
+    return [arr.slice(0, arr.length - 1), arr[arr.length - 1]];
+}
+function equals(one, other, itemEquals = (a, b) => a === b) {
+    if (one === other) {
+        return true;
+    }
+    if (!one || !other) {
+        return false;
+    }
+    if (one.length !== other.length) {
+        return false;
+    }
+    for (let i = 0, len = one.length; i < len; i++) {
+        if (!itemEquals(one[i], other[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+function binarySearch(array, key, comparator) {
+    let low = 0, high = array.length - 1;
+    while (low <= high) {
+        const mid = ((low + high) / 2) | 0;
+        const comp = comparator(array[mid], key);
+        if (comp < 0) {
+            low = mid + 1;
+        }
+        else if (comp > 0) {
+            high = mid - 1;
+        }
+        else {
+            return mid;
+        }
+    }
+    return -(low + 1);
+}
+/**
+ * Takes a sorted array and a function p. The array is sorted in such a way that all elements where p(x) is false
+ * are located before all elements where p(x) is true.
+ * @returns the least x for which p(x) is true or array.length if no element fullfills the given function.
+ */
+function findFirstInSorted(array, p) {
+    let low = 0, high = array.length;
+    if (high === 0) {
+        return 0; // no children
+    }
+    while (low < high) {
+        const mid = Math.floor((low + high) / 2);
+        if (p(array[mid])) {
+            high = mid;
+        }
+        else {
+            low = mid + 1;
+        }
+    }
+    return low;
+}
+/**
+ * Like `Array#sort` but always stable. Usually runs a little slower `than Array#sort`
+ * so only use this when actually needing stable sort.
+ */
+function mergeSort(data, compare) {
+    _sort(data, compare, 0, data.length - 1, []);
+    return data;
+}
+function _merge(a, compare, lo, mid, hi, aux) {
+    let leftIdx = lo, rightIdx = mid + 1;
+    for (let i = lo; i <= hi; i++) {
+        aux[i] = a[i];
+    }
+    for (let i = lo; i <= hi; i++) {
+        if (leftIdx > mid) {
+            // left side consumed
+            a[i] = aux[rightIdx++];
+        }
+        else if (rightIdx > hi) {
+            // right side consumed
+            a[i] = aux[leftIdx++];
+        }
+        else if (compare(aux[rightIdx], aux[leftIdx]) < 0) {
+            // right element is less -> comes first
+            a[i] = aux[rightIdx++];
+        }
+        else {
+            // left element comes first (less or equal)
+            a[i] = aux[leftIdx++];
+        }
+    }
+}
+function _sort(a, compare, lo, hi, aux) {
+    if (hi <= lo) {
+        return;
+    }
+    const mid = lo + ((hi - lo) / 2) | 0;
+    _sort(a, compare, lo, mid, aux);
+    _sort(a, compare, mid + 1, hi, aux);
+    if (compare(a[mid], a[mid + 1]) <= 0) {
+        // left and right are sorted and if the last-left element is less
+        // or equals than the first-right element there is nothing else
+        // to do
+        return;
+    }
+    _merge(a, compare, lo, mid, hi, aux);
+}
+function groupBy(data, compare) {
+    const result = [];
+    let currentGroup = undefined;
+    for (const element of mergeSort(data.slice(0), compare)) {
+        if (!currentGroup || compare(currentGroup[0], element) !== 0) {
+            currentGroup = [element];
+            result.push(currentGroup);
+        }
+        else {
+            currentGroup.push(element);
+        }
+    }
+    return result;
+}
+/**
+ * @returns New array with all falsy values removed. The original array IS NOT modified.
+ */
+function coalesce(array) {
+    return array.filter(e => !!e);
+}
+/**
+ * @returns false if the provided object is an array and not empty.
+ */
+function isFalsyOrEmpty(obj) {
+    return !Array.isArray(obj) || obj.length === 0;
+}
+function isNonEmptyArray(obj) {
+    return Array.isArray(obj) && obj.length > 0;
+}
+/**
+ * Removes duplicates from the given array. The optional keyFn allows to specify
+ * how elements are checked for equalness by returning a unique string for each.
+ */
+function distinct(array, keyFn) {
+    if (!keyFn) {
+        return array.filter((element, position) => {
+            return array.indexOf(element) === position;
+        });
+    }
+    const seen = Object.create(null);
+    return array.filter((elem) => {
+        const key = keyFn(elem);
+        if (seen[key]) {
+            return false;
+        }
+        seen[key] = true;
+        return true;
+    });
+}
+function distinctES6(array) {
+    const seen = new Set();
+    return array.filter(element => {
+        if (seen.has(element)) {
+            return false;
+        }
+        seen.add(element);
+        return true;
+    });
+}
+/**
+ * @deprecated ES6: use `Array.findIndex`
+ */
+function firstIndex(array, fn) {
+    for (let i = 0; i < array.length; i++) {
+        const element = array[i];
+        if (fn(element)) {
+            return i;
+        }
+    }
+    return -1;
+}
+function first(array, fn, notFoundValue = undefined) {
+    const index = firstIndex(array, fn);
+    return index < 0 ? notFoundValue : array[index];
+}
+function firstOrDefault(array, notFoundValue) {
+    return array.length > 0 ? array[0] : notFoundValue;
+}
+function flatten(arr) {
+    return [].concat(...arr);
+}
+function range(arg, to) {
+    let from = typeof to === 'number' ? arg : 0;
+    if (typeof to === 'number') {
+        from = arg;
+    }
+    else {
+        from = 0;
+        to = arg;
+    }
+    const result = [];
+    if (from <= to) {
+        for (let i = from; i < to; i++) {
+            result.push(i);
+        }
+    }
+    else {
+        for (let i = from; i > to; i--) {
+            result.push(i);
+        }
+    }
+    return result;
+}
+/**
+ * Insert `insertArr` inside `target` at `insertIndex`.
+ * Please don't touch unless you understand https://jsperf.com/inserting-an-array-within-an-array
+ */
+function arrayInsert(target, insertIndex, insertArr) {
+    const before = target.slice(0, insertIndex);
+    const after = target.slice(insertIndex);
+    return before.concat(insertArr, after);
+}
+/**
+ * Pushes an element to the start of the array, if found.
+ */
+function pushToStart(arr, value) {
+    const index = arr.indexOf(value);
+    if (index > -1) {
+        arr.splice(index, 1);
+        arr.unshift(value);
+    }
+}
+/**
+ * Pushes an element to the end of the array, if found.
+ */
+function pushToEnd(arr, value) {
+    const index = arr.indexOf(value);
+    if (index > -1) {
+        arr.splice(index, 1);
+        arr.push(value);
+    }
+}
+function asArray(x) {
+    return Array.isArray(x) ? x : [x];
+}
+
+
+/***/ }),
+
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/cancellation.js":
+/*!**************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/cancellation.js ***!
+  \**************************************************************************************************/
 /*! exports provided: CancellationToken, CancellationTokenSource */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -97,7 +382,7 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CancellationToken", function() { return CancellationToken; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CancellationTokenSource", function() { return CancellationTokenSource; });
-/* harmony import */ var _event_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./event.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/event.js");
+/* harmony import */ var _event_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./event.js */ "../../node_modules/monaco-editor/esm/vs/base/common/event.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -212,10 +497,10 @@ class CancellationTokenSource {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/diff/diff.js":
-/*!******************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/diff/diff.js ***!
-  \******************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/diff/diff.js":
+/*!***********************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/diff/diff.js ***!
+  \***********************************************************************************************/
 /*! exports provided: StringDiffSequence, stringDiff, Debug, MyArray, LcsDiff */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -226,8 +511,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Debug", function() { return Debug; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MyArray", function() { return MyArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LcsDiff", function() { return LcsDiff; });
-/* harmony import */ var _diffChange_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./diffChange.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/diff/diffChange.js");
-/* harmony import */ var _hash_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../hash.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/hash.js");
+/* harmony import */ var _diffChange_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./diffChange.js */ "../../node_modules/monaco-editor/esm/vs/base/common/diff/diffChange.js");
+/* harmony import */ var _hash_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../hash.js */ "../../node_modules/monaco-editor/esm/vs/base/common/hash.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -379,8 +664,6 @@ class LcsDiff {
      */
     constructor(originalSequence, modifiedSequence, continueProcessingPredicate = null) {
         this.ContinueProcessingPredicate = continueProcessingPredicate;
-        this._originalSequence = originalSequence;
-        this._modifiedSequence = modifiedSequence;
         const [originalStringElements, originalElementsOrHash, originalHasStrings] = LcsDiff._getElements(originalSequence);
         const [modifiedStringElements, modifiedElementsOrHash, modifiedHasStrings] = LcsDiff._getElements(modifiedSequence);
         this._hasStrings = (originalHasStrings && modifiedHasStrings);
@@ -413,20 +696,6 @@ class LcsDiff {
             return false;
         }
         return (this._hasStrings ? this._originalStringElements[originalIndex] === this._modifiedStringElements[newIndex] : true);
-    }
-    ElementsAreStrictEqual(originalIndex, newIndex) {
-        if (!this.ElementsAreEqual(originalIndex, newIndex)) {
-            return false;
-        }
-        const originalElement = LcsDiff._getStrictElement(this._originalSequence, originalIndex);
-        const modifiedElement = LcsDiff._getStrictElement(this._modifiedSequence, newIndex);
-        return (originalElement === modifiedElement);
-    }
-    static _getStrictElement(sequence, index) {
-        if (typeof sequence.getStrictElement === 'function') {
-            return sequence.getStrictElement(index);
-        }
-        return null;
     }
     OriginalElementsAreEqual(index1, index2) {
         if (this._originalElementsOrHash[index1] !== this._originalElementsOrHash[index2]) {
@@ -862,16 +1131,10 @@ class LcsDiff {
             const modifiedStop = (i < changes.length - 1) ? changes[i + 1].modifiedStart : this._modifiedElementsOrHash.length;
             const checkOriginal = change.originalLength > 0;
             const checkModified = change.modifiedLength > 0;
-            while (change.originalStart + change.originalLength < originalStop
-                && change.modifiedStart + change.modifiedLength < modifiedStop
-                && (!checkOriginal || this.OriginalElementsAreEqual(change.originalStart, change.originalStart + change.originalLength))
-                && (!checkModified || this.ModifiedElementsAreEqual(change.modifiedStart, change.modifiedStart + change.modifiedLength))) {
-                const startStrictEqual = this.ElementsAreStrictEqual(change.originalStart, change.modifiedStart);
-                const endStrictEqual = this.ElementsAreStrictEqual(change.originalStart + change.originalLength, change.modifiedStart + change.modifiedLength);
-                if (endStrictEqual && !startStrictEqual) {
-                    // moving the change down would create an equal change, but the elements are not strict equal
-                    break;
-                }
+            while (change.originalStart + change.originalLength < originalStop &&
+                change.modifiedStart + change.modifiedLength < modifiedStop &&
+                (!checkOriginal || this.OriginalElementsAreEqual(change.originalStart, change.originalStart + change.originalLength)) &&
+                (!checkModified || this.ModifiedElementsAreEqual(change.modifiedStart, change.modifiedStart + change.modifiedLength))) {
                 change.originalStart++;
                 change.modifiedStart++;
             }
@@ -890,8 +1153,12 @@ class LcsDiff {
             let modifiedStop = 0;
             if (i > 0) {
                 const prevChange = changes[i - 1];
-                originalStop = prevChange.originalStart + prevChange.originalLength;
-                modifiedStop = prevChange.modifiedStart + prevChange.modifiedLength;
+                if (prevChange.originalLength > 0) {
+                    originalStop = prevChange.originalStart + prevChange.originalLength;
+                }
+                if (prevChange.modifiedLength > 0) {
+                    modifiedStop = prevChange.modifiedStart + prevChange.modifiedLength;
+                }
             }
             const checkOriginal = change.originalLength > 0;
             const checkModified = change.modifiedLength > 0;
@@ -909,9 +1176,7 @@ class LcsDiff {
                 if (checkModified && !this.ModifiedElementsAreEqual(modifiedStart, modifiedStart + change.modifiedLength)) {
                     break;
                 }
-                const touchingPreviousChange = (originalStart === originalStop && modifiedStart === modifiedStop);
-                const score = ((touchingPreviousChange ? 5 : 0)
-                    + this._boundaryScore(originalStart, change.originalLength, modifiedStart, change.modifiedLength));
+                const score = this._boundaryScore(originalStart, change.originalLength, modifiedStart, change.modifiedLength);
                 if (score > bestScore) {
                     bestScore = score;
                     bestDelta = delta;
@@ -919,80 +1184,8 @@ class LcsDiff {
             }
             change.originalStart -= bestDelta;
             change.modifiedStart -= bestDelta;
-            const mergedChangeArr = [null];
-            if (i > 0 && this.ChangesOverlap(changes[i - 1], changes[i], mergedChangeArr)) {
-                changes[i - 1] = mergedChangeArr[0];
-                changes.splice(i, 1);
-                i++;
-                continue;
-            }
-        }
-        // There could be multiple longest common substrings.
-        // Give preference to the ones containing longer lines
-        if (this._hasStrings) {
-            for (let i = 1, len = changes.length; i < len; i++) {
-                const aChange = changes[i - 1];
-                const bChange = changes[i];
-                const matchedLength = bChange.originalStart - aChange.originalStart - aChange.originalLength;
-                const aOriginalStart = aChange.originalStart;
-                const bOriginalEnd = bChange.originalStart + bChange.originalLength;
-                const abOriginalLength = bOriginalEnd - aOriginalStart;
-                const aModifiedStart = aChange.modifiedStart;
-                const bModifiedEnd = bChange.modifiedStart + bChange.modifiedLength;
-                const abModifiedLength = bModifiedEnd - aModifiedStart;
-                // Avoid wasting a lot of time with these searches
-                if (matchedLength < 5 && abOriginalLength < 20 && abModifiedLength < 20) {
-                    const t = this._findBetterContiguousSequence(aOriginalStart, abOriginalLength, aModifiedStart, abModifiedLength, matchedLength);
-                    if (t) {
-                        const [originalMatchStart, modifiedMatchStart] = t;
-                        if (originalMatchStart !== aChange.originalStart + aChange.originalLength || modifiedMatchStart !== aChange.modifiedStart + aChange.modifiedLength) {
-                            // switch to another sequence that has a better score
-                            aChange.originalLength = originalMatchStart - aChange.originalStart;
-                            aChange.modifiedLength = modifiedMatchStart - aChange.modifiedStart;
-                            bChange.originalStart = originalMatchStart + matchedLength;
-                            bChange.modifiedStart = modifiedMatchStart + matchedLength;
-                            bChange.originalLength = bOriginalEnd - bChange.originalStart;
-                            bChange.modifiedLength = bModifiedEnd - bChange.modifiedStart;
-                        }
-                    }
-                }
-            }
         }
         return changes;
-    }
-    _findBetterContiguousSequence(originalStart, originalLength, modifiedStart, modifiedLength, desiredLength) {
-        if (originalLength < desiredLength || modifiedLength < desiredLength) {
-            return null;
-        }
-        const originalMax = originalStart + originalLength - desiredLength + 1;
-        const modifiedMax = modifiedStart + modifiedLength - desiredLength + 1;
-        let bestScore = 0;
-        let bestOriginalStart = 0;
-        let bestModifiedStart = 0;
-        for (let i = originalStart; i < originalMax; i++) {
-            for (let j = modifiedStart; j < modifiedMax; j++) {
-                const score = this._contiguousSequenceScore(i, j, desiredLength);
-                if (score > 0 && score > bestScore) {
-                    bestScore = score;
-                    bestOriginalStart = i;
-                    bestModifiedStart = j;
-                }
-            }
-        }
-        if (bestScore > 0) {
-            return [bestOriginalStart, bestModifiedStart];
-        }
-        return null;
-    }
-    _contiguousSequenceScore(originalStart, modifiedStart, length) {
-        let score = 0;
-        for (let l = 0; l < length; l++) {
-            if (!this.ElementsAreEqual(originalStart + l, modifiedStart + l)) {
-                return 0;
-            }
-            score += this._originalStringElements[originalStart + l].length;
-        }
-        return score;
     }
     _OriginalIsBoundary(index) {
         if (index <= 0 || index >= this._originalElementsOrHash.length - 1) {
@@ -1131,10 +1324,10 @@ class LcsDiff {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/diff/diffChange.js":
-/*!************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/diff/diffChange.js ***!
-  \************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/diff/diffChange.js":
+/*!*****************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/diff/diffChange.js ***!
+  \*****************************************************************************************************/
 /*! exports provided: DiffChange */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1177,10 +1370,10 @@ class DiffChange {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/errors.js":
-/*!***************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/errors.js ***!
-  \***************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/errors.js":
+/*!********************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/errors.js ***!
+  \********************************************************************************************/
 /*! exports provided: ErrorHandler, errorHandler, onUnexpectedError, onUnexpectedExternalError, transformErrorForSerialization, isPromiseCanceledError, canceled, illegalArgument, illegalState */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1195,6 +1388,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "canceled", function() { return canceled; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "illegalArgument", function() { return illegalArgument; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "illegalState", function() { return illegalState; });
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 // Avoid circular dependency on EventEmitter by implementing a subset of the interface.
 class ErrorHandler {
     constructor() {
@@ -1286,11 +1483,11 @@ function illegalState(name) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/event.js":
-/*!**************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/event.js ***!
-  \**************************************************************************************/
-/*! exports provided: Event, Emitter, PauseableEmitter, DebounceEmitter, EventBufferer, Relay */
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/event.js":
+/*!*******************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/event.js ***!
+  \*******************************************************************************************/
+/*! exports provided: Event, Emitter, PauseableEmitter, EventBufferer, Relay */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1298,14 +1495,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Event", function() { return Event; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Emitter", function() { return Emitter; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PauseableEmitter", function() { return PauseableEmitter; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DebounceEmitter", function() { return DebounceEmitter; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EventBufferer", function() { return EventBufferer; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Relay", function() { return Relay; });
-/* harmony import */ var _errors_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./errors.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/errors.js");
-/* harmony import */ var _lifecycle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./lifecycle.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/lifecycle.js");
-/* harmony import */ var _linkedList_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./linkedList.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/linkedList.js");
-/* harmony import */ var _stopwatch_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./stopwatch.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/stopwatch.js");
-
+/* harmony import */ var _errors_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./errors.js */ "../../node_modules/monaco-editor/esm/vs/base/common/errors.js");
+/* harmony import */ var _lifecycle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./lifecycle.js */ "../../node_modules/monaco-editor/esm/vs/base/common/lifecycle.js");
+/* harmony import */ var _linkedList_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./linkedList.js */ "../../node_modules/monaco-editor/esm/vs/base/common/linkedList.js");
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
 
 
@@ -1340,14 +1538,16 @@ var Event;
     }
     Event.once = once;
     /**
-     * @deprecated DO NOT use, this leaks memory
+     * Given an event and a `map` function, returns another event which maps each element
+     * through the mapping function.
      */
     function map(event, map) {
         return snapshot((listener, thisArgs = null, disposables) => event(i => listener.call(thisArgs, map(i)), null, disposables));
     }
     Event.map = map;
     /**
-     * @deprecated DO NOT use, this leaks memory
+     * Given an event and an `each` function, returns another identical event and calls
+     * the `each` function per each element.
      */
     function forEach(event, each) {
         return snapshot((listener, thisArgs = null, disposables) => event(i => { each(i); listener.call(thisArgs, i); }, null, disposables));
@@ -1369,7 +1569,8 @@ var Event;
     }
     Event.any = any;
     /**
-     * @deprecated DO NOT use, this leaks memory
+     * Given an event and a `merge` function, returns another event which maps each element
+     * and the cumulative result through the `merge` function. Similar to `map`, but with memory.
      */
     function reduce(event, merge, initial) {
         let output = initial;
@@ -1380,7 +1581,9 @@ var Event;
     }
     Event.reduce = reduce;
     /**
-     * @deprecated DO NOT use, this leaks memory
+     * Given a chain of event processing functions (filter, map, etc), each
+     * function will be invoked per event & per listener. Snapshotting an event
+     * chain allows each function to be invoked just once per event.
      */
     function snapshot(event) {
         let listener;
@@ -1394,9 +1597,7 @@ var Event;
         });
         return emitter.event;
     }
-    /**
-     * @deprecated DO NOT use, this leaks memory
-     */
+    Event.snapshot = snapshot;
     function debounce(event, merge, delay = 100, leading = false, leakWarningThreshold) {
         let subscription;
         let output = undefined;
@@ -1432,13 +1633,24 @@ var Event;
     }
     Event.debounce = debounce;
     /**
-     * @deprecated DO NOT use, this leaks memory
+     * Given an event, it returns another event which fires only once and as soon as
+     * the input event emits. The event data is the number of millis it took for the
+     * event to fire.
      */
-    function latch(event, equals = (a, b) => a === b) {
+    function stopwatch(event) {
+        const start = new Date().getTime();
+        return map(once(event), _ => new Date().getTime() - start);
+    }
+    Event.stopwatch = stopwatch;
+    /**
+     * Given an event, it returns another event which fires only when the event
+     * element changes.
+     */
+    function latch(event) {
         let firstCall = true;
         let cache;
         return filter(event, value => {
-            const shouldEmit = firstCall || !equals(value, cache);
+            const shouldEmit = firstCall || value !== cache;
             firstCall = false;
             cache = value;
             return shouldEmit;
@@ -1446,17 +1658,26 @@ var Event;
     }
     Event.latch = latch;
     /**
-     * @deprecated DO NOT use, this leaks memory
-     */
-    function split(event, isT) {
-        return [
-            Event.filter(event, isT),
-            Event.filter(event, e => !isT(e)),
-        ];
-    }
-    Event.split = split;
-    /**
-     * @deprecated DO NOT use, this leaks memory
+     * Buffers the provided event until a first listener comes
+     * along, at which point fire all the events at once and
+     * pipe the event from then on.
+     *
+     * ```typescript
+     * const emitter = new Emitter<number>();
+     * const event = emitter.event;
+     * const bufferedEvent = buffer(event);
+     *
+     * emitter.fire(1);
+     * emitter.fire(2);
+     * emitter.fire(3);
+     * // nothing...
+     *
+     * const listener = bufferedEvent(num => console.log(num));
+     * // 1, 2, 3
+     *
+     * emitter.fire(4);
+     * // 4
+     * ```
      */
     function buffer(event, nextTick = false, _buffer = []) {
         let buffer = _buffer.slice();
@@ -1529,9 +1750,6 @@ var Event;
             return once(this.event)(listener, thisArgs, disposables);
         }
     }
-    /**
-     * @deprecated DO NOT use, this leaks memory
-     */
     function chain(event) {
         return new ChainableEvent(event);
     }
@@ -1552,33 +1770,28 @@ var Event;
         return result.event;
     }
     Event.fromDOMEventEmitter = fromDOMEventEmitter;
+    function fromPromise(promise) {
+        const emitter = new Emitter();
+        let shouldEmit = false;
+        promise
+            .then(undefined, () => null)
+            .then(() => {
+            if (!shouldEmit) {
+                setTimeout(() => emitter.fire(undefined), 0);
+            }
+            else {
+                emitter.fire(undefined);
+            }
+        });
+        shouldEmit = true;
+        return emitter.event;
+    }
+    Event.fromPromise = fromPromise;
     function toPromise(event) {
-        return new Promise(resolve => once(event)(resolve));
+        return new Promise(c => once(event)(c));
     }
     Event.toPromise = toPromise;
 })(Event || (Event = {}));
-class EventProfiling {
-    constructor(name) {
-        this._listenerCount = 0;
-        this._invocationCount = 0;
-        this._elapsedOverall = 0;
-        this._name = `${name}_${EventProfiling._idPool++}`;
-    }
-    start(listenerCount) {
-        this._stopWatch = new _stopwatch_js__WEBPACK_IMPORTED_MODULE_3__["StopWatch"](true);
-        this._listenerCount = listenerCount;
-    }
-    stop() {
-        if (this._stopWatch) {
-            const elapsed = this._stopWatch.elapsed();
-            this._elapsedOverall += elapsed;
-            this._invocationCount += 1;
-            console.info(`did FIRE ${this._name}: elapsed_ms: ${elapsed.toFixed(5)}, listener: ${this._listenerCount} (elapsed_overall: ${this._elapsedOverall.toFixed(2)}, invocations: ${this._invocationCount})`);
-            this._stopWatch = undefined;
-        }
-    }
-}
-EventProfiling._idPool = 0;
 let _globalLeakWarningThreshold = -1;
 class LeakageMonitor {
     constructor(customThreshold, name = Math.random().toString(18).slice(2, 5)) {
@@ -1651,11 +1864,11 @@ class LeakageMonitor {
  */
 class Emitter {
     constructor(options) {
-        var _a;
         this._disposed = false;
         this._options = options;
-        this._leakageMon = _globalLeakWarningThreshold > 0 ? new LeakageMonitor(this._options && this._options.leakWarningThreshold) : undefined;
-        this._perfMon = ((_a = this._options) === null || _a === void 0 ? void 0 : _a._profName) ? new EventProfiling(this._options._profName) : undefined;
+        this._leakageMon = _globalLeakWarningThreshold > 0
+            ? new LeakageMonitor(this._options && this._options.leakWarningThreshold)
+            : undefined;
     }
     /**
      * For the public to allow to subscribe
@@ -1664,7 +1877,6 @@ class Emitter {
     get event() {
         if (!this._event) {
             this._event = (listener, thisArgs, disposables) => {
-                var _a;
                 if (!this._listeners) {
                     this._listeners = new _linkedList_js__WEBPACK_IMPORTED_MODULE_2__["LinkedList"]();
                 }
@@ -1680,7 +1892,10 @@ class Emitter {
                     this._options.onListenerDidAdd(this, listener, thisArgs);
                 }
                 // check and record this emitter for potential leakage
-                const removeMonitor = (_a = this._leakageMon) === null || _a === void 0 ? void 0 : _a.check(this._listeners.size);
+                let removeMonitor;
+                if (this._leakageMon) {
+                    removeMonitor = this._leakageMon.check(this._listeners.size);
+                }
                 let result;
                 result = {
                     dispose: () => {
@@ -1715,7 +1930,6 @@ class Emitter {
      * subscribers
      */
     fire(event) {
-        var _a, _b;
         if (this._listeners) {
             // put all [listener,event]-pairs into delivery queue
             // then emit all event. an inner/nested event might be
@@ -1726,8 +1940,6 @@ class Emitter {
             for (let listener of this._listeners) {
                 this._deliveryQueue.push([listener, event]);
             }
-            // start/stop performance insight collection
-            (_a = this._perfMon) === null || _a === void 0 ? void 0 : _a.start(this._deliveryQueue.size);
             while (this._deliveryQueue.size > 0) {
                 const [listener, event] = this._deliveryQueue.shift();
                 try {
@@ -1742,18 +1954,19 @@ class Emitter {
                     Object(_errors_js__WEBPACK_IMPORTED_MODULE_0__["onUnexpectedError"])(e);
                 }
             }
-            (_b = this._perfMon) === null || _b === void 0 ? void 0 : _b.stop();
         }
     }
     dispose() {
-        var _a, _b, _c, _d, _e;
-        if (!this._disposed) {
-            this._disposed = true;
-            (_a = this._listeners) === null || _a === void 0 ? void 0 : _a.clear();
-            (_b = this._deliveryQueue) === null || _b === void 0 ? void 0 : _b.clear();
-            (_d = (_c = this._options) === null || _c === void 0 ? void 0 : _c.onLastListenerRemove) === null || _d === void 0 ? void 0 : _d.call(_c);
-            (_e = this._leakageMon) === null || _e === void 0 ? void 0 : _e.dispose();
+        if (this._listeners) {
+            this._listeners.clear();
         }
+        if (this._deliveryQueue) {
+            this._deliveryQueue.clear();
+        }
+        if (this._leakageMon) {
+            this._leakageMon.dispose();
+        }
+        this._disposed = true;
     }
 }
 Emitter._noop = function () { };
@@ -1762,7 +1975,7 @@ class PauseableEmitter extends Emitter {
         super(options);
         this._isPaused = 0;
         this._eventQueue = new _linkedList_js__WEBPACK_IMPORTED_MODULE_2__["LinkedList"]();
-        this._mergeFn = options === null || options === void 0 ? void 0 : options.merge;
+        this._mergeFn = options && options.merge;
     }
     pause() {
         this._isPaused++;
@@ -1772,7 +1985,7 @@ class PauseableEmitter extends Emitter {
             if (this._mergeFn) {
                 // use the merge function to create a single composite
                 // event. make a copy in case firing pauses this emitter
-                const events = Array.from(this._eventQueue);
+                const events = this._eventQueue.toArray();
                 this._eventQueue.clear();
                 super.fire(this._mergeFn(events));
             }
@@ -1794,23 +2007,6 @@ class PauseableEmitter extends Emitter {
                 super.fire(event);
             }
         }
-    }
-}
-class DebounceEmitter extends PauseableEmitter {
-    constructor(options) {
-        var _a;
-        super(options);
-        this._delay = (_a = options.delay) !== null && _a !== void 0 ? _a : 100;
-    }
-    fire(event) {
-        if (!this._handle) {
-            this.pause();
-            this._handle = setTimeout(() => {
-                this._handle = undefined;
-                this.resume();
-            }, this._delay);
-        }
-        super.fire(event);
     }
 }
 /**
@@ -1898,11 +2094,11 @@ class Relay {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/hash.js":
-/*!*************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/hash.js ***!
-  \*************************************************************************************/
-/*! exports provided: hash, doHash, stringHash, toHexString, StringSHA1 */
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/hash.js":
+/*!******************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/hash.js ***!
+  \******************************************************************************************/
+/*! exports provided: hash, doHash, stringHash, StringSHA1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1910,9 +2106,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hash", function() { return hash; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doHash", function() { return doHash; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "stringHash", function() { return stringHash; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toHexString", function() { return toHexString; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StringSHA1", function() { return StringSHA1; });
-/* harmony import */ var _strings_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./strings.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/strings.js");
+/* harmony import */ var _strings_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./strings.js */ "../../node_modules/monaco-editor/esm/vs/base/common/strings.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -1989,11 +2184,8 @@ function leftPad(value, length, char = '0') {
     }
     return value;
 }
-function toHexString(bufferOrValue, bitsize = 32) {
-    if (bufferOrValue instanceof ArrayBuffer) {
-        return Array.from(new Uint8Array(bufferOrValue)).map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-    return leftPad((bufferOrValue >>> 0).toString(16), bitsize / 4);
+function toHexString(value, bitsize = 32) {
+    return leftPad((value >>> 0).toString(16), bitsize / 4);
 }
 /**
  * A SHA1 implementation that works with strings and does not allocate.
@@ -2175,10 +2367,10 @@ StringSHA1._bigBlock32 = new DataView(new ArrayBuffer(320)); // 80 * 4 = 320
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/iterator.js":
-/*!*****************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/iterator.js ***!
-  \*****************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/iterator.js":
+/*!**********************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/iterator.js ***!
+  \**********************************************************************************************/
 /*! exports provided: Iterable */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2208,10 +2400,6 @@ var Iterable;
         return iterable || _empty;
     }
     Iterable.from = from;
-    function isEmpty(iterable) {
-        return !iterable || iterable[Symbol.iterator]().next().done === true;
-    }
-    Iterable.isEmpty = isEmpty;
     function first(iterable) {
         return iterable[Symbol.iterator]().next().value;
     }
@@ -2225,15 +2413,6 @@ var Iterable;
         return false;
     }
     Iterable.some = some;
-    function find(iterable, predicate) {
-        for (const element of iterable) {
-            if (predicate(element)) {
-                return element;
-            }
-        }
-        return undefined;
-    }
-    Iterable.find = find;
     function* filter(iterable, predicate) {
         for (const element of iterable) {
             if (predicate(element)) {
@@ -2243,9 +2422,8 @@ var Iterable;
     }
     Iterable.filter = filter;
     function* map(iterable, fn) {
-        let index = 0;
         for (const element of iterable) {
-            yield fn(element, index++);
+            yield fn(element);
         }
     }
     Iterable.map = map;
@@ -2257,40 +2435,6 @@ var Iterable;
         }
     }
     Iterable.concat = concat;
-    function* concatNested(iterables) {
-        for (const iterable of iterables) {
-            for (const element of iterable) {
-                yield element;
-            }
-        }
-    }
-    Iterable.concatNested = concatNested;
-    function reduce(iterable, reducer, initialValue) {
-        let value = initialValue;
-        for (const element of iterable) {
-            value = reducer(value, element);
-        }
-        return value;
-    }
-    Iterable.reduce = reduce;
-    /**
-     * Returns an iterable slice of the array, with the same semantics as `array.slice()`.
-     */
-    function* slice(arr, from, to = arr.length) {
-        if (from < 0) {
-            from += arr.length;
-        }
-        if (to < 0) {
-            to += arr.length;
-        }
-        else if (to > arr.length) {
-            to = arr.length;
-        }
-        for (; from < to; from++) {
-            yield arr[from];
-        }
-    }
-    Iterable.slice = slice;
     /**
      * Consumes `atMost` elements from iterable and returns the consumed elements,
      * and an iterable for the rest of the elements.
@@ -2311,37 +2455,15 @@ var Iterable;
         return [consumed, { [Symbol.iterator]() { return iterator; } }];
     }
     Iterable.consume = consume;
-    /**
-     * Returns whether the iterables are the same length and all items are
-     * equal using the comparator function.
-     */
-    function equals(a, b, comparator = (at, bt) => at === bt) {
-        const ai = a[Symbol.iterator]();
-        const bi = b[Symbol.iterator]();
-        while (true) {
-            const an = ai.next();
-            const bn = bi.next();
-            if (an.done !== bn.done) {
-                return false;
-            }
-            else if (an.done) {
-                return true;
-            }
-            else if (!comparator(an.value, bn.value)) {
-                return false;
-            }
-        }
-    }
-    Iterable.equals = equals;
 })(Iterable || (Iterable = {}));
 
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/keyCodes.js":
-/*!*****************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/keyCodes.js ***!
-  \*****************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/keyCodes.js":
+/*!**********************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/keyCodes.js ***!
+  \**********************************************************************************************/
 /*! exports provided: KeyCodeUtils, KeyChord, createKeybinding, createSimpleKeybinding, SimpleKeybinding, ChordKeybinding, ResolvedKeybindingPart, ResolvedKeybinding */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2355,7 +2477,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChordKeybinding", function() { return ChordKeybinding; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ResolvedKeybindingPart", function() { return ResolvedKeybindingPart; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ResolvedKeybinding", function() { return ResolvedKeybinding; });
-/* harmony import */ var _errors_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./errors.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/errors.js");
+/* harmony import */ var _errors_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./errors.js */ "../../node_modules/monaco-editor/esm/vs/base/common/errors.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -2611,16 +2733,15 @@ class ResolvedKeybinding {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/lifecycle.js":
-/*!******************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/lifecycle.js ***!
-  \******************************************************************************************/
-/*! exports provided: trackDisposable, MultiDisposeError, isDisposable, dispose, combinedDisposable, toDisposable, DisposableStore, Disposable, MutableDisposable, ImmortalReference */
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/lifecycle.js":
+/*!***********************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/lifecycle.js ***!
+  \***********************************************************************************************/
+/*! exports provided: MultiDisposeError, isDisposable, dispose, combinedDisposable, toDisposable, DisposableStore, Disposable, MutableDisposable, ImmortalReference */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "trackDisposable", function() { return trackDisposable; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MultiDisposeError", function() { return MultiDisposeError; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isDisposable", function() { return isDisposable; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "dispose", function() { return dispose; });
@@ -2630,7 +2751,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Disposable", function() { return Disposable; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MutableDisposable", function() { return MutableDisposable; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ImmortalReference", function() { return ImmortalReference; });
-/* harmony import */ var _iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./iterator.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/iterator.js");
+/* harmony import */ var _iterator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./iterator.js */ "../../node_modules/monaco-editor/esm/vs/base/common/iterator.js");
 
 /**
  * Enables logging of potentially leaked disposables.
@@ -2640,46 +2761,35 @@ __webpack_require__.r(__webpack_exports__);
  * extend Disposable or use a DisposableStore. This means there are a lot of false positives.
  */
 const TRACK_DISPOSABLES = false;
-let disposableTracker = null;
-if (TRACK_DISPOSABLES) {
-    const __is_disposable_tracked__ = '__is_disposable_tracked__';
-    disposableTracker = new class {
-        trackDisposable(x) {
-            const stack = new Error('Potentially leaked disposable').stack;
-            setTimeout(() => {
-                if (!x[__is_disposable_tracked__]) {
-                    console.log(stack);
-                }
-            }, 3000);
-        }
-        markTracked(x) {
-            if (x && x !== Disposable.None) {
-                try {
-                    x[__is_disposable_tracked__] = true;
-                }
-                catch (_a) {
-                    // noop
-                }
-            }
-        }
-    };
-}
+const __is_disposable_tracked__ = '__is_disposable_tracked__';
 function markTracked(x) {
-    if (!disposableTracker) {
+    if (!TRACK_DISPOSABLES) {
         return;
     }
-    disposableTracker.markTracked(x);
+    if (x && x !== Disposable.None) {
+        try {
+            x[__is_disposable_tracked__] = true;
+        }
+        catch (_a) {
+            // noop
+        }
+    }
 }
 function trackDisposable(x) {
-    if (!disposableTracker) {
+    if (!TRACK_DISPOSABLES) {
         return x;
     }
-    disposableTracker.trackDisposable(x);
+    const stack = new Error('Potentially leaked disposable').stack;
+    setTimeout(() => {
+        if (!x[__is_disposable_tracked__]) {
+            console.log(stack);
+        }
+    }, 3000);
     return x;
 }
 class MultiDisposeError extends Error {
     constructor(errors) {
-        super(`Encountered errors while disposing of store. Errors: [${errors.join(', ')}]`);
+        super(`Encounter errors while disposing of store. Errors: [${errors.join(', ')}]`);
         this.errors = errors;
     }
 }
@@ -2716,7 +2826,7 @@ function dispose(arg) {
 }
 function combinedDisposable(...disposables) {
     disposables.forEach(markTracked);
-    return toDisposable(() => dispose(disposables));
+    return trackDisposable({ dispose: () => dispose(disposables) });
 }
 function toDisposable(fn) {
     const self = trackDisposable({
@@ -2808,11 +2918,12 @@ class MutableDisposable {
         return this._isDisposed ? undefined : this._value;
     }
     set value(value) {
-        var _a;
         if (this._isDisposed || value === this._value) {
             return;
         }
-        (_a = this._value) === null || _a === void 0 ? void 0 : _a.dispose();
+        if (this._value) {
+            this._value.dispose();
+        }
         if (value) {
             markTracked(value);
         }
@@ -2822,10 +2933,11 @@ class MutableDisposable {
         this.value = undefined;
     }
     dispose() {
-        var _a;
         this._isDisposed = true;
         markTracked(this);
-        (_a = this._value) === null || _a === void 0 ? void 0 : _a.dispose();
+        if (this._value) {
+            this._value.dispose();
+        }
         this._value = undefined;
     }
 }
@@ -2839,10 +2951,10 @@ class ImmortalReference {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/linkedList.js":
-/*!*******************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/linkedList.js ***!
-  \*******************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/linkedList.js":
+/*!************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/linkedList.js ***!
+  \************************************************************************************************/
 /*! exports provided: LinkedList */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2874,13 +2986,6 @@ class LinkedList {
         return this._first === Node.Undefined;
     }
     clear() {
-        let node = this._first;
-        while (node !== Node.Undefined) {
-            const next = node.next;
-            node.prev = Node.Undefined;
-            node.next = Node.Undefined;
-            node = next;
-        }
         this._first = Node.Undefined;
         this._last = Node.Undefined;
         this._size = 0;
@@ -2972,15 +3077,22 @@ class LinkedList {
             node = node.next;
         }
     }
+    toArray() {
+        const result = [];
+        for (let node = this._first; node !== Node.Undefined; node = node.next) {
+            result.push(node.element);
+        }
+        return result;
+    }
 }
 
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/path.js":
-/*!*************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/path.js ***!
-  \*************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/path.js":
+/*!******************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/path.js ***!
+  \******************************************************************************************/
 /*! exports provided: win32, posix, normalize, resolve, relative, dirname, basename, extname, sep */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2995,7 +3107,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "basename", function() { return basename; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "extname", function() { return extname; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sep", function() { return sep; });
-/* harmony import */ var _process_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./process.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/process.js");
+/* harmony import */ var _process_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./process.js */ "../../node_modules/monaco-editor/esm/vs/base/common/process.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -4379,26 +4491,22 @@ const sep = (_process_js__WEBPACK_IMPORTED_MODULE_0__["platform"] === 'win32' ? 
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/platform.js":
-/*!*****************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/platform.js ***!
-  \*****************************************************************************************/
-/*! exports provided: globals, isElectronSandboxed, browserCodeLoadingCacheStrategy, isPreferringBrowserCodeLoad, isWindows, isMacintosh, isLinux, isNative, isWeb, isIOS, userAgent, setImmediate, OS, isLittleEndian */
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/platform.js":
+/*!**********************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/platform.js ***!
+  \**********************************************************************************************/
+/*! exports provided: isWindows, isMacintosh, isLinux, isNative, isWeb, isIOS, globals, setImmediate, OS, isLittleEndian */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "globals", function() { return globals; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isElectronSandboxed", function() { return isElectronSandboxed; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "browserCodeLoadingCacheStrategy", function() { return browserCodeLoadingCacheStrategy; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isPreferringBrowserCodeLoad", function() { return isPreferringBrowserCodeLoad; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isWindows", function() { return isWindows; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isMacintosh", function() { return isMacintosh; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isLinux", function() { return isLinux; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isNative", function() { return isNative; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isWeb", function() { return isWeb; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isIOS", function() { return isIOS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "userAgent", function() { return userAgent; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "globals", function() { return globals; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setImmediate", function() { return setImmediate; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OS", function() { return OS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isLittleEndian", function() { return isLittleEndian; });
@@ -4406,12 +4514,10 @@ __webpack_require__.r(__webpack_exports__);
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-var _a;
 const LANGUAGE_DEFAULT = 'en';
 let _isWindows = false;
 let _isMacintosh = false;
 let _isLinux = false;
-let _isLinuxSnap = false;
 let _isNative = false;
 let _isWeb = false;
 let _isIOS = false;
@@ -4419,35 +4525,8 @@ let _locale = undefined;
 let _language = LANGUAGE_DEFAULT;
 let _translationsConfigFile = undefined;
 let _userAgent = undefined;
-const globals = (typeof self === 'object' ? self : typeof global === 'object' ? global : {});
-let nodeProcess = undefined;
-if (typeof globals.vscode !== 'undefined' && typeof globals.vscode.process !== 'undefined') {
-    // Native environment (sandboxed)
-    nodeProcess = globals.vscode.process;
-}
-else if (typeof process !== 'undefined') {
-    // Native environment (non-sandboxed)
-    nodeProcess = process;
-}
-const isElectronRenderer = typeof ((_a = nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.versions) === null || _a === void 0 ? void 0 : _a.electron) === 'string' && nodeProcess.type === 'renderer';
-const isElectronSandboxed = isElectronRenderer && (nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.sandboxed);
-const browserCodeLoadingCacheStrategy = (() => {
-    // Always enabled when sandbox is enabled
-    if (isElectronSandboxed) {
-        return 'bypassHeatCheck';
-    }
-    // Otherwise, only enabled conditionally
-    const env = nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.env['VSCODE_BROWSER_CODE_LOADING'];
-    if (typeof env === 'string') {
-        if (env === 'none' || env === 'code' || env === 'bypassHeatCheck' || env === 'bypassHeatCheckAndEagerCompile') {
-            return env;
-        }
-        return 'bypassHeatCheck';
-    }
-    return undefined;
-})();
-const isPreferringBrowserCodeLoad = typeof browserCodeLoadingCacheStrategy === 'string';
-// Web environment
+const isElectronRenderer = (typeof process !== 'undefined' && typeof process.versions !== 'undefined' && typeof process.versions.electron !== 'undefined' && process.type === 'renderer');
+// OS detection
 if (typeof navigator === 'object' && !isElectronRenderer) {
     _userAgent = navigator.userAgent;
     _isWindows = _userAgent.indexOf('Windows') >= 0;
@@ -4458,15 +4537,13 @@ if (typeof navigator === 'object' && !isElectronRenderer) {
     _locale = navigator.language;
     _language = _locale;
 }
-// Native environment
-else if (typeof nodeProcess === 'object') {
-    _isWindows = (nodeProcess.platform === 'win32');
-    _isMacintosh = (nodeProcess.platform === 'darwin');
-    _isLinux = (nodeProcess.platform === 'linux');
-    _isLinuxSnap = _isLinux && !!nodeProcess.env['SNAP'] && !!nodeProcess.env['SNAP_REVISION'];
+else if (typeof process === 'object') {
+    _isWindows = (process.platform === 'win32');
+    _isMacintosh = (process.platform === 'darwin');
+    _isLinux = (process.platform === 'linux');
     _locale = LANGUAGE_DEFAULT;
     _language = LANGUAGE_DEFAULT;
-    const rawNlsConfig = nodeProcess.env['VSCODE_NLS_CONFIG'];
+    const rawNlsConfig = ({})['VSCODE_NLS_CONFIG'];
     if (rawNlsConfig) {
         try {
             const nlsConfig = JSON.parse(rawNlsConfig);
@@ -4480,10 +4557,6 @@ else if (typeof nodeProcess === 'object') {
         }
     }
     _isNative = true;
-}
-// Unknown environment
-else {
-    console.error('Unable to resolve platform.');
 }
 let _platform = 0 /* Web */;
 if (_isMacintosh) {
@@ -4501,7 +4574,8 @@ const isLinux = _isLinux;
 const isNative = _isNative;
 const isWeb = _isWeb;
 const isIOS = _isIOS;
-const userAgent = _userAgent;
+const _globals = (typeof self === 'object' ? self : typeof global === 'object' ? global : {});
+const globals = _globals;
 const setImmediate = (function defineSetImmediate() {
     if (globals.setImmediate) {
         return globals.setImmediate.bind(globals);
@@ -4530,8 +4604,8 @@ const setImmediate = (function defineSetImmediate() {
             globals.postMessage({ vscodeSetImmediateId: myId }, '*');
         };
     }
-    if (typeof (nodeProcess === null || nodeProcess === void 0 ? void 0 : nodeProcess.nextTick) === 'function') {
-        return nodeProcess.nextTick.bind(nodeProcess);
+    if (typeof process !== 'undefined' && typeof process.nextTick === 'function') {
+        return process.nextTick.bind(process);
     }
     const _promise = Promise.resolve();
     return (callback) => _promise.then(callback);
@@ -4554,10 +4628,10 @@ function isLittleEndian() {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/process.js":
-/*!****************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/process.js ***!
-  \****************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/process.js":
+/*!*********************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/process.js ***!
+  \*********************************************************************************************/
 /*! exports provided: cwd, env, platform */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4566,119 +4640,36 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cwd", function() { return cwd; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "env", function() { return env; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "platform", function() { return platform; });
-/* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./platform.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/platform.js");
+/* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./platform.js */ "../../node_modules/monaco-editor/esm/vs/base/common/platform.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-let safeProcess;
-// Native sandbox environment
-if (typeof _platform_js__WEBPACK_IMPORTED_MODULE_0__["globals"].vscode !== 'undefined' && typeof _platform_js__WEBPACK_IMPORTED_MODULE_0__["globals"].vscode.process !== 'undefined') {
-    const sandboxProcess = _platform_js__WEBPACK_IMPORTED_MODULE_0__["globals"].vscode.process;
-    safeProcess = {
-        get platform() { return sandboxProcess.platform; },
-        get env() { return sandboxProcess.env; },
-        cwd() { return sandboxProcess.cwd(); },
-        nextTick(callback) { return Object(_platform_js__WEBPACK_IMPORTED_MODULE_0__["setImmediate"])(callback); }
-    };
-}
-// Native node.js environment
-else if (typeof process !== 'undefined') {
-    safeProcess = {
-        get platform() { return process.platform; },
-        get env() { return ({}); },
-        cwd() { return ({})['VSCODE_CWD'] || process.cwd(); },
-        nextTick(callback) { return process.nextTick(callback); }
-    };
-}
-// Web environment
-else {
-    safeProcess = {
-        // Supported
-        get platform() { return _platform_js__WEBPACK_IMPORTED_MODULE_0__["isWindows"] ? 'win32' : _platform_js__WEBPACK_IMPORTED_MODULE_0__["isMacintosh"] ? 'darwin' : 'linux'; },
-        nextTick(callback) { return Object(_platform_js__WEBPACK_IMPORTED_MODULE_0__["setImmediate"])(callback); },
-        // Unsupported
-        get env() { return {}; },
-        cwd() { return '/'; }
-    };
-}
-/**
- * Provides safe access to the `cwd` property in node.js, sandboxed or web
- * environments.
- *
- * Note: in web, this property is hardcoded to be `/`.
- */
+const safeProcess = (typeof process === 'undefined') ? {
+    cwd() { return '/'; },
+    env: Object.create(null),
+    get platform() { return _platform_js__WEBPACK_IMPORTED_MODULE_0__["isWindows"] ? 'win32' : _platform_js__WEBPACK_IMPORTED_MODULE_0__["isMacintosh"] ? 'darwin' : 'linux'; },
+    nextTick(callback) { return Object(_platform_js__WEBPACK_IMPORTED_MODULE_0__["setImmediate"])(callback); }
+} : process;
 const cwd = safeProcess.cwd;
-/**
- * Provides safe access to the `env` property in node.js, sandboxed or web
- * environments.
- *
- * Note: in web, this property is hardcoded to be `{}`.
- */
 const env = safeProcess.env;
-/**
- * Provides safe access to the `platform` property in node.js, sandboxed or web
- * environments.
- */
 const platform = safeProcess.platform;
 
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/stopwatch.js":
-/*!******************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/stopwatch.js ***!
-  \******************************************************************************************/
-/*! exports provided: StopWatch */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StopWatch", function() { return StopWatch; });
-/* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./platform.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/platform.js");
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
-const hasPerformanceNow = (_platform_js__WEBPACK_IMPORTED_MODULE_0__["globals"].performance && typeof _platform_js__WEBPACK_IMPORTED_MODULE_0__["globals"].performance.now === 'function');
-class StopWatch {
-    constructor(highResolution) {
-        this._highResolution = hasPerformanceNow && highResolution;
-        this._startTime = this._now();
-        this._stopTime = -1;
-    }
-    static create(highResolution = true) {
-        return new StopWatch(highResolution);
-    }
-    stop() {
-        this._stopTime = this._now();
-    }
-    elapsed() {
-        if (this._stopTime !== -1) {
-            return this._stopTime - this._startTime;
-        }
-        return this._now() - this._startTime;
-    }
-    _now() {
-        return this._highResolution ? _platform_js__WEBPACK_IMPORTED_MODULE_0__["globals"].performance.now() : Date.now();
-    }
-}
-
-
-/***/ }),
-
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/strings.js":
-/*!****************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/strings.js ***!
-  \****************************************************************************************/
-/*! exports provided: isFalsyOrWhitespace, format, escape, escapeRegExpCharacters, trim, ltrim, rtrim, convertSimple2RegExpPattern, stripWildcards, createRegExp, regExpLeadsToEndlessLoop, regExpFlags, splitLines, firstNonWhitespaceIndex, getLeadingWhitespace, lastNonWhitespaceIndex, compare, compareSubstring, compareIgnoreCase, compareSubstringIgnoreCase, isLowerAsciiLetter, isUpperAsciiLetter, equalsIgnoreCase, startsWithIgnoreCase, commonPrefixLength, commonSuffixLength, isHighSurrogate, isLowSurrogate, computeCodePoint, getNextCodePoint, nextCharLength, prevCharLength, decodeUTF8, containsRTL, containsEmoji, isBasicASCII, UNUSUAL_LINE_TERMINATORS, containsUnusualLineTerminators, containsFullWidthCharacter, isFullWidthCharacter, isEmojiImprecise, UTF8_BOM_CHARACTER, startsWithUTF8BOM, containsUppercaseCharacter, singleLetterHash, getGraphemeBreakType, breakBetweenGraphemeBreakType, getLeftDeleteOffset */
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/strings.js":
+/*!*********************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/strings.js ***!
+  \*********************************************************************************************/
+/*! exports provided: isFalsyOrWhitespace, pad, format, escape, escapeRegExpCharacters, trim, ltrim, rtrim, convertSimple2RegExpPattern, stripWildcards, startsWith, endsWith, createRegExp, regExpLeadsToEndlessLoop, regExpFlags, firstNonWhitespaceIndex, getLeadingWhitespace, lastNonWhitespaceIndex, compare, compareSubstring, compareIgnoreCase, compareSubstringIgnoreCase, isLowerAsciiLetter, isUpperAsciiLetter, equalsIgnoreCase, startsWithIgnoreCase, commonPrefixLength, commonSuffixLength, isHighSurrogate, isLowSurrogate, computeCodePoint, getNextCodePoint, nextCharLength, prevCharLength, decodeUTF8, containsRTL, containsEmoji, isBasicASCII, UNUSUAL_LINE_TERMINATORS, containsUnusualLineTerminators, containsFullWidthCharacter, isFullWidthCharacter, isEmojiImprecise, UTF8_BOM_CHARACTER, startsWithUTF8BOM, containsUppercaseCharacter, singleLetterHash, getGraphemeBreakType, breakBetweenGraphemeBreakType */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isFalsyOrWhitespace", function() { return isFalsyOrWhitespace; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "pad", function() { return pad; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "format", function() { return format; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "escape", function() { return escape; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "escapeRegExpCharacters", function() { return escapeRegExpCharacters; });
@@ -4687,10 +4678,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "rtrim", function() { return rtrim; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "convertSimple2RegExpPattern", function() { return convertSimple2RegExpPattern; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "stripWildcards", function() { return stripWildcards; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "startsWith", function() { return startsWith; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "endsWith", function() { return endsWith; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createRegExp", function() { return createRegExp; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "regExpLeadsToEndlessLoop", function() { return regExpLeadsToEndlessLoop; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "regExpFlags", function() { return regExpFlags; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "splitLines", function() { return splitLines; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "firstNonWhitespaceIndex", function() { return firstNonWhitespaceIndex; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getLeadingWhitespace", function() { return getLeadingWhitespace; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lastNonWhitespaceIndex", function() { return lastNonWhitespaceIndex; });
@@ -4725,7 +4717,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "singleLetterHash", function() { return singleLetterHash; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getGraphemeBreakType", function() { return getGraphemeBreakType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "breakBetweenGraphemeBreakType", function() { return breakBetweenGraphemeBreakType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getLeftDeleteOffset", function() { return getLeftDeleteOffset; });
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -4735,6 +4726,17 @@ function isFalsyOrWhitespace(str) {
         return true;
     }
     return str.trim().length === 0;
+}
+/**
+ * @deprecated ES6: use `String.padStart`
+ */
+function pad(n, l, char = '0') {
+    const str = '' + n;
+    const r = [str];
+    for (let i = str.length; i < l; i++) {
+        r.push(char);
+    }
+    return r.reverse().join('');
 }
 const _formatRegexp = /{(\d+)}/g;
 /**
@@ -4834,6 +4836,38 @@ function convertSimple2RegExpPattern(pattern) {
 function stripWildcards(pattern) {
     return pattern.replace(/\*/g, '');
 }
+/**
+ * @deprecated ES6: use `String.startsWith`
+ */
+function startsWith(haystack, needle) {
+    if (haystack.length < needle.length) {
+        return false;
+    }
+    if (haystack === needle) {
+        return true;
+    }
+    for (let i = 0; i < needle.length; i++) {
+        if (haystack[i] !== needle[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+/**
+ * @deprecated ES6: use `String.endsWith`
+ */
+function endsWith(haystack, needle) {
+    const diff = haystack.length - needle.length;
+    if (diff > 0) {
+        return haystack.indexOf(needle, diff) === diff;
+    }
+    else if (diff === 0) {
+        return haystack === needle;
+    }
+    else {
+        return false;
+    }
+}
 function createRegExp(searchString, isRegex, options = {}) {
     if (!searchString) {
         throw new Error('Cannot create regex from empty string');
@@ -4880,9 +4914,6 @@ function regExpFlags(regexp) {
         + (regexp.ignoreCase ? 'i' : '')
         + (regexp.multiline ? 'm' : '')
         + (regexp /* standalone editor compilation */.unicode ? 'u' : '');
-}
-function splitLines(str) {
-    return str.split(/\r\n|\r|\n/);
 }
 /**
  * Returns first index of the string that is not whitespace.
@@ -5192,7 +5223,7 @@ function decodeUTF8(buffer) {
     return result.join('');
 }
 /**
- * Generated using https://github.com/alexdima/unicode-utils/blob/master/generate-rtl-test.js
+ * Generated using https://github.com/alexandrudima/unicode-utils/blob/master/generate-rtl-test.js
  */
 const CONTAINS_RTL = /(?:[\u05BE\u05C0\u05C3\u05C6\u05D0-\u05F4\u0608\u060B\u060D\u061B-\u064A\u066D-\u066F\u0671-\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u0710\u0712-\u072F\u074D-\u07A5\u07B1-\u07EA\u07F4\u07F5\u07FA-\u0815\u081A\u0824\u0828\u0830-\u0858\u085E-\u08BD\u200F\uFB1D\uFB1F-\uFB28\uFB2A-\uFD3D\uFD50-\uFDFC\uFE70-\uFEFC]|\uD802[\uDC00-\uDD1B\uDD20-\uDE00\uDE10-\uDE33\uDE40-\uDEE4\uDEEB-\uDF35\uDF40-\uDFFF]|\uD803[\uDC00-\uDCFF]|\uD83A[\uDC00-\uDCCF\uDD00-\uDD43\uDD50-\uDFFF]|\uD83B[\uDC00-\uDEBB])/;
 /**
@@ -5202,9 +5233,9 @@ function containsRTL(str) {
     return CONTAINS_RTL.test(str);
 }
 /**
- * Generated using https://github.com/alexdima/unicode-utils/blob/master/generate-emoji-test.js
+ * Generated using https://github.com/alexandrudima/unicode-utils/blob/master/generate-emoji-test.js
  */
-const CONTAINS_EMOJI = /(?:[\u231A\u231B\u23F0\u23F3\u2600-\u27BF\u2B50\u2B55]|\uD83C[\uDDE6-\uDDFF\uDF00-\uDFFF]|\uD83D[\uDC00-\uDE4F\uDE80-\uDEFC\uDFE0-\uDFEB]|\uD83E[\uDD00-\uDDFF\uDE70-\uDED6])/;
+const CONTAINS_EMOJI = /(?:[\u231A\u231B\u23F0\u23F3\u2600-\u27BF\u2B50\u2B55]|\uD83C[\uDDE6-\uDDFF\uDF00-\uDFFF]|\uD83D[\uDC00-\uDE4F\uDE80-\uDEFC\uDFE0-\uDFEB]|\uD83E[\uDD00-\uDDFF\uDE70-\uDE73\uDE78-\uDE82\uDE90-\uDE95])/;
 function containsEmoji(str) {
     return CONTAINS_EMOJI.test(str);
 }
@@ -5276,14 +5307,12 @@ function isFullWidthCharacter(charCode) {
 }
 /**
  * A fast function (therefore imprecise) to check if code points are emojis.
- * Generated using https://github.com/alexdima/unicode-utils/blob/master/generate-emoji-test.js
+ * Generated using https://github.com/alexandrudima/unicode-utils/blob/master/generate-emoji-test.js
  */
 function isEmojiImprecise(x) {
-    return ((x >= 0x1F1E6 && x <= 0x1F1FF) || (x === 8986) || (x === 8987) || (x === 9200)
-        || (x === 9203) || (x >= 9728 && x <= 10175) || (x === 11088) || (x === 11093)
-        || (x >= 127744 && x <= 128591) || (x >= 128640 && x <= 128764)
-        || (x >= 128992 && x <= 129003) || (x >= 129280 && x <= 129535)
-        || (x >= 129648 && x <= 129750));
+    return ((x >= 0x1F1E6 && x <= 0x1F1FF) || (x >= 9728 && x <= 10175) || (x >= 127744 && x <= 128591)
+        || (x >= 128640 && x <= 128764) || (x >= 128992 && x <= 129003) || (x >= 129280 && x <= 129535)
+        || (x >= 129648 && x <= 129651) || (x >= 129656 && x <= 129666) || (x >= 129680 && x <= 129685));
 }
 // -- UTF-8 BOM
 const UTF8_BOM_CHARACTER = String.fromCharCode(65279 /* UTF8_BOM */);
@@ -5433,73 +5462,19 @@ class GraphemeBreakTree {
 }
 GraphemeBreakTree._INSTANCE = null;
 function getGraphemeBreakRawData() {
-    // generated using https://github.com/alexdima/unicode-utils/blob/master/generate-grapheme-break.js
+    // generated using https://github.com/alexandrudima/unicode-utils/blob/master/generate-grapheme-break.js
     return JSON.parse('[0,0,0,51592,51592,11,44424,44424,11,72251,72254,5,7150,7150,7,48008,48008,11,55176,55176,11,128420,128420,14,3276,3277,5,9979,9980,14,46216,46216,11,49800,49800,11,53384,53384,11,70726,70726,5,122915,122916,5,129320,129327,14,2558,2558,5,5906,5908,5,9762,9763,14,43360,43388,8,45320,45320,11,47112,47112,11,48904,48904,11,50696,50696,11,52488,52488,11,54280,54280,11,70082,70083,1,71350,71350,7,73111,73111,5,127892,127893,14,128726,128727,14,129473,129474,14,2027,2035,5,2901,2902,5,3784,3789,5,6754,6754,5,8418,8420,5,9877,9877,14,11088,11088,14,44008,44008,5,44872,44872,11,45768,45768,11,46664,46664,11,47560,47560,11,48456,48456,11,49352,49352,11,50248,50248,11,51144,51144,11,52040,52040,11,52936,52936,11,53832,53832,11,54728,54728,11,69811,69814,5,70459,70460,5,71096,71099,7,71998,71998,5,72874,72880,5,119149,119149,7,127374,127374,14,128335,128335,14,128482,128482,14,128765,128767,14,129399,129400,14,129680,129685,14,1476,1477,5,2377,2380,7,2759,2760,5,3137,3140,7,3458,3459,7,4153,4154,5,6432,6434,5,6978,6978,5,7675,7679,5,9723,9726,14,9823,9823,14,9919,9923,14,10035,10036,14,42736,42737,5,43596,43596,5,44200,44200,11,44648,44648,11,45096,45096,11,45544,45544,11,45992,45992,11,46440,46440,11,46888,46888,11,47336,47336,11,47784,47784,11,48232,48232,11,48680,48680,11,49128,49128,11,49576,49576,11,50024,50024,11,50472,50472,11,50920,50920,11,51368,51368,11,51816,51816,11,52264,52264,11,52712,52712,11,53160,53160,11,53608,53608,11,54056,54056,11,54504,54504,11,54952,54952,11,68108,68111,5,69933,69940,5,70197,70197,7,70498,70499,7,70845,70845,5,71229,71229,5,71727,71735,5,72154,72155,5,72344,72345,5,73023,73029,5,94095,94098,5,121403,121452,5,126981,127182,14,127538,127546,14,127990,127990,14,128391,128391,14,128445,128449,14,128500,128505,14,128752,128752,14,129160,129167,14,129356,129356,14,129432,129442,14,129648,129651,14,129751,131069,14,173,173,4,1757,1757,1,2274,2274,1,2494,2494,5,2641,2641,5,2876,2876,5,3014,3016,7,3262,3262,7,3393,3396,5,3570,3571,7,3968,3972,5,4228,4228,7,6086,6086,5,6679,6680,5,6912,6915,5,7080,7081,5,7380,7392,5,8252,8252,14,9096,9096,14,9748,9749,14,9784,9786,14,9833,9850,14,9890,9894,14,9938,9938,14,9999,9999,14,10085,10087,14,12349,12349,14,43136,43137,7,43454,43456,7,43755,43755,7,44088,44088,11,44312,44312,11,44536,44536,11,44760,44760,11,44984,44984,11,45208,45208,11,45432,45432,11,45656,45656,11,45880,45880,11,46104,46104,11,46328,46328,11,46552,46552,11,46776,46776,11,47000,47000,11,47224,47224,11,47448,47448,11,47672,47672,11,47896,47896,11,48120,48120,11,48344,48344,11,48568,48568,11,48792,48792,11,49016,49016,11,49240,49240,11,49464,49464,11,49688,49688,11,49912,49912,11,50136,50136,11,50360,50360,11,50584,50584,11,50808,50808,11,51032,51032,11,51256,51256,11,51480,51480,11,51704,51704,11,51928,51928,11,52152,52152,11,52376,52376,11,52600,52600,11,52824,52824,11,53048,53048,11,53272,53272,11,53496,53496,11,53720,53720,11,53944,53944,11,54168,54168,11,54392,54392,11,54616,54616,11,54840,54840,11,55064,55064,11,65438,65439,5,69633,69633,5,69837,69837,1,70018,70018,7,70188,70190,7,70368,70370,7,70465,70468,7,70712,70719,5,70835,70840,5,70850,70851,5,71132,71133,5,71340,71340,7,71458,71461,5,71985,71989,7,72002,72002,7,72193,72202,5,72281,72283,5,72766,72766,7,72885,72886,5,73104,73105,5,92912,92916,5,113824,113827,4,119173,119179,5,121505,121519,5,125136,125142,5,127279,127279,14,127489,127490,14,127570,127743,14,127900,127901,14,128254,128254,14,128369,128370,14,128400,128400,14,128425,128432,14,128468,128475,14,128489,128494,14,128715,128720,14,128745,128745,14,128759,128760,14,129004,129023,14,129296,129304,14,129340,129342,14,129388,129392,14,129404,129407,14,129454,129455,14,129485,129487,14,129659,129663,14,129719,129727,14,917536,917631,5,13,13,2,1160,1161,5,1564,1564,4,1807,1807,1,2085,2087,5,2363,2363,7,2402,2403,5,2507,2508,7,2622,2624,7,2691,2691,7,2786,2787,5,2881,2884,5,3006,3006,5,3072,3072,5,3170,3171,5,3267,3268,7,3330,3331,7,3406,3406,1,3538,3540,5,3655,3662,5,3897,3897,5,4038,4038,5,4184,4185,5,4352,4447,8,6068,6069,5,6155,6157,5,6448,6449,7,6742,6742,5,6783,6783,5,6966,6970,5,7042,7042,7,7143,7143,7,7212,7219,5,7412,7412,5,8206,8207,4,8294,8303,4,8596,8601,14,9410,9410,14,9742,9742,14,9757,9757,14,9770,9770,14,9794,9794,14,9828,9828,14,9855,9855,14,9882,9882,14,9900,9903,14,9929,9933,14,9963,9967,14,9987,9988,14,10006,10006,14,10062,10062,14,10175,10175,14,11744,11775,5,42607,42607,5,43043,43044,7,43263,43263,5,43444,43445,7,43569,43570,5,43698,43700,5,43766,43766,5,44032,44032,11,44144,44144,11,44256,44256,11,44368,44368,11,44480,44480,11,44592,44592,11,44704,44704,11,44816,44816,11,44928,44928,11,45040,45040,11,45152,45152,11,45264,45264,11,45376,45376,11,45488,45488,11,45600,45600,11,45712,45712,11,45824,45824,11,45936,45936,11,46048,46048,11,46160,46160,11,46272,46272,11,46384,46384,11,46496,46496,11,46608,46608,11,46720,46720,11,46832,46832,11,46944,46944,11,47056,47056,11,47168,47168,11,47280,47280,11,47392,47392,11,47504,47504,11,47616,47616,11,47728,47728,11,47840,47840,11,47952,47952,11,48064,48064,11,48176,48176,11,48288,48288,11,48400,48400,11,48512,48512,11,48624,48624,11,48736,48736,11,48848,48848,11,48960,48960,11,49072,49072,11,49184,49184,11,49296,49296,11,49408,49408,11,49520,49520,11,49632,49632,11,49744,49744,11,49856,49856,11,49968,49968,11,50080,50080,11,50192,50192,11,50304,50304,11,50416,50416,11,50528,50528,11,50640,50640,11,50752,50752,11,50864,50864,11,50976,50976,11,51088,51088,11,51200,51200,11,51312,51312,11,51424,51424,11,51536,51536,11,51648,51648,11,51760,51760,11,51872,51872,11,51984,51984,11,52096,52096,11,52208,52208,11,52320,52320,11,52432,52432,11,52544,52544,11,52656,52656,11,52768,52768,11,52880,52880,11,52992,52992,11,53104,53104,11,53216,53216,11,53328,53328,11,53440,53440,11,53552,53552,11,53664,53664,11,53776,53776,11,53888,53888,11,54000,54000,11,54112,54112,11,54224,54224,11,54336,54336,11,54448,54448,11,54560,54560,11,54672,54672,11,54784,54784,11,54896,54896,11,55008,55008,11,55120,55120,11,64286,64286,5,66272,66272,5,68900,68903,5,69762,69762,7,69817,69818,5,69927,69931,5,70003,70003,5,70070,70078,5,70094,70094,7,70194,70195,7,70206,70206,5,70400,70401,5,70463,70463,7,70475,70477,7,70512,70516,5,70722,70724,5,70832,70832,5,70842,70842,5,70847,70848,5,71088,71089,7,71102,71102,7,71219,71226,5,71231,71232,5,71342,71343,7,71453,71455,5,71463,71467,5,71737,71738,5,71995,71996,5,72000,72000,7,72145,72147,7,72160,72160,5,72249,72249,7,72273,72278,5,72330,72342,5,72752,72758,5,72850,72871,5,72882,72883,5,73018,73018,5,73031,73031,5,73109,73109,5,73461,73462,7,94031,94031,5,94192,94193,7,119142,119142,7,119155,119162,4,119362,119364,5,121476,121476,5,122888,122904,5,123184,123190,5,126976,126979,14,127184,127231,14,127344,127345,14,127405,127461,14,127514,127514,14,127561,127567,14,127778,127779,14,127896,127896,14,127985,127986,14,127995,127999,5,128326,128328,14,128360,128366,14,128378,128378,14,128394,128397,14,128405,128406,14,128422,128423,14,128435,128443,14,128453,128464,14,128479,128480,14,128484,128487,14,128496,128498,14,128640,128709,14,128723,128724,14,128736,128741,14,128747,128748,14,128755,128755,14,128762,128762,14,128981,128991,14,129096,129103,14,129292,129292,14,129311,129311,14,129329,129330,14,129344,129349,14,129360,129374,14,129394,129394,14,129402,129402,14,129413,129425,14,129445,129450,14,129466,129471,14,129483,129483,14,129511,129535,14,129653,129655,14,129667,129670,14,129705,129711,14,129731,129743,14,917505,917505,4,917760,917999,5,10,10,3,127,159,4,768,879,5,1471,1471,5,1536,1541,1,1648,1648,5,1767,1768,5,1840,1866,5,2070,2073,5,2137,2139,5,2307,2307,7,2366,2368,7,2382,2383,7,2434,2435,7,2497,2500,5,2519,2519,5,2563,2563,7,2631,2632,5,2677,2677,5,2750,2752,7,2763,2764,7,2817,2817,5,2879,2879,5,2891,2892,7,2914,2915,5,3008,3008,5,3021,3021,5,3076,3076,5,3146,3149,5,3202,3203,7,3264,3265,7,3271,3272,7,3298,3299,5,3390,3390,5,3402,3404,7,3426,3427,5,3535,3535,5,3544,3550,7,3635,3635,7,3763,3763,7,3893,3893,5,3953,3966,5,3981,3991,5,4145,4145,7,4157,4158,5,4209,4212,5,4237,4237,5,4520,4607,10,5970,5971,5,6071,6077,5,6089,6099,5,6277,6278,5,6439,6440,5,6451,6456,7,6683,6683,5,6744,6750,5,6765,6770,7,6846,6846,5,6964,6964,5,6972,6972,5,7019,7027,5,7074,7077,5,7083,7085,5,7146,7148,7,7154,7155,7,7222,7223,5,7394,7400,5,7416,7417,5,8204,8204,5,8233,8233,4,8288,8292,4,8413,8416,5,8482,8482,14,8986,8987,14,9193,9203,14,9654,9654,14,9733,9733,14,9745,9745,14,9752,9752,14,9760,9760,14,9766,9766,14,9774,9775,14,9792,9792,14,9800,9811,14,9825,9826,14,9831,9831,14,9852,9853,14,9872,9873,14,9880,9880,14,9885,9887,14,9896,9897,14,9906,9916,14,9926,9927,14,9936,9936,14,9941,9960,14,9974,9974,14,9982,9985,14,9992,9997,14,10002,10002,14,10017,10017,14,10055,10055,14,10071,10071,14,10145,10145,14,11013,11015,14,11503,11505,5,12334,12335,5,12951,12951,14,42612,42621,5,43014,43014,5,43047,43047,7,43204,43205,5,43335,43345,5,43395,43395,7,43450,43451,7,43561,43566,5,43573,43574,5,43644,43644,5,43710,43711,5,43758,43759,7,44005,44005,5,44012,44012,7,44060,44060,11,44116,44116,11,44172,44172,11,44228,44228,11,44284,44284,11,44340,44340,11,44396,44396,11,44452,44452,11,44508,44508,11,44564,44564,11,44620,44620,11,44676,44676,11,44732,44732,11,44788,44788,11,44844,44844,11,44900,44900,11,44956,44956,11,45012,45012,11,45068,45068,11,45124,45124,11,45180,45180,11,45236,45236,11,45292,45292,11,45348,45348,11,45404,45404,11,45460,45460,11,45516,45516,11,45572,45572,11,45628,45628,11,45684,45684,11,45740,45740,11,45796,45796,11,45852,45852,11,45908,45908,11,45964,45964,11,46020,46020,11,46076,46076,11,46132,46132,11,46188,46188,11,46244,46244,11,46300,46300,11,46356,46356,11,46412,46412,11,46468,46468,11,46524,46524,11,46580,46580,11,46636,46636,11,46692,46692,11,46748,46748,11,46804,46804,11,46860,46860,11,46916,46916,11,46972,46972,11,47028,47028,11,47084,47084,11,47140,47140,11,47196,47196,11,47252,47252,11,47308,47308,11,47364,47364,11,47420,47420,11,47476,47476,11,47532,47532,11,47588,47588,11,47644,47644,11,47700,47700,11,47756,47756,11,47812,47812,11,47868,47868,11,47924,47924,11,47980,47980,11,48036,48036,11,48092,48092,11,48148,48148,11,48204,48204,11,48260,48260,11,48316,48316,11,48372,48372,11,48428,48428,11,48484,48484,11,48540,48540,11,48596,48596,11,48652,48652,11,48708,48708,11,48764,48764,11,48820,48820,11,48876,48876,11,48932,48932,11,48988,48988,11,49044,49044,11,49100,49100,11,49156,49156,11,49212,49212,11,49268,49268,11,49324,49324,11,49380,49380,11,49436,49436,11,49492,49492,11,49548,49548,11,49604,49604,11,49660,49660,11,49716,49716,11,49772,49772,11,49828,49828,11,49884,49884,11,49940,49940,11,49996,49996,11,50052,50052,11,50108,50108,11,50164,50164,11,50220,50220,11,50276,50276,11,50332,50332,11,50388,50388,11,50444,50444,11,50500,50500,11,50556,50556,11,50612,50612,11,50668,50668,11,50724,50724,11,50780,50780,11,50836,50836,11,50892,50892,11,50948,50948,11,51004,51004,11,51060,51060,11,51116,51116,11,51172,51172,11,51228,51228,11,51284,51284,11,51340,51340,11,51396,51396,11,51452,51452,11,51508,51508,11,51564,51564,11,51620,51620,11,51676,51676,11,51732,51732,11,51788,51788,11,51844,51844,11,51900,51900,11,51956,51956,11,52012,52012,11,52068,52068,11,52124,52124,11,52180,52180,11,52236,52236,11,52292,52292,11,52348,52348,11,52404,52404,11,52460,52460,11,52516,52516,11,52572,52572,11,52628,52628,11,52684,52684,11,52740,52740,11,52796,52796,11,52852,52852,11,52908,52908,11,52964,52964,11,53020,53020,11,53076,53076,11,53132,53132,11,53188,53188,11,53244,53244,11,53300,53300,11,53356,53356,11,53412,53412,11,53468,53468,11,53524,53524,11,53580,53580,11,53636,53636,11,53692,53692,11,53748,53748,11,53804,53804,11,53860,53860,11,53916,53916,11,53972,53972,11,54028,54028,11,54084,54084,11,54140,54140,11,54196,54196,11,54252,54252,11,54308,54308,11,54364,54364,11,54420,54420,11,54476,54476,11,54532,54532,11,54588,54588,11,54644,54644,11,54700,54700,11,54756,54756,11,54812,54812,11,54868,54868,11,54924,54924,11,54980,54980,11,55036,55036,11,55092,55092,11,55148,55148,11,55216,55238,9,65056,65071,5,65529,65531,4,68097,68099,5,68159,68159,5,69446,69456,5,69688,69702,5,69808,69810,7,69815,69816,7,69821,69821,1,69888,69890,5,69932,69932,7,69957,69958,7,70016,70017,5,70067,70069,7,70079,70080,7,70089,70092,5,70095,70095,5,70191,70193,5,70196,70196,5,70198,70199,5,70367,70367,5,70371,70378,5,70402,70403,7,70462,70462,5,70464,70464,5,70471,70472,7,70487,70487,5,70502,70508,5,70709,70711,7,70720,70721,7,70725,70725,7,70750,70750,5,70833,70834,7,70841,70841,7,70843,70844,7,70846,70846,7,70849,70849,7,71087,71087,5,71090,71093,5,71100,71101,5,71103,71104,5,71216,71218,7,71227,71228,7,71230,71230,7,71339,71339,5,71341,71341,5,71344,71349,5,71351,71351,5,71456,71457,7,71462,71462,7,71724,71726,7,71736,71736,7,71984,71984,5,71991,71992,7,71997,71997,7,71999,71999,1,72001,72001,1,72003,72003,5,72148,72151,5,72156,72159,7,72164,72164,7,72243,72248,5,72250,72250,1,72263,72263,5,72279,72280,7,72324,72329,1,72343,72343,7,72751,72751,7,72760,72765,5,72767,72767,5,72873,72873,7,72881,72881,7,72884,72884,7,73009,73014,5,73020,73021,5,73030,73030,1,73098,73102,7,73107,73108,7,73110,73110,7,73459,73460,5,78896,78904,4,92976,92982,5,94033,94087,7,94180,94180,5,113821,113822,5,119141,119141,5,119143,119145,5,119150,119154,5,119163,119170,5,119210,119213,5,121344,121398,5,121461,121461,5,121499,121503,5,122880,122886,5,122907,122913,5,122918,122922,5,123628,123631,5,125252,125258,5,126980,126980,14,127183,127183,14,127245,127247,14,127340,127343,14,127358,127359,14,127377,127386,14,127462,127487,6,127491,127503,14,127535,127535,14,127548,127551,14,127568,127569,14,127744,127777,14,127780,127891,14,127894,127895,14,127897,127899,14,127902,127984,14,127987,127989,14,127991,127994,14,128000,128253,14,128255,128317,14,128329,128334,14,128336,128359,14,128367,128368,14,128371,128377,14,128379,128390,14,128392,128393,14,128398,128399,14,128401,128404,14,128407,128419,14,128421,128421,14,128424,128424,14,128433,128434,14,128444,128444,14,128450,128452,14,128465,128467,14,128476,128478,14,128481,128481,14,128483,128483,14,128488,128488,14,128495,128495,14,128499,128499,14,128506,128591,14,128710,128714,14,128721,128722,14,128725,128725,14,128728,128735,14,128742,128744,14,128746,128746,14,128749,128751,14,128753,128754,14,128756,128758,14,128761,128761,14,128763,128764,14,128884,128895,14,128992,129003,14,129036,129039,14,129114,129119,14,129198,129279,14,129293,129295,14,129305,129310,14,129312,129319,14,129328,129328,14,129331,129338,14,129343,129343,14,129351,129355,14,129357,129359,14,129375,129387,14,129393,129393,14,129395,129398,14,129401,129401,14,129403,129403,14,129408,129412,14,129426,129431,14,129443,129444,14,129451,129453,14,129456,129465,14,129472,129472,14,129475,129482,14,129484,129484,14,129488,129510,14,129536,129647,14,129652,129652,14,129656,129658,14,129664,129666,14,129671,129679,14,129686,129704,14,129712,129718,14,129728,129730,14,129744,129750,14,917504,917504,4,917506,917535,4,917632,917759,4,918000,921599,4,0,9,4,11,12,4,14,31,4,169,169,14,174,174,14,1155,1159,5,1425,1469,5,1473,1474,5,1479,1479,5,1552,1562,5,1611,1631,5,1750,1756,5,1759,1764,5,1770,1773,5,1809,1809,5,1958,1968,5,2045,2045,5,2075,2083,5,2089,2093,5,2259,2273,5,2275,2306,5,2362,2362,5,2364,2364,5,2369,2376,5,2381,2381,5,2385,2391,5,2433,2433,5,2492,2492,5,2495,2496,7,2503,2504,7,2509,2509,5,2530,2531,5,2561,2562,5,2620,2620,5,2625,2626,5,2635,2637,5,2672,2673,5,2689,2690,5,2748,2748,5,2753,2757,5,2761,2761,7,2765,2765,5,2810,2815,5,2818,2819,7,2878,2878,5,2880,2880,7,2887,2888,7,2893,2893,5,2903,2903,5,2946,2946,5,3007,3007,7,3009,3010,7,3018,3020,7,3031,3031,5,3073,3075,7,3134,3136,5,3142,3144,5,3157,3158,5,3201,3201,5,3260,3260,5,3263,3263,5,3266,3266,5,3270,3270,5,3274,3275,7,3285,3286,5,3328,3329,5,3387,3388,5,3391,3392,7,3398,3400,7,3405,3405,5,3415,3415,5,3457,3457,5,3530,3530,5,3536,3537,7,3542,3542,5,3551,3551,5,3633,3633,5,3636,3642,5,3761,3761,5,3764,3772,5,3864,3865,5,3895,3895,5,3902,3903,7,3967,3967,7,3974,3975,5,3993,4028,5,4141,4144,5,4146,4151,5,4155,4156,7,4182,4183,7,4190,4192,5,4226,4226,5,4229,4230,5,4253,4253,5,4448,4519,9,4957,4959,5,5938,5940,5,6002,6003,5,6070,6070,7,6078,6085,7,6087,6088,7,6109,6109,5,6158,6158,4,6313,6313,5,6435,6438,7,6441,6443,7,6450,6450,5,6457,6459,5,6681,6682,7,6741,6741,7,6743,6743,7,6752,6752,5,6757,6764,5,6771,6780,5,6832,6845,5,6847,6848,5,6916,6916,7,6965,6965,5,6971,6971,7,6973,6977,7,6979,6980,7,7040,7041,5,7073,7073,7,7078,7079,7,7082,7082,7,7142,7142,5,7144,7145,5,7149,7149,5,7151,7153,5,7204,7211,7,7220,7221,7,7376,7378,5,7393,7393,7,7405,7405,5,7415,7415,7,7616,7673,5,8203,8203,4,8205,8205,13,8232,8232,4,8234,8238,4,8265,8265,14,8293,8293,4,8400,8412,5,8417,8417,5,8421,8432,5,8505,8505,14,8617,8618,14,9000,9000,14,9167,9167,14,9208,9210,14,9642,9643,14,9664,9664,14,9728,9732,14,9735,9741,14,9743,9744,14,9746,9746,14,9750,9751,14,9753,9756,14,9758,9759,14,9761,9761,14,9764,9765,14,9767,9769,14,9771,9773,14,9776,9783,14,9787,9791,14,9793,9793,14,9795,9799,14,9812,9822,14,9824,9824,14,9827,9827,14,9829,9830,14,9832,9832,14,9851,9851,14,9854,9854,14,9856,9861,14,9874,9876,14,9878,9879,14,9881,9881,14,9883,9884,14,9888,9889,14,9895,9895,14,9898,9899,14,9904,9905,14,9917,9918,14,9924,9925,14,9928,9928,14,9934,9935,14,9937,9937,14,9939,9940,14,9961,9962,14,9968,9973,14,9975,9978,14,9981,9981,14,9986,9986,14,9989,9989,14,9998,9998,14,10000,10001,14,10004,10004,14,10013,10013,14,10024,10024,14,10052,10052,14,10060,10060,14,10067,10069,14,10083,10084,14,10133,10135,14,10160,10160,14,10548,10549,14,11035,11036,14,11093,11093,14,11647,11647,5,12330,12333,5,12336,12336,14,12441,12442,5,12953,12953,14,42608,42610,5,42654,42655,5,43010,43010,5,43019,43019,5,43045,43046,5,43052,43052,5,43188,43203,7,43232,43249,5,43302,43309,5,43346,43347,7,43392,43394,5,43443,43443,5,43446,43449,5,43452,43453,5,43493,43493,5,43567,43568,7,43571,43572,7,43587,43587,5,43597,43597,7,43696,43696,5,43703,43704,5,43713,43713,5,43756,43757,5,43765,43765,7,44003,44004,7,44006,44007,7,44009,44010,7,44013,44013,5,44033,44059,12,44061,44087,12,44089,44115,12,44117,44143,12,44145,44171,12,44173,44199,12,44201,44227,12,44229,44255,12,44257,44283,12,44285,44311,12,44313,44339,12,44341,44367,12,44369,44395,12,44397,44423,12,44425,44451,12,44453,44479,12,44481,44507,12,44509,44535,12,44537,44563,12,44565,44591,12,44593,44619,12,44621,44647,12,44649,44675,12,44677,44703,12,44705,44731,12,44733,44759,12,44761,44787,12,44789,44815,12,44817,44843,12,44845,44871,12,44873,44899,12,44901,44927,12,44929,44955,12,44957,44983,12,44985,45011,12,45013,45039,12,45041,45067,12,45069,45095,12,45097,45123,12,45125,45151,12,45153,45179,12,45181,45207,12,45209,45235,12,45237,45263,12,45265,45291,12,45293,45319,12,45321,45347,12,45349,45375,12,45377,45403,12,45405,45431,12,45433,45459,12,45461,45487,12,45489,45515,12,45517,45543,12,45545,45571,12,45573,45599,12,45601,45627,12,45629,45655,12,45657,45683,12,45685,45711,12,45713,45739,12,45741,45767,12,45769,45795,12,45797,45823,12,45825,45851,12,45853,45879,12,45881,45907,12,45909,45935,12,45937,45963,12,45965,45991,12,45993,46019,12,46021,46047,12,46049,46075,12,46077,46103,12,46105,46131,12,46133,46159,12,46161,46187,12,46189,46215,12,46217,46243,12,46245,46271,12,46273,46299,12,46301,46327,12,46329,46355,12,46357,46383,12,46385,46411,12,46413,46439,12,46441,46467,12,46469,46495,12,46497,46523,12,46525,46551,12,46553,46579,12,46581,46607,12,46609,46635,12,46637,46663,12,46665,46691,12,46693,46719,12,46721,46747,12,46749,46775,12,46777,46803,12,46805,46831,12,46833,46859,12,46861,46887,12,46889,46915,12,46917,46943,12,46945,46971,12,46973,46999,12,47001,47027,12,47029,47055,12,47057,47083,12,47085,47111,12,47113,47139,12,47141,47167,12,47169,47195,12,47197,47223,12,47225,47251,12,47253,47279,12,47281,47307,12,47309,47335,12,47337,47363,12,47365,47391,12,47393,47419,12,47421,47447,12,47449,47475,12,47477,47503,12,47505,47531,12,47533,47559,12,47561,47587,12,47589,47615,12,47617,47643,12,47645,47671,12,47673,47699,12,47701,47727,12,47729,47755,12,47757,47783,12,47785,47811,12,47813,47839,12,47841,47867,12,47869,47895,12,47897,47923,12,47925,47951,12,47953,47979,12,47981,48007,12,48009,48035,12,48037,48063,12,48065,48091,12,48093,48119,12,48121,48147,12,48149,48175,12,48177,48203,12,48205,48231,12,48233,48259,12,48261,48287,12,48289,48315,12,48317,48343,12,48345,48371,12,48373,48399,12,48401,48427,12,48429,48455,12,48457,48483,12,48485,48511,12,48513,48539,12,48541,48567,12,48569,48595,12,48597,48623,12,48625,48651,12,48653,48679,12,48681,48707,12,48709,48735,12,48737,48763,12,48765,48791,12,48793,48819,12,48821,48847,12,48849,48875,12,48877,48903,12,48905,48931,12,48933,48959,12,48961,48987,12,48989,49015,12,49017,49043,12,49045,49071,12,49073,49099,12,49101,49127,12,49129,49155,12,49157,49183,12,49185,49211,12,49213,49239,12,49241,49267,12,49269,49295,12,49297,49323,12,49325,49351,12,49353,49379,12,49381,49407,12,49409,49435,12,49437,49463,12,49465,49491,12,49493,49519,12,49521,49547,12,49549,49575,12,49577,49603,12,49605,49631,12,49633,49659,12,49661,49687,12,49689,49715,12,49717,49743,12,49745,49771,12,49773,49799,12,49801,49827,12,49829,49855,12,49857,49883,12,49885,49911,12,49913,49939,12,49941,49967,12,49969,49995,12,49997,50023,12,50025,50051,12,50053,50079,12,50081,50107,12,50109,50135,12,50137,50163,12,50165,50191,12,50193,50219,12,50221,50247,12,50249,50275,12,50277,50303,12,50305,50331,12,50333,50359,12,50361,50387,12,50389,50415,12,50417,50443,12,50445,50471,12,50473,50499,12,50501,50527,12,50529,50555,12,50557,50583,12,50585,50611,12,50613,50639,12,50641,50667,12,50669,50695,12,50697,50723,12,50725,50751,12,50753,50779,12,50781,50807,12,50809,50835,12,50837,50863,12,50865,50891,12,50893,50919,12,50921,50947,12,50949,50975,12,50977,51003,12,51005,51031,12,51033,51059,12,51061,51087,12,51089,51115,12,51117,51143,12,51145,51171,12,51173,51199,12,51201,51227,12,51229,51255,12,51257,51283,12,51285,51311,12,51313,51339,12,51341,51367,12,51369,51395,12,51397,51423,12,51425,51451,12,51453,51479,12,51481,51507,12,51509,51535,12,51537,51563,12,51565,51591,12,51593,51619,12,51621,51647,12,51649,51675,12,51677,51703,12,51705,51731,12,51733,51759,12,51761,51787,12,51789,51815,12,51817,51843,12,51845,51871,12,51873,51899,12,51901,51927,12,51929,51955,12,51957,51983,12,51985,52011,12,52013,52039,12,52041,52067,12,52069,52095,12,52097,52123,12,52125,52151,12,52153,52179,12,52181,52207,12,52209,52235,12,52237,52263,12,52265,52291,12,52293,52319,12,52321,52347,12,52349,52375,12,52377,52403,12,52405,52431,12,52433,52459,12,52461,52487,12,52489,52515,12,52517,52543,12,52545,52571,12,52573,52599,12,52601,52627,12,52629,52655,12,52657,52683,12,52685,52711,12,52713,52739,12,52741,52767,12,52769,52795,12,52797,52823,12,52825,52851,12,52853,52879,12,52881,52907,12,52909,52935,12,52937,52963,12,52965,52991,12,52993,53019,12,53021,53047,12,53049,53075,12,53077,53103,12,53105,53131,12,53133,53159,12,53161,53187,12,53189,53215,12,53217,53243,12,53245,53271,12,53273,53299,12,53301,53327,12,53329,53355,12,53357,53383,12,53385,53411,12,53413,53439,12,53441,53467,12,53469,53495,12,53497,53523,12,53525,53551,12,53553,53579,12,53581,53607,12,53609,53635,12,53637,53663,12,53665,53691,12,53693,53719,12,53721,53747,12,53749,53775,12,53777,53803,12,53805,53831,12,53833,53859,12,53861,53887,12,53889,53915,12,53917,53943,12,53945,53971,12,53973,53999,12,54001,54027,12,54029,54055,12,54057,54083,12,54085,54111,12,54113,54139,12,54141,54167,12,54169,54195,12,54197,54223,12,54225,54251,12,54253,54279,12,54281,54307,12,54309,54335,12,54337,54363,12,54365,54391,12,54393,54419,12,54421,54447,12,54449,54475,12,54477,54503,12,54505,54531,12,54533,54559,12,54561,54587,12,54589,54615,12,54617,54643,12,54645,54671,12,54673,54699,12,54701,54727,12,54729,54755,12,54757,54783,12,54785,54811,12,54813,54839,12,54841,54867,12,54869,54895,12,54897,54923,12,54925,54951,12,54953,54979,12,54981,55007,12,55009,55035,12,55037,55063,12,55065,55091,12,55093,55119,12,55121,55147,12,55149,55175,12,55177,55203,12,55243,55291,10,65024,65039,5,65279,65279,4,65520,65528,4,66045,66045,5,66422,66426,5,68101,68102,5,68152,68154,5,68325,68326,5,69291,69292,5,69632,69632,7,69634,69634,7,69759,69761,5]');
 }
 //#endregion
-/**
- * Computes the offset after performing a left delete on the given string,
- * while considering unicode grapheme/emoji rules.
-*/
-function getLeftDeleteOffset(offset, str) {
-    if (offset === 0) {
-        return 0;
-    }
-    // Try to delete emoji part.
-    const emojiOffset = getOffsetBeforeLastEmojiComponent(offset, str);
-    if (emojiOffset !== undefined) {
-        return emojiOffset;
-    }
-    // Otherwise, just skip a single code point.
-    const codePoint = getPrevCodePoint(str, offset);
-    offset -= getUTF16Length(codePoint);
-    return offset;
-}
-function getOffsetBeforeLastEmojiComponent(offset, str) {
-    // See https://www.unicode.org/reports/tr51/tr51-14.html#EBNF_and_Regex for the
-    // structure of emojis.
-    let codePoint = getPrevCodePoint(str, offset);
-    offset -= getUTF16Length(codePoint);
-    // Skip modifiers
-    while ((isEmojiModifier(codePoint) || codePoint === 65039 /* emojiVariantSelector */ || codePoint === 8419 /* enclosingKeyCap */)) {
-        if (offset === 0) {
-            // Cannot skip modifier, no preceding emoji base.
-            return undefined;
-        }
-        codePoint = getPrevCodePoint(str, offset);
-        offset -= getUTF16Length(codePoint);
-    }
-    // Expect base emoji
-    if (!isEmojiImprecise(codePoint)) {
-        // Unexpected code point, not a valid emoji.
-        return undefined;
-    }
-    if (offset >= 0) {
-        // Skip optional ZWJ code points that combine multiple emojis.
-        // In theory, we should check if that ZWJ actually combines multiple emojis
-        // to prevent deleting ZWJs in situations we didn't account for.
-        const optionalZwjCodePoint = getPrevCodePoint(str, offset);
-        if (optionalZwjCodePoint === 8205 /* zwj */) {
-            offset -= getUTF16Length(optionalZwjCodePoint);
-        }
-    }
-    return offset;
-}
-function getUTF16Length(codePoint) {
-    return codePoint >= 65536 /* UNICODE_SUPPLEMENTARY_PLANE_BEGIN */ ? 2 : 1;
-}
-function isEmojiModifier(codePoint) {
-    return 0x1F3FB <= codePoint && codePoint <= 0x1F3FF;
-}
 
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/types.js":
-/*!**************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/types.js ***!
-  \**************************************************************************************/
-/*! exports provided: isArray, isString, isObject, isNumber, isBoolean, isUndefined, isUndefinedOrNull, assertType, assertIsDefined, isFunction, validateConstraints, validateConstraint, getAllPropertyNames, getAllMethodNames, createProxyObject, withNullAsUndefined, assertNever */
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/types.js":
+/*!*******************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/types.js ***!
+  \*******************************************************************************************/
+/*! exports provided: isArray, isString, isObject, isNumber, isBoolean, isUndefined, isUndefinedOrNull, assertType, assertIsDefined, isFunction, validateConstraints, validateConstraint, getAllPropertyNames, getAllMethodNames, createProxyObject, withNullAsUndefined */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5520,7 +5495,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getAllMethodNames", function() { return getAllMethodNames; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createProxyObject", function() { return createProxyObject; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "withNullAsUndefined", function() { return withNullAsUndefined; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "assertNever", function() { return assertNever; });
 /**
  * @returns whether the provided parameter is a JavaScript Array or not.
  */
@@ -5660,17 +5634,14 @@ function createProxyObject(methodNames, invoke) {
 function withNullAsUndefined(x) {
     return x === null ? undefined : x;
 }
-function assertNever(value) {
-    throw new Error('Unreachable');
-}
 
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/uint.js":
-/*!*************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/uint.js ***!
-  \*************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/uint.js":
+/*!******************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/uint.js ***!
+  \******************************************************************************************/
 /*! exports provided: toUint8, toUint32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -5704,10 +5675,10 @@ function toUint32(v) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/uri.js":
-/*!************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/uri.js ***!
-  \************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/uri.js":
+/*!*****************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/uri.js ***!
+  \*****************************************************************************************/
 /*! exports provided: URI, uriToFsPath */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -5715,8 +5686,8 @@ function toUint32(v) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "URI", function() { return URI; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "uriToFsPath", function() { return uriToFsPath; });
-/* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./platform.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/platform.js");
-/* harmony import */ var _path_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./path.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/path.js");
+/* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./platform.js */ "../../node_modules/monaco-editor/esm/vs/base/common/platform.js");
+/* harmony import */ var _path_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./path.js */ "../../node_modules/monaco-editor/esm/vs/base/common/path.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -5839,7 +5810,7 @@ class URI {
             && typeof thing.path === 'string'
             && typeof thing.query === 'string'
             && typeof thing.scheme === 'string'
-            && typeof thing.fsPath === 'string'
+            && typeof thing.fsPath === 'function'
             && typeof thing.with === 'function'
             && typeof thing.toString === 'function';
     }
@@ -5978,9 +5949,7 @@ class URI {
         return new Uri('file', authority, path, _empty, _empty);
     }
     static from(components) {
-        const result = new Uri(components.scheme, components.authority, components.path, components.query, components.fragment);
-        _validateUri(result, true);
-        return result;
+        return new Uri(components.scheme, components.authority, components.path, components.query, components.fragment);
     }
     /**
      * Join a URI path with path fragments and normalizes the resulting path.
@@ -5991,7 +5960,7 @@ class URI {
      */
     static joinPath(uri, ...pathFragment) {
         if (!uri.path) {
-            throw new Error(`[UriError]: cannot call joinPath on URI without path`);
+            throw new Error(`[UriError]: cannot call joinPaths on URI without path`);
         }
         let newPath;
         if (_platform_js__WEBPACK_IMPORTED_MODULE_0__["isWindows"] && uri.scheme === 'file') {
@@ -6063,7 +6032,7 @@ class Uri extends URI {
     }
     toJSON() {
         const res = {
-            $mid: 1 /* Uri */
+            $mid: 1
         };
         // cached state
         if (this._fsPath) {
@@ -6310,10 +6279,10 @@ function percentDecode(str) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/worker/simpleWorker.js":
-/*!****************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/worker/simpleWorker.js ***!
-  \****************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/base/common/worker/simpleWorker.js":
+/*!*********************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/base/common/worker/simpleWorker.js ***!
+  \*********************************************************************************************************/
 /*! exports provided: logOnceWebWorkerWarning, SimpleWorkerClient, SimpleWorkerServer, create */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -6323,10 +6292,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SimpleWorkerClient", function() { return SimpleWorkerClient; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SimpleWorkerServer", function() { return SimpleWorkerServer; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "create", function() { return create; });
-/* harmony import */ var _errors_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../errors.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/errors.js");
-/* harmony import */ var _lifecycle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../lifecycle.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/lifecycle.js");
-/* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../platform.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/platform.js");
-/* harmony import */ var _types_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../types.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/types.js");
+/* harmony import */ var _errors_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../errors.js */ "../../node_modules/monaco-editor/esm/vs/base/common/errors.js");
+/* harmony import */ var _lifecycle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../lifecycle.js */ "../../node_modules/monaco-editor/esm/vs/base/common/lifecycle.js");
+/* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../platform.js */ "../../node_modules/monaco-editor/esm/vs/base/common/platform.js");
+/* harmony import */ var _types_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../types.js */ "../../node_modules/monaco-editor/esm/vs/base/common/types.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6344,7 +6313,7 @@ function logOnceWebWorkerWarning(err) {
     }
     if (!webWorkerWarningLogged) {
         webWorkerWarningLogged = true;
-        console.warn('Could not create web worker(s). Falling back to loading web worker code in main thread, which might cause UI freezes. Please see https://github.com/microsoft/monaco-editor#faq');
+        console.warn('Could not create web worker(s). Falling back to loading web worker code in main thread, which might cause UI freezes. Please see https://github.com/Microsoft/monaco-editor#faq');
     }
     console.warn(err.message);
 }
@@ -6579,10 +6548,6 @@ class SimpleWorkerServer {
                     delete loaderConfig.paths['vs'];
                 }
             }
-            if (typeof loaderConfig.trustedTypesPolicy !== undefined) {
-                // don't use, it has been destroyed during serialize
-                delete loaderConfig['trustedTypesPolicy'];
-            }
             // Since this is in a web worker, enable catching errors
             loaderConfig.catchError = true;
             self.require.config(loaderConfig);
@@ -6610,10 +6575,10 @@ function create(postMessage) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/characterClassifier.js":
-/*!***********************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/characterClassifier.js ***!
-  \***********************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/editor/common/core/characterClassifier.js":
+/*!****************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/editor/common/core/characterClassifier.js ***!
+  \****************************************************************************************************************/
 /*! exports provided: CharacterClassifier, CharacterSet */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -6621,7 +6586,7 @@ function create(postMessage) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CharacterClassifier", function() { return CharacterClassifier; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CharacterSet", function() { return CharacterSet; });
-/* harmony import */ var _base_common_uint_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/uint.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/uint.js");
+/* harmony import */ var _base_common_uint_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/uint.js */ "../../node_modules/monaco-editor/esm/vs/base/common/uint.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6677,10 +6642,10 @@ class CharacterSet {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/position.js":
-/*!************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/position.js ***!
-  \************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/editor/common/core/position.js":
+/*!*****************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/editor/common/core/position.js ***!
+  \*****************************************************************************************************/
 /*! exports provided: Position */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -6825,17 +6790,17 @@ class Position {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/range.js":
-/*!*********************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/range.js ***!
-  \*********************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/editor/common/core/range.js":
+/*!**************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/editor/common/core/range.js ***!
+  \**************************************************************************************************/
 /*! exports provided: Range */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Range", function() { return Range; });
-/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./position.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/position.js");
+/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./position.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/core/position.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7200,18 +7165,18 @@ class Range {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/selection.js":
-/*!*************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/selection.js ***!
-  \*************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/editor/common/core/selection.js":
+/*!******************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/editor/common/core/selection.js ***!
+  \******************************************************************************************************/
 /*! exports provided: Selection */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Selection", function() { return Selection; });
-/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./position.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/position.js");
-/* harmony import */ var _range_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./range.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/range.js");
+/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./position.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/core/position.js");
+/* harmony import */ var _range_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./range.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/core/range.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7341,10 +7306,10 @@ class Selection extends _range_js__WEBPACK_IMPORTED_MODULE_1__["Range"] {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/token.js":
-/*!*********************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/token.js ***!
-  \*********************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/editor/common/core/token.js":
+/*!**************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/editor/common/core/token.js ***!
+  \**************************************************************************************************/
 /*! exports provided: Token, TokenizationResult, TokenizationResult2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -7359,7 +7324,6 @@ __webpack_require__.r(__webpack_exports__);
  *--------------------------------------------------------------------------------------------*/
 class Token {
     constructor(offset, type, language) {
-        this._tokenBrand = undefined;
         this.offset = offset | 0; // @perf
         this.type = type;
         this.language = language;
@@ -7370,14 +7334,12 @@ class Token {
 }
 class TokenizationResult {
     constructor(tokens, endState) {
-        this._tokenizationResultBrand = undefined;
         this.tokens = tokens;
         this.endState = endState;
     }
 }
 class TokenizationResult2 {
     constructor(tokens, endState) {
-        this._tokenizationResult2Brand = undefined;
         this.tokens = tokens;
         this.endState = endState;
     }
@@ -7386,18 +7348,18 @@ class TokenizationResult2 {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/diff/diffComputer.js":
-/*!****************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/diff/diffComputer.js ***!
-  \****************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/editor/common/diff/diffComputer.js":
+/*!*********************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/editor/common/diff/diffComputer.js ***!
+  \*********************************************************************************************************/
 /*! exports provided: DiffComputer */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DiffComputer", function() { return DiffComputer; });
-/* harmony import */ var _base_common_diff_diff_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/diff/diff.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/diff/diff.js");
-/* harmony import */ var _base_common_strings_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../base/common/strings.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/strings.js");
+/* harmony import */ var _base_common_diff_diff_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/diff/diff.js */ "../../node_modules/monaco-editor/esm/vs/base/common/diff/diff.js");
+/* harmony import */ var _base_common_strings_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../base/common/strings.js */ "../../node_modules/monaco-editor/esm/vs/base/common/strings.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7427,9 +7389,6 @@ class LineSequence {
             elements[i] = this.lines[i].substring(this._startColumns[i] - 1, this._endColumns[i] - 1);
         }
         return elements;
-    }
-    getStrictElement(index) {
-        return this.lines[index];
     }
     getStartLineNumber(i) {
         return i + 1;
@@ -7612,12 +7571,6 @@ class DiffComputer {
     computeDiff() {
         if (this.original.lines.length === 1 && this.original.lines[0].length === 0) {
             // empty original => fast path
-            if (this.modified.lines.length === 1 && this.modified.lines[0].length === 0) {
-                return {
-                    quitEarly: false,
-                    changes: []
-                };
-            }
             return {
                 quitEarly: false,
                 changes: [{
@@ -7800,24 +7753,22 @@ function createContinueProcessingPredicate(maximumRuntime) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/model/mirrorTextModel.js":
-/*!********************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/model/mirrorTextModel.js ***!
-  \********************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/editor/common/model/mirrorTextModel.js":
+/*!*************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/editor/common/model/mirrorTextModel.js ***!
+  \*************************************************************************************************************/
 /*! exports provided: MirrorTextModel */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MirrorTextModel", function() { return MirrorTextModel; });
-/* harmony import */ var _base_common_strings_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/strings.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/strings.js");
-/* harmony import */ var _core_position_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../core/position.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/position.js");
-/* harmony import */ var _viewModel_prefixSumComputer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../viewModel/prefixSumComputer.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/viewModel/prefixSumComputer.js");
+/* harmony import */ var _core_position_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core/position.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/core/position.js");
+/* harmony import */ var _viewModel_prefixSumComputer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../viewModel/prefixSumComputer.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/viewModel/prefixSumComputer.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-
 
 
 class MirrorTextModel {
@@ -7831,9 +7782,6 @@ class MirrorTextModel {
     }
     dispose() {
         this._lines.length = 0;
-    }
-    get version() {
-        return this._versionId;
     }
     getText() {
         if (this._cachedTextValue === null) {
@@ -7850,7 +7798,7 @@ class MirrorTextModel {
         const changes = e.changes;
         for (const change of changes) {
             this._acceptDeleteRange(change.range);
-            this._acceptInsertText(new _core_position_js__WEBPACK_IMPORTED_MODULE_1__["Position"](change.range.startLineNumber, change.range.startColumn), change.text);
+            this._acceptInsertText(new _core_position_js__WEBPACK_IMPORTED_MODULE_0__["Position"](change.range.startLineNumber, change.range.startColumn), change.text);
         }
         this._versionId = e.versionId;
         this._cachedTextValue = null;
@@ -7863,7 +7811,7 @@ class MirrorTextModel {
             for (let i = 0; i < linesLength; i++) {
                 lineStartValues[i] = this._lines[i].length + eolLength;
             }
-            this._lineStarts = new _viewModel_prefixSumComputer_js__WEBPACK_IMPORTED_MODULE_2__["PrefixSumComputer"](lineStartValues);
+            this._lineStarts = new _viewModel_prefixSumComputer_js__WEBPACK_IMPORTED_MODULE_1__["PrefixSumComputer"](lineStartValues);
         }
     }
     /**
@@ -7902,7 +7850,7 @@ class MirrorTextModel {
             // Nothing to insert
             return;
         }
-        let insertLines = Object(_base_common_strings_js__WEBPACK_IMPORTED_MODULE_0__["splitLines"])(insertText);
+        let insertLines = insertText.split(/\r\n|\r|\n/);
         if (insertLines.length === 1) {
             // Inserting text on one line
             this._setLineText(position.lineNumber - 1, this._lines[position.lineNumber - 1].substring(0, position.column - 1)
@@ -7931,10 +7879,10 @@ class MirrorTextModel {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/model/wordHelper.js":
-/*!***************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/model/wordHelper.js ***!
-  \***************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/editor/common/model/wordHelper.js":
+/*!********************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/editor/common/model/wordHelper.js ***!
+  \********************************************************************************************************/
 /*! exports provided: USUAL_WORD_SEPARATORS, DEFAULT_WORD_REGEXP, ensureValidWordDefinition, getWordAtText */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -8003,6 +7951,7 @@ function getWordAtText(column, wordDefinition, text, textOffset, config = _defau
         // but use a sub-string in which a word must occur
         let start = column - config.maxLen / 2;
         if (start < 0) {
+            textOffset += column;
             start = 0;
         }
         else {
@@ -8018,7 +7967,7 @@ function getWordAtText(column, wordDefinition, text, textOffset, config = _defau
     for (let i = 1;; i++) {
         // check time budget
         if (Date.now() - t1 >= config.timeBudget) {
-            break;
+            // break;
         }
         // reset the index at which the regexp should start matching, also know where it
         // should stop so that subsequent search don't repeat previous searches
@@ -8064,10 +8013,10 @@ function _findRegexMatchEnclosingPosition(wordDefinition, text, pos, stopPos) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/modes/linkComputer.js":
-/*!*****************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/modes/linkComputer.js ***!
-  \*****************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/editor/common/modes/linkComputer.js":
+/*!**********************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/editor/common/modes/linkComputer.js ***!
+  \**********************************************************************************************************/
 /*! exports provided: Uint8Matrix, StateMachine, LinkComputer, computeLinks */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -8077,7 +8026,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StateMachine", function() { return StateMachine; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LinkComputer", function() { return LinkComputer; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "computeLinks", function() { return computeLinks; });
-/* harmony import */ var _core_characterClassifier_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core/characterClassifier.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/characterClassifier.js");
+/* harmony import */ var _core_characterClassifier_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core/characterClassifier.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/core/characterClassifier.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8168,7 +8117,7 @@ let _classifier = null;
 function getClassifier() {
     if (_classifier === null) {
         _classifier = new _core_characterClassifier_js__WEBPACK_IMPORTED_MODULE_0__["CharacterClassifier"](0 /* None */);
-        const FORCE_TERMINATION_CHARACTERS = ' \t<>\'\"、。｡､，．：；‘〈「『〔（［｛｢｣｝］）〕』」〉’｀～…';
+        const FORCE_TERMINATION_CHARACTERS = ' \t<>\'\"、。｡､，．：；‘“〈《「『【〔（［｛｢｣｝］）〕】』」》〉”’｀～…';
         for (let i = 0; i < FORCE_TERMINATION_CHARACTERS.length; i++) {
             _classifier.set(FORCE_TERMINATION_CHARACTERS.charCodeAt(i), 1 /* ForceTermination */);
         }
@@ -8346,10 +8295,10 @@ function computeLinks(model) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/modes/supports/inplaceReplaceSupport.js":
-/*!***********************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/modes/supports/inplaceReplaceSupport.js ***!
-  \***********************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/editor/common/modes/supports/inplaceReplaceSupport.js":
+/*!****************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/editor/common/modes/supports/inplaceReplaceSupport.js ***!
+  \****************************************************************************************************************************/
 /*! exports provided: BasicInplaceReplace */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -8445,10 +8394,10 @@ BasicInplaceReplace.INSTANCE = new BasicInplaceReplace();
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js":
-/*!**************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js ***!
-  \**************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js":
+/*!*******************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js ***!
+  \*******************************************************************************************************************/
 /*! exports provided: EditorSimpleWorker, create */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -8456,19 +8405,19 @@ BasicInplaceReplace.INSTANCE = new BasicInplaceReplace();
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EditorSimpleWorker", function() { return EditorSimpleWorker; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "create", function() { return create; });
-/* harmony import */ var _base_common_diff_diff_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/diff/diff.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/diff/diff.js");
-/* harmony import */ var _base_common_platform_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../base/common/platform.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/platform.js");
-/* harmony import */ var _base_common_uri_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../base/common/uri.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/uri.js");
-/* harmony import */ var _core_position_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../core/position.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/position.js");
-/* harmony import */ var _core_range_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../core/range.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/range.js");
-/* harmony import */ var _diff_diffComputer_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../diff/diffComputer.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/diff/diffComputer.js");
-/* harmony import */ var _model_mirrorTextModel_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../model/mirrorTextModel.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/model/mirrorTextModel.js");
-/* harmony import */ var _model_wordHelper_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../model/wordHelper.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/model/wordHelper.js");
-/* harmony import */ var _modes_linkComputer_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../modes/linkComputer.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/modes/linkComputer.js");
-/* harmony import */ var _modes_supports_inplaceReplaceSupport_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../modes/supports/inplaceReplaceSupport.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/modes/supports/inplaceReplaceSupport.js");
-/* harmony import */ var _standalone_standaloneBase_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../standalone/standaloneBase.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/standalone/standaloneBase.js");
-/* harmony import */ var _base_common_types_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../base/common/types.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/types.js");
-/* harmony import */ var _base_common_stopwatch_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../base/common/stopwatch.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/stopwatch.js");
+/* harmony import */ var _base_common_arrays_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/arrays.js */ "../../node_modules/monaco-editor/esm/vs/base/common/arrays.js");
+/* harmony import */ var _base_common_diff_diff_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../base/common/diff/diff.js */ "../../node_modules/monaco-editor/esm/vs/base/common/diff/diff.js");
+/* harmony import */ var _base_common_platform_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../base/common/platform.js */ "../../node_modules/monaco-editor/esm/vs/base/common/platform.js");
+/* harmony import */ var _base_common_uri_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../base/common/uri.js */ "../../node_modules/monaco-editor/esm/vs/base/common/uri.js");
+/* harmony import */ var _core_position_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../core/position.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/core/position.js");
+/* harmony import */ var _core_range_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../core/range.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/core/range.js");
+/* harmony import */ var _diff_diffComputer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../diff/diffComputer.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/diff/diffComputer.js");
+/* harmony import */ var _model_mirrorTextModel_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../model/mirrorTextModel.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/model/mirrorTextModel.js");
+/* harmony import */ var _model_wordHelper_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../model/wordHelper.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/model/wordHelper.js");
+/* harmony import */ var _modes_linkComputer_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../modes/linkComputer.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/modes/linkComputer.js");
+/* harmony import */ var _modes_supports_inplaceReplaceSupport_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../modes/supports/inplaceReplaceSupport.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/modes/supports/inplaceReplaceSupport.js");
+/* harmony import */ var _standalone_standaloneBase_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../standalone/standaloneBase.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/standalone/standaloneBase.js");
+/* harmony import */ var _base_common_types_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../base/common/types.js */ "../../node_modules/monaco-editor/esm/vs/base/common/types.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8498,9 +8447,12 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 /**
  * @internal
  */
-class MirrorModel extends _model_mirrorTextModel_js__WEBPACK_IMPORTED_MODULE_6__["MirrorTextModel"] {
+class MirrorModel extends _model_mirrorTextModel_js__WEBPACK_IMPORTED_MODULE_7__["MirrorTextModel"] {
     get uri() {
         return this._uri;
+    }
+    get version() {
+        return this._versionId;
     }
     get eol() {
         return this._eol;
@@ -8518,9 +8470,9 @@ class MirrorModel extends _model_mirrorTextModel_js__WEBPACK_IMPORTED_MODULE_6__
         return this._lines[lineNumber - 1];
     }
     getWordAtPosition(position, wordDefinition) {
-        let wordAtText = Object(_model_wordHelper_js__WEBPACK_IMPORTED_MODULE_7__["getWordAtText"])(position.column, Object(_model_wordHelper_js__WEBPACK_IMPORTED_MODULE_7__["ensureValidWordDefinition"])(wordDefinition), this._lines[position.lineNumber - 1], 0);
+        let wordAtText = Object(_model_wordHelper_js__WEBPACK_IMPORTED_MODULE_8__["getWordAtText"])(position.column, Object(_model_wordHelper_js__WEBPACK_IMPORTED_MODULE_8__["ensureValidWordDefinition"])(wordDefinition), this._lines[position.lineNumber - 1], 0);
         if (wordAtText) {
-            return new _core_range_js__WEBPACK_IMPORTED_MODULE_4__["Range"](position.lineNumber, wordAtText.startColumn, position.lineNumber, wordAtText.endColumn);
+            return new _core_range_js__WEBPACK_IMPORTED_MODULE_5__["Range"](position.lineNumber, wordAtText.startColumn, position.lineNumber, wordAtText.endColumn);
         }
         return null;
     }
@@ -8599,7 +8551,7 @@ class MirrorModel extends _model_mirrorTextModel_js__WEBPACK_IMPORTED_MODULE_6__
     offsetAt(position) {
         position = this._validatePosition(position);
         this._ensureLineStarts();
-        return this._lineStarts.getPrefixSum(position.lineNumber - 2) + (position.column - 1);
+        return this._lineStarts.getAccumulatedValue(position.lineNumber - 2) + (position.column - 1);
     }
     positionAt(offset) {
         offset = Math.floor(offset);
@@ -8630,7 +8582,7 @@ class MirrorModel extends _model_mirrorTextModel_js__WEBPACK_IMPORTED_MODULE_6__
         return range;
     }
     _validatePosition(position) {
-        if (!_core_position_js__WEBPACK_IMPORTED_MODULE_3__["Position"].isIPosition(position)) {
+        if (!_core_position_js__WEBPACK_IMPORTED_MODULE_4__["Position"].isIPosition(position)) {
             throw new Error('bad position');
         }
         let { lineNumber, column } = position;
@@ -8686,7 +8638,7 @@ class EditorSimpleWorker {
         return all;
     }
     acceptNewModel(data) {
-        this._models[data.url] = new MirrorModel(_base_common_uri_js__WEBPACK_IMPORTED_MODULE_2__["URI"].parse(data.url), data.lines, data.EOL, data.versionId);
+        this._models[data.url] = new MirrorModel(_base_common_uri_js__WEBPACK_IMPORTED_MODULE_3__["URI"].parse(data.url), data.lines, data.EOL, data.versionId);
     }
     acceptModelChanged(strURL, e) {
         if (!this._models[strURL]) {
@@ -8711,7 +8663,7 @@ class EditorSimpleWorker {
             }
             const originalLines = original.getLinesContent();
             const modifiedLines = modified.getLinesContent();
-            const diffComputer = new _diff_diffComputer_js__WEBPACK_IMPORTED_MODULE_5__["DiffComputer"](originalLines, modifiedLines, {
+            const diffComputer = new _diff_diffComputer_js__WEBPACK_IMPORTED_MODULE_6__["DiffComputer"](originalLines, modifiedLines, {
                 shouldComputeCharChanges: true,
                 shouldPostProcessCharChanges: true,
                 shouldIgnoreTrimWhitespace: ignoreTrimWhitespace,
@@ -8750,9 +8702,9 @@ class EditorSimpleWorker {
             }
             const result = [];
             let lastEol = undefined;
-            edits = edits.slice(0).sort((a, b) => {
+            edits = Object(_base_common_arrays_js__WEBPACK_IMPORTED_MODULE_0__["mergeSort"])(edits, (a, b) => {
                 if (a.range && b.range) {
-                    return _core_range_js__WEBPACK_IMPORTED_MODULE_4__["Range"].compareRangesUsingStarts(a.range, b.range);
+                    return _core_range_js__WEBPACK_IMPORTED_MODULE_5__["Range"].compareRangesUsingStarts(a.range, b.range);
                 }
                 // eol only changes should go to the end
                 let aRng = a.range ? 0 : 1;
@@ -8763,7 +8715,7 @@ class EditorSimpleWorker {
                 if (typeof eol === 'number') {
                     lastEol = eol;
                 }
-                if (_core_range_js__WEBPACK_IMPORTED_MODULE_4__["Range"].isEmpty(range) && !text) {
+                if (_core_range_js__WEBPACK_IMPORTED_MODULE_5__["Range"].isEmpty(range) && !text) {
                     // empty change
                     continue;
                 }
@@ -8779,8 +8731,8 @@ class EditorSimpleWorker {
                     continue;
                 }
                 // compute diff between original and edit.text
-                const changes = Object(_base_common_diff_diff_js__WEBPACK_IMPORTED_MODULE_0__["stringDiff"])(original, text, false);
-                const editOffset = model.offsetAt(_core_range_js__WEBPACK_IMPORTED_MODULE_4__["Range"].lift(range).getStartPosition());
+                const changes = Object(_base_common_diff_diff_js__WEBPACK_IMPORTED_MODULE_1__["stringDiff"])(original, text, false);
+                const editOffset = model.offsetAt(_core_range_js__WEBPACK_IMPORTED_MODULE_5__["Range"].lift(range).getStartPosition());
                 for (const change of changes) {
                     const start = model.positionAt(editOffset + change.originalStart);
                     const end = model.positionAt(editOffset + change.originalStart + change.originalLength);
@@ -8806,30 +8758,36 @@ class EditorSimpleWorker {
             if (!model) {
                 return null;
             }
-            return Object(_modes_linkComputer_js__WEBPACK_IMPORTED_MODULE_8__["computeLinks"])(model);
+            return Object(_modes_linkComputer_js__WEBPACK_IMPORTED_MODULE_9__["computeLinks"])(model);
         });
     }
-    textualSuggest(modelUrls, leadingWord, wordDef, wordDefFlags) {
+    textualSuggest(modelUrl, position, wordDef, wordDefFlags) {
         return __awaiter(this, void 0, void 0, function* () {
-            const sw = new _base_common_stopwatch_js__WEBPACK_IMPORTED_MODULE_12__["StopWatch"](true);
-            const wordDefRegExp = new RegExp(wordDef, wordDefFlags);
+            const model = this._getModel(modelUrl);
+            if (!model) {
+                return null;
+            }
+            const words = [];
             const seen = new Set();
-            outer: for (let url of modelUrls) {
-                const model = this._getModel(url);
-                if (!model) {
+            const wordDefRegExp = new RegExp(wordDef, wordDefFlags);
+            const wordAt = model.getWordAtPosition(position, wordDefRegExp);
+            if (wordAt) {
+                seen.add(model.getValueInRange(wordAt));
+            }
+            for (let word of model.words(wordDefRegExp)) {
+                if (seen.has(word)) {
                     continue;
                 }
-                for (let word of model.words(wordDefRegExp)) {
-                    if (word === leadingWord || !isNaN(Number(word))) {
-                        continue;
-                    }
-                    seen.add(word);
-                    if (seen.size > EditorSimpleWorker._suggestionsLimit) {
-                        break outer;
-                    }
+                seen.add(word);
+                if (!isNaN(Number(word))) {
+                    continue;
+                }
+                words.push(word);
+                if (seen.size > EditorSimpleWorker._suggestionsLimit) {
+                    break;
                 }
             }
-            return { words: Array.from(seen), duration: sw.elapsed() };
+            return words;
         });
     }
     // ---- END suggest --------------------------------------------------------------------------
@@ -8886,7 +8844,7 @@ class EditorSimpleWorker {
                 return null;
             }
             let word = model.getValueInRange(wordRange);
-            let result = _modes_supports_inplaceReplaceSupport_js__WEBPACK_IMPORTED_MODULE_9__["BasicInplaceReplace"].INSTANCE.navigateValueSet(range, selectionText, wordRange, word, up);
+            let result = _modes_supports_inplaceReplaceSupport_js__WEBPACK_IMPORTED_MODULE_10__["BasicInplaceReplace"].INSTANCE.navigateValueSet(range, selectionText, wordRange, word, up);
             return result;
         });
     }
@@ -8895,7 +8853,7 @@ class EditorSimpleWorker {
         const proxyMethodRequest = (method, args) => {
             return this._host.fhr(method, args);
         };
-        const foreignHost = _base_common_types_js__WEBPACK_IMPORTED_MODULE_11__["createProxyObject"](foreignHostMethods, proxyMethodRequest);
+        const foreignHost = _base_common_types_js__WEBPACK_IMPORTED_MODULE_12__["createProxyObject"](foreignHostMethods, proxyMethodRequest);
         let ctx = {
             host: foreignHost,
             getMirrorModels: () => {
@@ -8905,7 +8863,7 @@ class EditorSimpleWorker {
         if (this._foreignModuleFactory) {
             this._foreignModule = this._foreignModuleFactory(ctx, createData);
             // static foreing module
-            return Promise.resolve(_base_common_types_js__WEBPACK_IMPORTED_MODULE_11__["getAllMethodNames"](this._foreignModule));
+            return Promise.resolve(_base_common_types_js__WEBPACK_IMPORTED_MODULE_12__["getAllMethodNames"](this._foreignModule));
         }
         // ESM-comment-begin
         // 		return new Promise<any>((resolve, reject) => {
@@ -8948,16 +8906,16 @@ function create(host) {
 }
 if (typeof importScripts === 'function') {
     // Running in a web worker
-    _base_common_platform_js__WEBPACK_IMPORTED_MODULE_1__["globals"].monaco = Object(_standalone_standaloneBase_js__WEBPACK_IMPORTED_MODULE_10__["createMonacoBaseAPI"])();
+    _base_common_platform_js__WEBPACK_IMPORTED_MODULE_2__["globals"].monaco = Object(_standalone_standaloneBase_js__WEBPACK_IMPORTED_MODULE_11__["createMonacoBaseAPI"])();
 }
 
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/standalone/standaloneBase.js":
-/*!************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/standalone/standaloneBase.js ***!
-  \************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/editor/common/standalone/standaloneBase.js":
+/*!*****************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/editor/common/standalone/standaloneBase.js ***!
+  \*****************************************************************************************************************/
 /*! exports provided: KeyMod, createMonacoBaseAPI */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -8965,15 +8923,15 @@ if (typeof importScripts === 'function') {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "KeyMod", function() { return KeyMod; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createMonacoBaseAPI", function() { return createMonacoBaseAPI; });
-/* harmony import */ var _base_common_cancellation_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/cancellation.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/cancellation.js");
-/* harmony import */ var _base_common_event_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../base/common/event.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/event.js");
-/* harmony import */ var _base_common_keyCodes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../base/common/keyCodes.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/keyCodes.js");
-/* harmony import */ var _base_common_uri_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../base/common/uri.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/uri.js");
-/* harmony import */ var _core_position_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../core/position.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/position.js");
-/* harmony import */ var _core_range_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../core/range.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/range.js");
-/* harmony import */ var _core_selection_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../core/selection.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/selection.js");
-/* harmony import */ var _core_token_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../core/token.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/core/token.js");
-/* harmony import */ var _standaloneEnums_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./standaloneEnums.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/standalone/standaloneEnums.js");
+/* harmony import */ var _base_common_cancellation_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/cancellation.js */ "../../node_modules/monaco-editor/esm/vs/base/common/cancellation.js");
+/* harmony import */ var _base_common_event_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../base/common/event.js */ "../../node_modules/monaco-editor/esm/vs/base/common/event.js");
+/* harmony import */ var _base_common_keyCodes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../base/common/keyCodes.js */ "../../node_modules/monaco-editor/esm/vs/base/common/keyCodes.js");
+/* harmony import */ var _base_common_uri_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../base/common/uri.js */ "../../node_modules/monaco-editor/esm/vs/base/common/uri.js");
+/* harmony import */ var _core_position_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../core/position.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/core/position.js");
+/* harmony import */ var _core_range_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../core/range.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/core/range.js");
+/* harmony import */ var _core_selection_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../core/selection.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/core/selection.js");
+/* harmony import */ var _core_token_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../core/token.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/core/token.js");
+/* harmony import */ var _standaloneEnums_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./standaloneEnums.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/standalone/standaloneEnums.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9018,11 +8976,11 @@ function createMonacoBaseAPI() {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/standalone/standaloneEnums.js":
-/*!*************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/standalone/standaloneEnums.js ***!
-  \*************************************************************************************************************/
-/*! exports provided: AccessibilitySupport, CompletionItemInsertTextRule, CompletionItemKind, CompletionItemTag, CompletionTriggerKind, ContentWidgetPositionPreference, CursorChangeReason, DefaultEndOfLine, DocumentHighlightKind, EditorAutoIndentStrategy, EditorOption, EndOfLinePreference, EndOfLineSequence, IndentAction, InlayHintKind, InlineCompletionTriggerKind, KeyCode, MarkerSeverity, MarkerTag, MinimapPosition, MouseTargetType, OverlayWidgetPositionPreference, OverviewRulerLane, RenderLineNumbersType, RenderMinimap, ScrollType, ScrollbarVisibility, SelectionDirection, SignatureHelpTriggerKind, SymbolKind, SymbolTag, TextEditorCursorBlinkingStyle, TextEditorCursorStyle, TrackedRangeStickiness, WrappingIndent */
+/***/ "../../node_modules/monaco-editor/esm/vs/editor/common/standalone/standaloneEnums.js":
+/*!******************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/editor/common/standalone/standaloneEnums.js ***!
+  \******************************************************************************************************************/
+/*! exports provided: AccessibilitySupport, CompletionItemInsertTextRule, CompletionItemKind, CompletionItemTag, CompletionTriggerKind, ContentWidgetPositionPreference, CursorChangeReason, DefaultEndOfLine, DocumentHighlightKind, EditorAutoIndentStrategy, EditorOption, EndOfLinePreference, EndOfLineSequence, IndentAction, KeyCode, MarkerSeverity, MarkerTag, MinimapPosition, MouseTargetType, OverlayWidgetPositionPreference, OverviewRulerLane, RenderLineNumbersType, RenderMinimap, ScrollType, ScrollbarVisibility, SelectionDirection, SignatureHelpTriggerKind, SymbolKind, SymbolTag, TextEditorCursorBlinkingStyle, TextEditorCursorStyle, TrackedRangeStickiness, WrappingIndent */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9041,8 +8999,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EndOfLinePreference", function() { return EndOfLinePreference; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EndOfLineSequence", function() { return EndOfLineSequence; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IndentAction", function() { return IndentAction; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InlayHintKind", function() { return InlayHintKind; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InlineCompletionTriggerKind", function() { return InlineCompletionTriggerKind; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "KeyCode", function() { return KeyCode; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MarkerSeverity", function() { return MarkerSeverity; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MarkerTag", function() { return MarkerTag; });
@@ -9235,130 +9191,119 @@ var EditorOption;
     EditorOption[EditorOption["accessibilityPageSize"] = 3] = "accessibilityPageSize";
     EditorOption[EditorOption["ariaLabel"] = 4] = "ariaLabel";
     EditorOption[EditorOption["autoClosingBrackets"] = 5] = "autoClosingBrackets";
-    EditorOption[EditorOption["autoClosingDelete"] = 6] = "autoClosingDelete";
-    EditorOption[EditorOption["autoClosingOvertype"] = 7] = "autoClosingOvertype";
-    EditorOption[EditorOption["autoClosingQuotes"] = 8] = "autoClosingQuotes";
-    EditorOption[EditorOption["autoIndent"] = 9] = "autoIndent";
-    EditorOption[EditorOption["automaticLayout"] = 10] = "automaticLayout";
-    EditorOption[EditorOption["autoSurround"] = 11] = "autoSurround";
-    EditorOption[EditorOption["codeLens"] = 12] = "codeLens";
-    EditorOption[EditorOption["codeLensFontFamily"] = 13] = "codeLensFontFamily";
-    EditorOption[EditorOption["codeLensFontSize"] = 14] = "codeLensFontSize";
-    EditorOption[EditorOption["colorDecorators"] = 15] = "colorDecorators";
-    EditorOption[EditorOption["columnSelection"] = 16] = "columnSelection";
-    EditorOption[EditorOption["comments"] = 17] = "comments";
-    EditorOption[EditorOption["contextmenu"] = 18] = "contextmenu";
-    EditorOption[EditorOption["copyWithSyntaxHighlighting"] = 19] = "copyWithSyntaxHighlighting";
-    EditorOption[EditorOption["cursorBlinking"] = 20] = "cursorBlinking";
-    EditorOption[EditorOption["cursorSmoothCaretAnimation"] = 21] = "cursorSmoothCaretAnimation";
-    EditorOption[EditorOption["cursorStyle"] = 22] = "cursorStyle";
-    EditorOption[EditorOption["cursorSurroundingLines"] = 23] = "cursorSurroundingLines";
-    EditorOption[EditorOption["cursorSurroundingLinesStyle"] = 24] = "cursorSurroundingLinesStyle";
-    EditorOption[EditorOption["cursorWidth"] = 25] = "cursorWidth";
-    EditorOption[EditorOption["disableLayerHinting"] = 26] = "disableLayerHinting";
-    EditorOption[EditorOption["disableMonospaceOptimizations"] = 27] = "disableMonospaceOptimizations";
-    EditorOption[EditorOption["domReadOnly"] = 28] = "domReadOnly";
-    EditorOption[EditorOption["dragAndDrop"] = 29] = "dragAndDrop";
-    EditorOption[EditorOption["emptySelectionClipboard"] = 30] = "emptySelectionClipboard";
-    EditorOption[EditorOption["extraEditorClassName"] = 31] = "extraEditorClassName";
-    EditorOption[EditorOption["fastScrollSensitivity"] = 32] = "fastScrollSensitivity";
-    EditorOption[EditorOption["find"] = 33] = "find";
-    EditorOption[EditorOption["fixedOverflowWidgets"] = 34] = "fixedOverflowWidgets";
-    EditorOption[EditorOption["folding"] = 35] = "folding";
-    EditorOption[EditorOption["foldingStrategy"] = 36] = "foldingStrategy";
-    EditorOption[EditorOption["foldingHighlight"] = 37] = "foldingHighlight";
-    EditorOption[EditorOption["unfoldOnClickAfterEndOfLine"] = 38] = "unfoldOnClickAfterEndOfLine";
-    EditorOption[EditorOption["fontFamily"] = 39] = "fontFamily";
-    EditorOption[EditorOption["fontInfo"] = 40] = "fontInfo";
-    EditorOption[EditorOption["fontLigatures"] = 41] = "fontLigatures";
-    EditorOption[EditorOption["fontSize"] = 42] = "fontSize";
-    EditorOption[EditorOption["fontWeight"] = 43] = "fontWeight";
-    EditorOption[EditorOption["formatOnPaste"] = 44] = "formatOnPaste";
-    EditorOption[EditorOption["formatOnType"] = 45] = "formatOnType";
-    EditorOption[EditorOption["glyphMargin"] = 46] = "glyphMargin";
-    EditorOption[EditorOption["gotoLocation"] = 47] = "gotoLocation";
-    EditorOption[EditorOption["hideCursorInOverviewRuler"] = 48] = "hideCursorInOverviewRuler";
-    EditorOption[EditorOption["highlightActiveIndentGuide"] = 49] = "highlightActiveIndentGuide";
-    EditorOption[EditorOption["hover"] = 50] = "hover";
-    EditorOption[EditorOption["inDiffEditor"] = 51] = "inDiffEditor";
-    EditorOption[EditorOption["inlineSuggest"] = 52] = "inlineSuggest";
-    EditorOption[EditorOption["letterSpacing"] = 53] = "letterSpacing";
-    EditorOption[EditorOption["lightbulb"] = 54] = "lightbulb";
-    EditorOption[EditorOption["lineDecorationsWidth"] = 55] = "lineDecorationsWidth";
-    EditorOption[EditorOption["lineHeight"] = 56] = "lineHeight";
-    EditorOption[EditorOption["lineNumbers"] = 57] = "lineNumbers";
-    EditorOption[EditorOption["lineNumbersMinChars"] = 58] = "lineNumbersMinChars";
-    EditorOption[EditorOption["linkedEditing"] = 59] = "linkedEditing";
-    EditorOption[EditorOption["links"] = 60] = "links";
-    EditorOption[EditorOption["matchBrackets"] = 61] = "matchBrackets";
-    EditorOption[EditorOption["minimap"] = 62] = "minimap";
-    EditorOption[EditorOption["mouseStyle"] = 63] = "mouseStyle";
-    EditorOption[EditorOption["mouseWheelScrollSensitivity"] = 64] = "mouseWheelScrollSensitivity";
-    EditorOption[EditorOption["mouseWheelZoom"] = 65] = "mouseWheelZoom";
-    EditorOption[EditorOption["multiCursorMergeOverlapping"] = 66] = "multiCursorMergeOverlapping";
-    EditorOption[EditorOption["multiCursorModifier"] = 67] = "multiCursorModifier";
-    EditorOption[EditorOption["multiCursorPaste"] = 68] = "multiCursorPaste";
-    EditorOption[EditorOption["occurrencesHighlight"] = 69] = "occurrencesHighlight";
-    EditorOption[EditorOption["overviewRulerBorder"] = 70] = "overviewRulerBorder";
-    EditorOption[EditorOption["overviewRulerLanes"] = 71] = "overviewRulerLanes";
-    EditorOption[EditorOption["padding"] = 72] = "padding";
-    EditorOption[EditorOption["parameterHints"] = 73] = "parameterHints";
-    EditorOption[EditorOption["peekWidgetDefaultFocus"] = 74] = "peekWidgetDefaultFocus";
-    EditorOption[EditorOption["definitionLinkOpensInPeek"] = 75] = "definitionLinkOpensInPeek";
-    EditorOption[EditorOption["quickSuggestions"] = 76] = "quickSuggestions";
-    EditorOption[EditorOption["quickSuggestionsDelay"] = 77] = "quickSuggestionsDelay";
-    EditorOption[EditorOption["readOnly"] = 78] = "readOnly";
-    EditorOption[EditorOption["renameOnType"] = 79] = "renameOnType";
-    EditorOption[EditorOption["renderControlCharacters"] = 80] = "renderControlCharacters";
-    EditorOption[EditorOption["renderIndentGuides"] = 81] = "renderIndentGuides";
-    EditorOption[EditorOption["renderFinalNewline"] = 82] = "renderFinalNewline";
-    EditorOption[EditorOption["renderLineHighlight"] = 83] = "renderLineHighlight";
-    EditorOption[EditorOption["renderLineHighlightOnlyWhenFocus"] = 84] = "renderLineHighlightOnlyWhenFocus";
-    EditorOption[EditorOption["renderValidationDecorations"] = 85] = "renderValidationDecorations";
-    EditorOption[EditorOption["renderWhitespace"] = 86] = "renderWhitespace";
-    EditorOption[EditorOption["revealHorizontalRightPadding"] = 87] = "revealHorizontalRightPadding";
-    EditorOption[EditorOption["roundedSelection"] = 88] = "roundedSelection";
-    EditorOption[EditorOption["rulers"] = 89] = "rulers";
-    EditorOption[EditorOption["scrollbar"] = 90] = "scrollbar";
-    EditorOption[EditorOption["scrollBeyondLastColumn"] = 91] = "scrollBeyondLastColumn";
-    EditorOption[EditorOption["scrollBeyondLastLine"] = 92] = "scrollBeyondLastLine";
-    EditorOption[EditorOption["scrollPredominantAxis"] = 93] = "scrollPredominantAxis";
-    EditorOption[EditorOption["selectionClipboard"] = 94] = "selectionClipboard";
-    EditorOption[EditorOption["selectionHighlight"] = 95] = "selectionHighlight";
-    EditorOption[EditorOption["selectOnLineNumbers"] = 96] = "selectOnLineNumbers";
-    EditorOption[EditorOption["showFoldingControls"] = 97] = "showFoldingControls";
-    EditorOption[EditorOption["showUnused"] = 98] = "showUnused";
-    EditorOption[EditorOption["snippetSuggestions"] = 99] = "snippetSuggestions";
-    EditorOption[EditorOption["smartSelect"] = 100] = "smartSelect";
-    EditorOption[EditorOption["smoothScrolling"] = 101] = "smoothScrolling";
-    EditorOption[EditorOption["stickyTabStops"] = 102] = "stickyTabStops";
-    EditorOption[EditorOption["stopRenderingLineAfter"] = 103] = "stopRenderingLineAfter";
-    EditorOption[EditorOption["suggest"] = 104] = "suggest";
-    EditorOption[EditorOption["suggestFontSize"] = 105] = "suggestFontSize";
-    EditorOption[EditorOption["suggestLineHeight"] = 106] = "suggestLineHeight";
-    EditorOption[EditorOption["suggestOnTriggerCharacters"] = 107] = "suggestOnTriggerCharacters";
-    EditorOption[EditorOption["suggestSelection"] = 108] = "suggestSelection";
-    EditorOption[EditorOption["tabCompletion"] = 109] = "tabCompletion";
-    EditorOption[EditorOption["tabIndex"] = 110] = "tabIndex";
-    EditorOption[EditorOption["unusualLineTerminators"] = 111] = "unusualLineTerminators";
-    EditorOption[EditorOption["useShadowDOM"] = 112] = "useShadowDOM";
-    EditorOption[EditorOption["useTabStops"] = 113] = "useTabStops";
-    EditorOption[EditorOption["wordSeparators"] = 114] = "wordSeparators";
-    EditorOption[EditorOption["wordWrap"] = 115] = "wordWrap";
-    EditorOption[EditorOption["wordWrapBreakAfterCharacters"] = 116] = "wordWrapBreakAfterCharacters";
-    EditorOption[EditorOption["wordWrapBreakBeforeCharacters"] = 117] = "wordWrapBreakBeforeCharacters";
-    EditorOption[EditorOption["wordWrapColumn"] = 118] = "wordWrapColumn";
-    EditorOption[EditorOption["wordWrapOverride1"] = 119] = "wordWrapOverride1";
-    EditorOption[EditorOption["wordWrapOverride2"] = 120] = "wordWrapOverride2";
-    EditorOption[EditorOption["wrappingIndent"] = 121] = "wrappingIndent";
-    EditorOption[EditorOption["wrappingStrategy"] = 122] = "wrappingStrategy";
-    EditorOption[EditorOption["showDeprecated"] = 123] = "showDeprecated";
-    EditorOption[EditorOption["inlayHints"] = 124] = "inlayHints";
-    EditorOption[EditorOption["editorClassName"] = 125] = "editorClassName";
-    EditorOption[EditorOption["pixelRatio"] = 126] = "pixelRatio";
-    EditorOption[EditorOption["tabFocusMode"] = 127] = "tabFocusMode";
-    EditorOption[EditorOption["layoutInfo"] = 128] = "layoutInfo";
-    EditorOption[EditorOption["wrappingInfo"] = 129] = "wrappingInfo";
+    EditorOption[EditorOption["autoClosingOvertype"] = 6] = "autoClosingOvertype";
+    EditorOption[EditorOption["autoClosingQuotes"] = 7] = "autoClosingQuotes";
+    EditorOption[EditorOption["autoIndent"] = 8] = "autoIndent";
+    EditorOption[EditorOption["automaticLayout"] = 9] = "automaticLayout";
+    EditorOption[EditorOption["autoSurround"] = 10] = "autoSurround";
+    EditorOption[EditorOption["codeLens"] = 11] = "codeLens";
+    EditorOption[EditorOption["colorDecorators"] = 12] = "colorDecorators";
+    EditorOption[EditorOption["columnSelection"] = 13] = "columnSelection";
+    EditorOption[EditorOption["comments"] = 14] = "comments";
+    EditorOption[EditorOption["contextmenu"] = 15] = "contextmenu";
+    EditorOption[EditorOption["copyWithSyntaxHighlighting"] = 16] = "copyWithSyntaxHighlighting";
+    EditorOption[EditorOption["cursorBlinking"] = 17] = "cursorBlinking";
+    EditorOption[EditorOption["cursorSmoothCaretAnimation"] = 18] = "cursorSmoothCaretAnimation";
+    EditorOption[EditorOption["cursorStyle"] = 19] = "cursorStyle";
+    EditorOption[EditorOption["cursorSurroundingLines"] = 20] = "cursorSurroundingLines";
+    EditorOption[EditorOption["cursorSurroundingLinesStyle"] = 21] = "cursorSurroundingLinesStyle";
+    EditorOption[EditorOption["cursorWidth"] = 22] = "cursorWidth";
+    EditorOption[EditorOption["disableLayerHinting"] = 23] = "disableLayerHinting";
+    EditorOption[EditorOption["disableMonospaceOptimizations"] = 24] = "disableMonospaceOptimizations";
+    EditorOption[EditorOption["dragAndDrop"] = 25] = "dragAndDrop";
+    EditorOption[EditorOption["emptySelectionClipboard"] = 26] = "emptySelectionClipboard";
+    EditorOption[EditorOption["extraEditorClassName"] = 27] = "extraEditorClassName";
+    EditorOption[EditorOption["fastScrollSensitivity"] = 28] = "fastScrollSensitivity";
+    EditorOption[EditorOption["find"] = 29] = "find";
+    EditorOption[EditorOption["fixedOverflowWidgets"] = 30] = "fixedOverflowWidgets";
+    EditorOption[EditorOption["folding"] = 31] = "folding";
+    EditorOption[EditorOption["foldingStrategy"] = 32] = "foldingStrategy";
+    EditorOption[EditorOption["foldingHighlight"] = 33] = "foldingHighlight";
+    EditorOption[EditorOption["unfoldOnClickAfterEndOfLine"] = 34] = "unfoldOnClickAfterEndOfLine";
+    EditorOption[EditorOption["fontFamily"] = 35] = "fontFamily";
+    EditorOption[EditorOption["fontInfo"] = 36] = "fontInfo";
+    EditorOption[EditorOption["fontLigatures"] = 37] = "fontLigatures";
+    EditorOption[EditorOption["fontSize"] = 38] = "fontSize";
+    EditorOption[EditorOption["fontWeight"] = 39] = "fontWeight";
+    EditorOption[EditorOption["formatOnPaste"] = 40] = "formatOnPaste";
+    EditorOption[EditorOption["formatOnType"] = 41] = "formatOnType";
+    EditorOption[EditorOption["glyphMargin"] = 42] = "glyphMargin";
+    EditorOption[EditorOption["gotoLocation"] = 43] = "gotoLocation";
+    EditorOption[EditorOption["hideCursorInOverviewRuler"] = 44] = "hideCursorInOverviewRuler";
+    EditorOption[EditorOption["highlightActiveIndentGuide"] = 45] = "highlightActiveIndentGuide";
+    EditorOption[EditorOption["hover"] = 46] = "hover";
+    EditorOption[EditorOption["inDiffEditor"] = 47] = "inDiffEditor";
+    EditorOption[EditorOption["letterSpacing"] = 48] = "letterSpacing";
+    EditorOption[EditorOption["lightbulb"] = 49] = "lightbulb";
+    EditorOption[EditorOption["lineDecorationsWidth"] = 50] = "lineDecorationsWidth";
+    EditorOption[EditorOption["lineHeight"] = 51] = "lineHeight";
+    EditorOption[EditorOption["lineNumbers"] = 52] = "lineNumbers";
+    EditorOption[EditorOption["lineNumbersMinChars"] = 53] = "lineNumbersMinChars";
+    EditorOption[EditorOption["links"] = 54] = "links";
+    EditorOption[EditorOption["matchBrackets"] = 55] = "matchBrackets";
+    EditorOption[EditorOption["minimap"] = 56] = "minimap";
+    EditorOption[EditorOption["mouseStyle"] = 57] = "mouseStyle";
+    EditorOption[EditorOption["mouseWheelScrollSensitivity"] = 58] = "mouseWheelScrollSensitivity";
+    EditorOption[EditorOption["mouseWheelZoom"] = 59] = "mouseWheelZoom";
+    EditorOption[EditorOption["multiCursorMergeOverlapping"] = 60] = "multiCursorMergeOverlapping";
+    EditorOption[EditorOption["multiCursorModifier"] = 61] = "multiCursorModifier";
+    EditorOption[EditorOption["multiCursorPaste"] = 62] = "multiCursorPaste";
+    EditorOption[EditorOption["occurrencesHighlight"] = 63] = "occurrencesHighlight";
+    EditorOption[EditorOption["overviewRulerBorder"] = 64] = "overviewRulerBorder";
+    EditorOption[EditorOption["overviewRulerLanes"] = 65] = "overviewRulerLanes";
+    EditorOption[EditorOption["padding"] = 66] = "padding";
+    EditorOption[EditorOption["parameterHints"] = 67] = "parameterHints";
+    EditorOption[EditorOption["peekWidgetDefaultFocus"] = 68] = "peekWidgetDefaultFocus";
+    EditorOption[EditorOption["definitionLinkOpensInPeek"] = 69] = "definitionLinkOpensInPeek";
+    EditorOption[EditorOption["quickSuggestions"] = 70] = "quickSuggestions";
+    EditorOption[EditorOption["quickSuggestionsDelay"] = 71] = "quickSuggestionsDelay";
+    EditorOption[EditorOption["readOnly"] = 72] = "readOnly";
+    EditorOption[EditorOption["renameOnType"] = 73] = "renameOnType";
+    EditorOption[EditorOption["renderControlCharacters"] = 74] = "renderControlCharacters";
+    EditorOption[EditorOption["renderIndentGuides"] = 75] = "renderIndentGuides";
+    EditorOption[EditorOption["renderFinalNewline"] = 76] = "renderFinalNewline";
+    EditorOption[EditorOption["renderLineHighlight"] = 77] = "renderLineHighlight";
+    EditorOption[EditorOption["renderLineHighlightOnlyWhenFocus"] = 78] = "renderLineHighlightOnlyWhenFocus";
+    EditorOption[EditorOption["renderValidationDecorations"] = 79] = "renderValidationDecorations";
+    EditorOption[EditorOption["renderWhitespace"] = 80] = "renderWhitespace";
+    EditorOption[EditorOption["revealHorizontalRightPadding"] = 81] = "revealHorizontalRightPadding";
+    EditorOption[EditorOption["roundedSelection"] = 82] = "roundedSelection";
+    EditorOption[EditorOption["rulers"] = 83] = "rulers";
+    EditorOption[EditorOption["scrollbar"] = 84] = "scrollbar";
+    EditorOption[EditorOption["scrollBeyondLastColumn"] = 85] = "scrollBeyondLastColumn";
+    EditorOption[EditorOption["scrollBeyondLastLine"] = 86] = "scrollBeyondLastLine";
+    EditorOption[EditorOption["scrollPredominantAxis"] = 87] = "scrollPredominantAxis";
+    EditorOption[EditorOption["selectionClipboard"] = 88] = "selectionClipboard";
+    EditorOption[EditorOption["selectionHighlight"] = 89] = "selectionHighlight";
+    EditorOption[EditorOption["selectOnLineNumbers"] = 90] = "selectOnLineNumbers";
+    EditorOption[EditorOption["showFoldingControls"] = 91] = "showFoldingControls";
+    EditorOption[EditorOption["showUnused"] = 92] = "showUnused";
+    EditorOption[EditorOption["snippetSuggestions"] = 93] = "snippetSuggestions";
+    EditorOption[EditorOption["smoothScrolling"] = 94] = "smoothScrolling";
+    EditorOption[EditorOption["stopRenderingLineAfter"] = 95] = "stopRenderingLineAfter";
+    EditorOption[EditorOption["suggest"] = 96] = "suggest";
+    EditorOption[EditorOption["suggestFontSize"] = 97] = "suggestFontSize";
+    EditorOption[EditorOption["suggestLineHeight"] = 98] = "suggestLineHeight";
+    EditorOption[EditorOption["suggestOnTriggerCharacters"] = 99] = "suggestOnTriggerCharacters";
+    EditorOption[EditorOption["suggestSelection"] = 100] = "suggestSelection";
+    EditorOption[EditorOption["tabCompletion"] = 101] = "tabCompletion";
+    EditorOption[EditorOption["tabIndex"] = 102] = "tabIndex";
+    EditorOption[EditorOption["unusualLineTerminators"] = 103] = "unusualLineTerminators";
+    EditorOption[EditorOption["useTabStops"] = 104] = "useTabStops";
+    EditorOption[EditorOption["wordSeparators"] = 105] = "wordSeparators";
+    EditorOption[EditorOption["wordWrap"] = 106] = "wordWrap";
+    EditorOption[EditorOption["wordWrapBreakAfterCharacters"] = 107] = "wordWrapBreakAfterCharacters";
+    EditorOption[EditorOption["wordWrapBreakBeforeCharacters"] = 108] = "wordWrapBreakBeforeCharacters";
+    EditorOption[EditorOption["wordWrapColumn"] = 109] = "wordWrapColumn";
+    EditorOption[EditorOption["wordWrapMinified"] = 110] = "wordWrapMinified";
+    EditorOption[EditorOption["wrappingIndent"] = 111] = "wrappingIndent";
+    EditorOption[EditorOption["wrappingStrategy"] = 112] = "wrappingStrategy";
+    EditorOption[EditorOption["showDeprecated"] = 113] = "showDeprecated";
+    EditorOption[EditorOption["editorClassName"] = 114] = "editorClassName";
+    EditorOption[EditorOption["pixelRatio"] = 115] = "pixelRatio";
+    EditorOption[EditorOption["tabFocusMode"] = 116] = "tabFocusMode";
+    EditorOption[EditorOption["layoutInfo"] = 117] = "layoutInfo";
+    EditorOption[EditorOption["wrappingInfo"] = 118] = "wrappingInfo";
 })(EditorOption || (EditorOption = {}));
 /**
  * End of line character preference.
@@ -9416,28 +9361,6 @@ var IndentAction;
      */
     IndentAction[IndentAction["Outdent"] = 3] = "Outdent";
 })(IndentAction || (IndentAction = {}));
-var InlayHintKind;
-(function (InlayHintKind) {
-    InlayHintKind[InlayHintKind["Other"] = 0] = "Other";
-    InlayHintKind[InlayHintKind["Type"] = 1] = "Type";
-    InlayHintKind[InlayHintKind["Parameter"] = 2] = "Parameter";
-})(InlayHintKind || (InlayHintKind = {}));
-/**
- * How an {@link InlineCompletionsProvider inline completion provider} was triggered.
- */
-var InlineCompletionTriggerKind;
-(function (InlineCompletionTriggerKind) {
-    /**
-     * Completion was triggered automatically while editing.
-     * It is sufficient to return a single completion item in this case.
-     */
-    InlineCompletionTriggerKind[InlineCompletionTriggerKind["Automatic"] = 0] = "Automatic";
-    /**
-     * Completion was triggered explicitly by a user gesture.
-     * Return multiple completion items to enable cycling through them.
-     */
-    InlineCompletionTriggerKind[InlineCompletionTriggerKind["Explicit"] = 1] = "Explicit";
-})(InlineCompletionTriggerKind || (InlineCompletionTriggerKind = {}));
 /**
  * Virtual Key Codes, the value does not hold any inherent meaning.
  * Inspired somewhat from https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
@@ -9445,7 +9368,6 @@ var InlineCompletionTriggerKind;
  */
 var KeyCode;
 (function (KeyCode) {
-    KeyCode[KeyCode["DependsOnKbLayout"] = -1] = "DependsOnKbLayout";
     /**
      * Placed first to cover the 0 value of the enum.
      */
@@ -9908,10 +9830,10 @@ var WrappingIndent;
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/viewModel/prefixSumComputer.js":
-/*!**************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/viewModel/prefixSumComputer.js ***!
-  \**************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/editor/common/viewModel/prefixSumComputer.js":
+/*!*******************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/editor/common/viewModel/prefixSumComputer.js ***!
+  \*******************************************************************************************************************/
 /*! exports provided: PrefixSumIndexOfResult, PrefixSumComputer */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -9919,7 +9841,7 @@ var WrappingIndent;
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PrefixSumIndexOfResult", function() { return PrefixSumIndexOfResult; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PrefixSumComputer", function() { return PrefixSumComputer; });
-/* harmony import */ var _base_common_uint_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/uint.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/uint.js");
+/* harmony import */ var _base_common_uint_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/common/uint.js */ "../../node_modules/monaco-editor/esm/vs/base/common/uint.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9927,7 +9849,6 @@ __webpack_require__.r(__webpack_exports__);
 
 class PrefixSumIndexOfResult {
     constructor(index, remainder) {
-        this._prefixSumIndexOfResultBrand = undefined;
         this.index = index;
         this.remainder = remainder;
     }
@@ -9972,24 +9893,24 @@ class PrefixSumComputer {
         }
         return true;
     }
-    removeValues(startIndex, count) {
+    removeValues(startIndex, cnt) {
         startIndex = Object(_base_common_uint_js__WEBPACK_IMPORTED_MODULE_0__["toUint32"])(startIndex);
-        count = Object(_base_common_uint_js__WEBPACK_IMPORTED_MODULE_0__["toUint32"])(count);
+        cnt = Object(_base_common_uint_js__WEBPACK_IMPORTED_MODULE_0__["toUint32"])(cnt);
         const oldValues = this.values;
         const oldPrefixSum = this.prefixSum;
         if (startIndex >= oldValues.length) {
             return false;
         }
-        let maxCount = oldValues.length - startIndex;
-        if (count >= maxCount) {
-            count = maxCount;
+        let maxCnt = oldValues.length - startIndex;
+        if (cnt >= maxCnt) {
+            cnt = maxCnt;
         }
-        if (count === 0) {
+        if (cnt === 0) {
             return false;
         }
-        this.values = new Uint32Array(oldValues.length - count);
+        this.values = new Uint32Array(oldValues.length - cnt);
         this.values.set(oldValues.subarray(0, startIndex), 0);
-        this.values.set(oldValues.subarray(startIndex + count), startIndex);
+        this.values.set(oldValues.subarray(startIndex + cnt), startIndex);
         this.prefixSum = new Uint32Array(this.values.length);
         if (startIndex - 1 < this.prefixSumValidIndex[0]) {
             this.prefixSumValidIndex[0] = startIndex - 1;
@@ -9999,20 +9920,20 @@ class PrefixSumComputer {
         }
         return true;
     }
-    getTotalSum() {
+    getTotalValue() {
         if (this.values.length === 0) {
             return 0;
         }
-        return this._getPrefixSum(this.values.length - 1);
+        return this._getAccumulatedValue(this.values.length - 1);
     }
-    getPrefixSum(index) {
+    getAccumulatedValue(index) {
         if (index < 0) {
             return 0;
         }
         index = Object(_base_common_uint_js__WEBPACK_IMPORTED_MODULE_0__["toUint32"])(index);
-        return this._getPrefixSum(index);
+        return this._getAccumulatedValue(index);
     }
-    _getPrefixSum(index) {
+    _getAccumulatedValue(index) {
         if (index <= this.prefixSumValidIndex[0]) {
             return this.prefixSum[index];
         }
@@ -10030,10 +9951,10 @@ class PrefixSumComputer {
         this.prefixSumValidIndex[0] = Math.max(this.prefixSumValidIndex[0], index);
         return this.prefixSum[index];
     }
-    getIndexOf(sum) {
-        sum = Math.floor(sum); //@perf
+    getIndexOf(accumulatedValue) {
+        accumulatedValue = Math.floor(accumulatedValue); //@perf
         // Compute all sums (to get a fully valid prefixSum)
-        this.getTotalSum();
+        this.getTotalValue();
         let low = 0;
         let high = this.values.length - 1;
         let mid = 0;
@@ -10043,35 +9964,35 @@ class PrefixSumComputer {
             mid = low + ((high - low) / 2) | 0;
             midStop = this.prefixSum[mid];
             midStart = midStop - this.values[mid];
-            if (sum < midStart) {
+            if (accumulatedValue < midStart) {
                 high = mid - 1;
             }
-            else if (sum >= midStop) {
+            else if (accumulatedValue >= midStop) {
                 low = mid + 1;
             }
             else {
                 break;
             }
         }
-        return new PrefixSumIndexOfResult(mid, sum - midStart);
+        return new PrefixSumIndexOfResult(mid, accumulatedValue - midStart);
     }
 }
 
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/editor.worker.js":
-/*!*****************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/editor.worker.js ***!
-  \*****************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/editor/editor.worker.js":
+/*!**********************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/editor/editor.worker.js ***!
+  \**********************************************************************************************/
 /*! exports provided: initialize */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "initialize", function() { return initialize; });
-/* harmony import */ var _base_common_worker_simpleWorker_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/common/worker/simpleWorker.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/base/common/worker/simpleWorker.js");
-/* harmony import */ var _common_services_editorSimpleWorker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common/services/editorSimpleWorker.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js");
+/* harmony import */ var _base_common_worker_simpleWorker_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/common/worker/simpleWorker.js */ "../../node_modules/monaco-editor/esm/vs/base/common/worker/simpleWorker.js");
+/* harmony import */ var _common_services_editorSimpleWorker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./common/services/editorSimpleWorker.js */ "../../node_modules/monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10101,10 +10022,10 @@ self.onmessage = (e) => {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/edit.js":
-/*!***************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/edit.js ***!
-  \***************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/edit.js":
+/*!********************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/edit.js ***!
+  \********************************************************************************************************************/
 /*! exports provided: removeProperty, setProperty, applyEdit, isWS */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -10114,8 +10035,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setProperty", function() { return setProperty; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "applyEdit", function() { return applyEdit; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isWS", function() { return isWS; });
-/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./format.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/format.js");
-/* harmony import */ var _parser_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./parser.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/parser.js");
+/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./format.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/format.js");
+/* harmony import */ var _parser_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./parser.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/parser.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10306,10 +10227,10 @@ function isWS(text, offset) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/format.js":
-/*!*****************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/format.js ***!
-  \*****************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/format.js":
+/*!**********************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/format.js ***!
+  \**********************************************************************************************************************/
 /*! exports provided: format, isEOL */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -10317,7 +10238,7 @@ function isWS(text, offset) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "format", function() { return format; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isEOL", function() { return isEOL; });
-/* harmony import */ var _scanner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./scanner.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/scanner.js");
+/* harmony import */ var _scanner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./scanner.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/scanner.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10378,7 +10299,7 @@ function format(documentText, range, options) {
     }
     var editOperations = [];
     function addEdit(text, startOffset, endOffset) {
-        if (!hasError && (!range || (startOffset < rangeEnd && endOffset > rangeStart)) && documentText.substring(startOffset, endOffset) !== text) {
+        if (!hasError && startOffset < rangeEnd && endOffset > rangeStart && documentText.substring(startOffset, endOffset) !== text) {
             editOperations.push({ offset: startOffset, length: endOffset - startOffset, content: text });
         }
     }
@@ -10392,14 +10313,12 @@ function format(documentText, range, options) {
         var firstTokenEnd = scanner.getTokenOffset() + scanner.getTokenLength() + formatTextStart;
         var secondToken = scanNext();
         var replaceContent = '';
-        var needsLineBreak = false;
         while (!lineBreak && (secondToken === 12 /* LineCommentTrivia */ || secondToken === 13 /* BlockCommentTrivia */)) {
             // comments on the same line: keep them on the same line, but ignore them otherwise
             var commentTokenStart = scanner.getTokenOffset() + formatTextStart;
             addEdit(' ', firstTokenEnd, commentTokenStart);
             firstTokenEnd = scanner.getTokenOffset() + scanner.getTokenLength() + formatTextStart;
-            needsLineBreak = secondToken === 12 /* LineCommentTrivia */;
-            replaceContent = needsLineBreak ? newLineAndIndent() : '';
+            replaceContent = secondToken === 12 /* LineCommentTrivia */ ? newLineAndIndent() : '';
             secondToken = scanNext();
         }
         if (secondToken === 2 /* CloseBraceToken */) {
@@ -10429,21 +10348,17 @@ function format(documentText, range, options) {
                     if (lineBreak) {
                         replaceContent = newLineAndIndent();
                     }
-                    else if (!needsLineBreak) {
+                    else {
                         // symbol following comment on the same line: keep on same line, separate with ' '
                         replaceContent = ' ';
                     }
                     break;
                 case 6 /* ColonToken */:
-                    if (!needsLineBreak) {
-                        replaceContent = ' ';
-                    }
+                    replaceContent = ' ';
                     break;
                 case 10 /* StringLiteral */:
                     if (secondToken === 6 /* ColonToken */) {
-                        if (!needsLineBreak) {
-                            replaceContent = '';
-                        }
+                        replaceContent = '';
                         break;
                     }
                 // fall through
@@ -10454,9 +10369,7 @@ function format(documentText, range, options) {
                 case 2 /* CloseBraceToken */:
                 case 4 /* CloseBracketToken */:
                     if (secondToken === 12 /* LineCommentTrivia */ || secondToken === 13 /* BlockCommentTrivia */) {
-                        if (!needsLineBreak) {
-                            replaceContent = ' ';
-                        }
+                        replaceContent = ' ';
                     }
                     else if (secondToken !== 5 /* CommaToken */ && secondToken !== 17 /* EOF */) {
                         hasError = true;
@@ -10469,9 +10382,6 @@ function format(documentText, range, options) {
             if (lineBreak && (secondToken === 12 /* LineCommentTrivia */ || secondToken === 13 /* BlockCommentTrivia */)) {
                 replaceContent = newLineAndIndent();
             }
-        }
-        if (secondToken === 17 /* EOF */) {
-            replaceContent = options.insertFinalNewline ? eol : '';
         }
         var secondTokenStart = scanner.getTokenOffset() + formatTextStart;
         addEdit(replaceContent, firstTokenEnd, secondTokenStart);
@@ -10527,10 +10437,10 @@ function isEOL(text, offset) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/parser.js":
-/*!*****************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/parser.js ***!
-  \*****************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/parser.js":
+/*!**********************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/parser.js ***!
+  \**********************************************************************************************************************/
 /*! exports provided: getLocation, parse, parseTree, findNodeAtLocation, getNodePath, getNodeValue, contains, findNodeAtOffset, visit, stripComments, getNodeType */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -10547,7 +10457,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "visit", function() { return visit; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "stripComments", function() { return stripComments; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getNodeType", function() { return getNodeType; });
-/* harmony import */ var _scanner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./scanner.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/scanner.js");
+/* harmony import */ var _scanner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./scanner.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/scanner.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10992,11 +10902,16 @@ function visit(text, visitor, options) {
     function parseLiteral() {
         switch (_scanner.getToken()) {
             case 11 /* NumericLiteral */:
-                var tokenValue = _scanner.getTokenValue();
-                var value = Number(tokenValue);
-                if (isNaN(value)) {
+                var value = 0;
+                try {
+                    value = JSON.parse(_scanner.getTokenValue());
+                    if (typeof value !== 'number') {
+                        handleError(2 /* InvalidNumberFormat */);
+                        value = 0;
+                    }
+                }
+                catch (e) {
                     handleError(2 /* InvalidNumberFormat */);
-                    value = 0;
                 }
                 onLiteralValue(value);
                 break;
@@ -11173,10 +11088,10 @@ function getNodeType(value) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/scanner.js":
-/*!******************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/scanner.js ***!
-  \******************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/scanner.js":
+/*!***********************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/scanner.js ***!
+  \***********************************************************************************************************************/
 /*! exports provided: createScanner */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -11550,10 +11465,10 @@ function isDigit(ch) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/main.js":
-/*!**********************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/main.js ***!
-  \**********************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/main.js":
+/*!***************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/main.js ***!
+  \***************************************************************************************************************/
 /*! exports provided: createScanner, getLocation, parse, parseTree, findNodeAtLocation, findNodeAtOffset, getNodePath, getNodeValue, visit, stripComments, printParseErrorCode, format, modify, applyEdits */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -11573,10 +11488,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "format", function() { return format; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "modify", function() { return modify; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "applyEdits", function() { return applyEdits; });
-/* harmony import */ var _impl_format_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./impl/format.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/format.js");
-/* harmony import */ var _impl_edit_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./impl/edit.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/edit.js");
-/* harmony import */ var _impl_scanner_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./impl/scanner.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/scanner.js");
-/* harmony import */ var _impl_parser_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./impl/parser.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/parser.js");
+/* harmony import */ var _impl_format_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./impl/format.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/format.js");
+/* harmony import */ var _impl_edit_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./impl/edit.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/edit.js");
+/* harmony import */ var _impl_scanner_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./impl/scanner.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/scanner.js");
+/* harmony import */ var _impl_parser_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./impl/parser.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/impl/parser.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -11697,28 +11612,28 @@ function applyEdits(text, edits) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageService.js":
-/*!****************************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageService.js ***!
-  \****************************************************************************************************************************************/
-/*! exports provided: TextDocument, Range, TextEdit, Color, ColorInformation, ColorPresentation, FoldingRange, FoldingRangeKind, SelectionRange, Diagnostic, DiagnosticSeverity, CompletionItem, CompletionItemKind, CompletionList, Position, InsertTextFormat, MarkupContent, MarkupKind, SymbolInformation, SymbolKind, DocumentSymbol, Location, Hover, MarkedString, ErrorCode, ClientCapabilities, getLanguageService */
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageService.js":
+/*!*********************************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageService.js ***!
+  \*********************************************************************************************************************************************/
+/*! exports provided: TextDocument, Range, TextEdit, Color, ColorInformation, ColorPresentation, FoldingRange, FoldingRangeKind, SelectionRange, Diagnostic, DiagnosticSeverity, CompletionItem, CompletionItemKind, CompletionList, Position, InsertTextFormat, MarkupContent, MarkupKind, SymbolInformation, SymbolKind, DocumentSymbol, Location, Hover, MarkedString, FormattingOptions, ErrorCode, ClientCapabilities, getLanguageService */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getLanguageService", function() { return getLanguageService; });
-/* harmony import */ var _services_jsonCompletion_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./services/jsonCompletion.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonCompletion.js");
-/* harmony import */ var _services_jsonHover_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./services/jsonHover.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonHover.js");
-/* harmony import */ var _services_jsonValidation_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./services/jsonValidation.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonValidation.js");
-/* harmony import */ var _services_jsonDocumentSymbols_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./services/jsonDocumentSymbols.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonDocumentSymbols.js");
-/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./parser/jsonParser.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/parser/jsonParser.js");
-/* harmony import */ var _services_configuration_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./services/configuration.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/configuration.js");
-/* harmony import */ var _services_jsonSchemaService_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./services/jsonSchemaService.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonSchemaService.js");
-/* harmony import */ var _services_jsonFolding_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./services/jsonFolding.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonFolding.js");
-/* harmony import */ var _services_jsonSelectionRanges_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./services/jsonSelectionRanges.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonSelectionRanges.js");
-/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../jsonc-parser/main.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/main.js");
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./jsonLanguageTypes.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
-/* harmony import */ var _services_jsonLinks_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./services/jsonLinks.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonLinks.js");
+/* harmony import */ var _services_jsonCompletion_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./services/jsonCompletion.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonCompletion.js");
+/* harmony import */ var _services_jsonHover_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./services/jsonHover.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonHover.js");
+/* harmony import */ var _services_jsonValidation_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./services/jsonValidation.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonValidation.js");
+/* harmony import */ var _services_jsonDocumentSymbols_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./services/jsonDocumentSymbols.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonDocumentSymbols.js");
+/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./parser/jsonParser.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/parser/jsonParser.js");
+/* harmony import */ var _services_configuration_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./services/configuration.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/configuration.js");
+/* harmony import */ var _services_jsonSchemaService_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./services/jsonSchemaService.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonSchemaService.js");
+/* harmony import */ var _services_jsonFolding_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./services/jsonFolding.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonFolding.js");
+/* harmony import */ var _services_jsonSelectionRanges_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./services/jsonSelectionRanges.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonSelectionRanges.js");
+/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../jsonc-parser/main.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/main.js");
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./jsonLanguageTypes.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
+/* harmony import */ var _services_jsonDefinition_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./services/jsonDefinition.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonDefinition.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextDocument", function() { return _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_10__["TextDocument"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Range", function() { return _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_10__["Range"]; });
@@ -11766,6 +11681,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Hover", function() { return _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_10__["Hover"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MarkedString", function() { return _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_10__["MarkedString"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FormattingOptions", function() { return _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_10__["FormattingOptions"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ErrorCode", function() { return _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_10__["ErrorCode"]; });
 
@@ -11815,13 +11732,13 @@ function getLanguageService(params) {
         doComplete: jsonCompletion.doComplete.bind(jsonCompletion),
         findDocumentSymbols: jsonDocumentSymbols.findDocumentSymbols.bind(jsonDocumentSymbols),
         findDocumentSymbols2: jsonDocumentSymbols.findDocumentSymbols2.bind(jsonDocumentSymbols),
+        findColorSymbols: function (d, s) { return jsonDocumentSymbols.findDocumentColors(d, s).then(function (s) { return s.map(function (s) { return s.range; }); }); },
         findDocumentColors: jsonDocumentSymbols.findDocumentColors.bind(jsonDocumentSymbols),
         getColorPresentations: jsonDocumentSymbols.getColorPresentations.bind(jsonDocumentSymbols),
         doHover: jsonHover.doHover.bind(jsonHover),
         getFoldingRanges: _services_jsonFolding_js__WEBPACK_IMPORTED_MODULE_7__["getFoldingRanges"],
         getSelectionRanges: _services_jsonSelectionRanges_js__WEBPACK_IMPORTED_MODULE_8__["getSelectionRanges"],
-        findDefinition: function () { return Promise.resolve([]); },
-        findLinks: _services_jsonLinks_js__WEBPACK_IMPORTED_MODULE_11__["findLinks"],
+        findDefinition: _services_jsonDefinition_js__WEBPACK_IMPORTED_MODULE_11__["findDefinition"],
         format: function (d, r, o) {
             var range = undefined;
             if (r) {
@@ -11829,7 +11746,7 @@ function getLanguageService(params) {
                 var length = d.offsetAt(r.end) - offset;
                 range = { offset: offset, length: length };
             }
-            var options = { tabSize: o ? o.tabSize : 4, insertSpaces: (o === null || o === void 0 ? void 0 : o.insertSpaces) === true, insertFinalNewline: (o === null || o === void 0 ? void 0 : o.insertFinalNewline) === true, eol: '\n' };
+            var options = { tabSize: o ? o.tabSize : 4, insertSpaces: o ? o.insertSpaces : true, eol: '\n' };
             return Object(_jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_9__["format"])(d.getText(), range, options).map(function (e) {
                 return _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_10__["TextEdit"].replace(_jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_10__["Range"].create(d.positionAt(e.offset), d.positionAt(e.offset + e.length)), e.content);
             });
@@ -11840,18 +11757,18 @@ function getLanguageService(params) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js":
-/*!**************************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js ***!
-  \**************************************************************************************************************************************/
-/*! exports provided: TextDocument, Range, TextEdit, Color, ColorInformation, ColorPresentation, FoldingRange, FoldingRangeKind, SelectionRange, Diagnostic, DiagnosticSeverity, CompletionItem, CompletionItemKind, CompletionList, Position, InsertTextFormat, MarkupContent, MarkupKind, SymbolInformation, SymbolKind, DocumentSymbol, Location, Hover, MarkedString, ErrorCode, ClientCapabilities */
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js":
+/*!*******************************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js ***!
+  \*******************************************************************************************************************************************/
+/*! exports provided: TextDocument, Range, TextEdit, Color, ColorInformation, ColorPresentation, FoldingRange, FoldingRangeKind, SelectionRange, Diagnostic, DiagnosticSeverity, CompletionItem, CompletionItemKind, CompletionList, Position, InsertTextFormat, MarkupContent, MarkupKind, SymbolInformation, SymbolKind, DocumentSymbol, Location, Hover, MarkedString, FormattingOptions, ErrorCode, ClientCapabilities */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ErrorCode", function() { return ErrorCode; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ClientCapabilities", function() { return ClientCapabilities; });
-/* harmony import */ var _vscode_languageserver_types_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../vscode-languageserver-types/main.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-languageserver-types/main.js");
+/* harmony import */ var _vscode_languageserver_types_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../vscode-languageserver-types/main.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-languageserver-types/main.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Range", function() { return _vscode_languageserver_types_main_js__WEBPACK_IMPORTED_MODULE_0__["Range"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextEdit", function() { return _vscode_languageserver_types_main_js__WEBPACK_IMPORTED_MODULE_0__["TextEdit"]; });
@@ -11898,7 +11815,9 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MarkedString", function() { return _vscode_languageserver_types_main_js__WEBPACK_IMPORTED_MODULE_0__["MarkedString"]; });
 
-/* harmony import */ var _vscode_languageserver_textdocument_lib_esm_main_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../vscode-languageserver-textdocument/lib/esm/main.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-languageserver-textdocument/lib/esm/main.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FormattingOptions", function() { return _vscode_languageserver_types_main_js__WEBPACK_IMPORTED_MODULE_0__["FormattingOptions"]; });
+
+/* harmony import */ var _vscode_languageserver_textdocument_lib_esm_main_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../vscode-languageserver-textdocument/lib/esm/main.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-languageserver-textdocument/lib/esm/main.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TextDocument", function() { return _vscode_languageserver_textdocument_lib_esm_main_js__WEBPACK_IMPORTED_MODULE_1__["TextDocument"]; });
 
 /*---------------------------------------------------------------------------------------------
@@ -11915,7 +11834,6 @@ var ErrorCode;
 (function (ErrorCode) {
     ErrorCode[ErrorCode["Undefined"] = 0] = "Undefined";
     ErrorCode[ErrorCode["EnumValueMismatch"] = 1] = "EnumValueMismatch";
-    ErrorCode[ErrorCode["Deprecated"] = 2] = "Deprecated";
     ErrorCode[ErrorCode["UnexpectedEndOfComment"] = 257] = "UnexpectedEndOfComment";
     ErrorCode[ErrorCode["UnexpectedEndOfString"] = 258] = "UnexpectedEndOfString";
     ErrorCode[ErrorCode["UnexpectedEndOfNumber"] = 259] = "UnexpectedEndOfNumber";
@@ -11950,10 +11868,10 @@ var ClientCapabilities;
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/parser/jsonParser.js":
-/*!**************************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/parser/jsonParser.js ***!
-  \**************************************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/parser/jsonParser.js":
+/*!*******************************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/parser/jsonParser.js ***!
+  \*******************************************************************************************************************************************/
 /*! exports provided: ASTNodeImpl, NullASTNodeImpl, BooleanASTNodeImpl, ArrayASTNodeImpl, NumberASTNodeImpl, StringASTNodeImpl, PropertyASTNodeImpl, ObjectASTNodeImpl, asSchema, EnumMatch, ValidationResult, newJSONDocument, getNodeValue, getNodePath, contains, JSONDocument, parse */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -11976,10 +11894,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "contains", function() { return contains; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "JSONDocument", function() { return JSONDocument; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parse", function() { return parse; });
-/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../jsonc-parser/main.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/main.js");
-/* harmony import */ var _utils_objects_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/objects.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/objects.js");
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../jsonLanguageTypes.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
-/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../fillers/vscode-nls.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/fillers/vscode-nls.js");
+/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../jsonc-parser/main.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/main.js");
+/* harmony import */ var _utils_objects_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/objects.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/objects.js");
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../jsonLanguageTypes.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
+/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../fillers/vscode-nls.js */ "../../node_modules/monaco-editor/esm/vs/language/json/fillers/vscode-nls.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -11988,7 +11906,7 @@ var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
@@ -12281,15 +12199,13 @@ var JSONDocument = /** @class */ (function () {
             doVisit_1(this.root);
         }
     };
-    JSONDocument.prototype.validate = function (textDocument, schema, severity) {
-        if (severity === void 0) { severity = _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning; }
+    JSONDocument.prototype.validate = function (textDocument, schema) {
         if (this.root && schema) {
             var validationResult = new ValidationResult();
             validate(this.root, schema, validationResult, NoOpSchemaCollector.instance);
             return validationResult.problems.map(function (p) {
-                var _a;
                 var range = _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["Range"].create(textDocument.positionAt(p.location.offset), textDocument.positionAt(p.location.offset + p.location.length));
-                return _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["Diagnostic"].create(range, p.message, (_a = p.severity) !== null && _a !== void 0 ? _a : severity, p.code);
+                return _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["Diagnostic"].create(range, p.message, p.severity, p.code);
             });
         }
         return undefined;
@@ -12336,6 +12252,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
             if (!schema.type.some(matchesType)) {
                 validationResult.problems.push({
                     location: { offset: node.offset, length: node.length },
+                    severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                     message: schema.errorMessage || localize('typeArrayMismatchWarning', 'Incorrect type. Expected one of {0}.', schema.type.join(', '))
                 });
             }
@@ -12344,6 +12261,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
             if (!matchesType(schema.type)) {
                 validationResult.problems.push({
                     location: { offset: node.offset, length: node.length },
+                    severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                     message: schema.errorMessage || localize('typeMismatchWarning', 'Incorrect type. Expected "{0}".', schema.type)
                 });
             }
@@ -12362,6 +12280,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
             if (!subValidationResult.hasProblems()) {
                 validationResult.problems.push({
                     location: { offset: node.offset, length: node.length },
+                    severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                     message: localize('notSchemaWarning', "Matches a schema that is not allowed.")
                 });
             }
@@ -12411,6 +12330,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
             if (matches.length > 1 && maxOneMatch) {
                 validationResult.problems.push({
                     location: { offset: node.offset, length: 1 },
+                    severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                     message: localize('oneOfWarning', "Matches multiple schemas when only one must validate.")
                 });
             }
@@ -12471,6 +12391,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
             if (!enumValueMatch) {
                 validationResult.problems.push({
                     location: { offset: node.offset, length: node.length },
+                    severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                     code: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["ErrorCode"].EnumValueMismatch,
                     message: schema.errorMessage || localize('enumWarning', 'Value is not accepted. Valid values: {0}.', schema.enum.map(function (v) { return JSON.stringify(v); }).join(', '))
                 });
@@ -12481,6 +12402,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
             if (!Object(_utils_objects_js__WEBPACK_IMPORTED_MODULE_1__["equals"])(val, schema.const)) {
                 validationResult.problems.push({
                     location: { offset: node.offset, length: node.length },
+                    severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                     code: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["ErrorCode"].EnumValueMismatch,
                     message: schema.errorMessage || localize('constWarning', 'Value must be {0}.', JSON.stringify(schema.const))
                 });
@@ -12495,8 +12417,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
             validationResult.problems.push({
                 location: { offset: node.parent.offset, length: node.parent.length },
                 severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
-                message: schema.deprecationMessage,
-                code: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["ErrorCode"].Deprecated
+                message: schema.deprecationMessage
             });
         }
     }
@@ -12533,6 +12454,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
             if (remainder !== 0) {
                 validationResult.problems.push({
                     location: { offset: node.offset, length: node.length },
+                    severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                     message: localize('multipleOfWarning', 'Value is not divisible by {0}.', schema.multipleOf)
                 });
             }
@@ -12556,6 +12478,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
         if (Object(_utils_objects_js__WEBPACK_IMPORTED_MODULE_1__["isNumber"])(exclusiveMinimum) && val <= exclusiveMinimum) {
             validationResult.problems.push({
                 location: { offset: node.offset, length: node.length },
+                severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                 message: localize('exclusiveMinimumWarning', 'Value is below the exclusive minimum of {0}.', exclusiveMinimum)
             });
         }
@@ -12563,6 +12486,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
         if (Object(_utils_objects_js__WEBPACK_IMPORTED_MODULE_1__["isNumber"])(exclusiveMaximum) && val >= exclusiveMaximum) {
             validationResult.problems.push({
                 location: { offset: node.offset, length: node.length },
+                severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                 message: localize('exclusiveMaximumWarning', 'Value is above the exclusive maximum of {0}.', exclusiveMaximum)
             });
         }
@@ -12570,6 +12494,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
         if (Object(_utils_objects_js__WEBPACK_IMPORTED_MODULE_1__["isNumber"])(minimum) && val < minimum) {
             validationResult.problems.push({
                 location: { offset: node.offset, length: node.length },
+                severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                 message: localize('minimumWarning', 'Value is below the minimum of {0}.', minimum)
             });
         }
@@ -12577,6 +12502,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
         if (Object(_utils_objects_js__WEBPACK_IMPORTED_MODULE_1__["isNumber"])(maximum) && val > maximum) {
             validationResult.problems.push({
                 location: { offset: node.offset, length: node.length },
+                severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                 message: localize('maximumWarning', 'Value is above the maximum of {0}.', maximum)
             });
         }
@@ -12585,12 +12511,14 @@ function validate(n, schema, validationResult, matchingSchemas) {
         if (Object(_utils_objects_js__WEBPACK_IMPORTED_MODULE_1__["isNumber"])(schema.minLength) && node.value.length < schema.minLength) {
             validationResult.problems.push({
                 location: { offset: node.offset, length: node.length },
+                severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                 message: localize('minLengthWarning', 'String is shorter than the minimum length of {0}.', schema.minLength)
             });
         }
         if (Object(_utils_objects_js__WEBPACK_IMPORTED_MODULE_1__["isNumber"])(schema.maxLength) && node.value.length > schema.maxLength) {
             validationResult.problems.push({
                 location: { offset: node.offset, length: node.length },
+                severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                 message: localize('maxLengthWarning', 'String is longer than the maximum length of {0}.', schema.maxLength)
             });
         }
@@ -12599,6 +12527,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
             if (!regex.test(node.value)) {
                 validationResult.problems.push({
                     location: { offset: node.offset, length: node.length },
+                    severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                     message: schema.patternErrorMessage || schema.errorMessage || localize('patternWarning', 'String does not match the pattern of "{0}".', schema.pattern)
                 });
             }
@@ -12624,6 +12553,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
                         if (errorMessage) {
                             validationResult.problems.push({
                                 location: { offset: node.offset, length: node.length },
+                                severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                                 message: schema.patternErrorMessage || schema.errorMessage || localize('uriFormatWarning', 'String is not a URI: {0}', errorMessage)
                             });
                         }
@@ -12638,6 +12568,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
                     if (!node.value || !format.pattern.exec(node.value)) {
                         validationResult.problems.push({
                             location: { offset: node.offset, length: node.length },
+                            severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                             message: schema.patternErrorMessage || schema.errorMessage || format.errorMessage
                         });
                     }
@@ -12672,6 +12603,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
                 else if (schema.additionalItems === false) {
                     validationResult.problems.push({
                         location: { offset: node.offset, length: node.length },
+                        severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                         message: localize('additionalItemsWarning', 'Array has too many items according to schema. Expected {0} or fewer.', subSchemas.length)
                     });
                 }
@@ -12698,6 +12630,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
             if (!doesContain) {
                 validationResult.problems.push({
                     location: { offset: node.offset, length: node.length },
+                    severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                     message: schema.errorMessage || localize('requiredItemMissingWarning', 'Array does not contain required item.')
                 });
             }
@@ -12705,12 +12638,14 @@ function validate(n, schema, validationResult, matchingSchemas) {
         if (Object(_utils_objects_js__WEBPACK_IMPORTED_MODULE_1__["isNumber"])(schema.minItems) && node.items.length < schema.minItems) {
             validationResult.problems.push({
                 location: { offset: node.offset, length: node.length },
+                severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                 message: localize('minItemsWarning', 'Array has too few items. Expected {0} or more.', schema.minItems)
             });
         }
         if (Object(_utils_objects_js__WEBPACK_IMPORTED_MODULE_1__["isNumber"])(schema.maxItems) && node.items.length > schema.maxItems) {
             validationResult.problems.push({
                 location: { offset: node.offset, length: node.length },
+                severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                 message: localize('maxItemsWarning', 'Array has too many items. Expected {0} or fewer.', schema.maxItems)
             });
         }
@@ -12722,6 +12657,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
             if (duplicates) {
                 validationResult.problems.push({
                     location: { offset: node.offset, length: node.length },
+                    severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                     message: localize('uniqueItemsWarning', 'Array has duplicate items.')
                 });
             }
@@ -12744,6 +12680,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
                     var location = keyNode ? { offset: keyNode.offset, length: keyNode.length } : { offset: node.offset, length: 1 };
                     validationResult.problems.push({
                         location: location,
+                        severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                         message: localize('MissingRequiredPropWarning', 'Missing property "{0}".', propertyName)
                     });
                 }
@@ -12768,6 +12705,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
                             var propertyNode = child.parent;
                             validationResult.problems.push({
                                 location: { offset: propertyNode.keyNode.offset, length: propertyNode.keyNode.length },
+                                severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                                 message: schema.errorMessage || localize('DisallowedExtraPropWarning', 'Property {0} is not allowed.', propertyName)
                             });
                         }
@@ -12800,6 +12738,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
                                     var propertyNode = child.parent;
                                     validationResult.problems.push({
                                         location: { offset: propertyNode.keyNode.offset, length: propertyNode.keyNode.length },
+                                        severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                                         message: schema.errorMessage || localize('DisallowedExtraPropWarning', 'Property {0} is not allowed.', propertyName)
                                     });
                                 }
@@ -12838,6 +12777,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
                         var propertyNode = child.parent;
                         validationResult.problems.push({
                             location: { offset: propertyNode.keyNode.offset, length: propertyNode.keyNode.length },
+                            severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                             message: schema.errorMessage || localize('DisallowedExtraPropWarning', 'Property {0} is not allowed.', propertyName)
                         });
                     }
@@ -12848,6 +12788,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
             if (node.properties.length > schema.maxProperties) {
                 validationResult.problems.push({
                     location: { offset: node.offset, length: node.length },
+                    severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                     message: localize('MaxPropWarning', 'Object has more properties than limit of {0}.', schema.maxProperties)
                 });
             }
@@ -12856,6 +12797,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
             if (node.properties.length < schema.minProperties) {
                 validationResult.problems.push({
                     location: { offset: node.offset, length: node.length },
+                    severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                     message: localize('MinPropWarning', 'Object has fewer properties than the required number of {0}', schema.minProperties)
                 });
             }
@@ -12872,6 +12814,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
                             if (!seenKeys[requiredProp]) {
                                 validationResult.problems.push({
                                     location: { offset: node.offset, length: node.length },
+                                    severity: _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_2__["DiagnosticSeverity"].Warning,
                                     message: localize('RequiredDependentPropWarning', 'Object is missing property {0} required by property {1}.', requiredProp, key)
                                 });
                             }
@@ -13193,17 +13136,17 @@ function parse(textDocument, config) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/configuration.js":
-/*!*******************************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/configuration.js ***!
-  \*******************************************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/configuration.js":
+/*!************************************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/configuration.js ***!
+  \************************************************************************************************************************************************/
 /*! exports provided: schemaContributions */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "schemaContributions", function() { return schemaContributions; });
-/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../fillers/vscode-nls.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/fillers/vscode-nls.js");
+/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../fillers/vscode-nls.js */ "../../node_modules/monaco-editor/esm/vs/language/json/fillers/vscode-nls.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13738,23 +13681,23 @@ for (var schemaName in schemaContributions.schemas) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonCompletion.js":
-/*!********************************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonCompletion.js ***!
-  \********************************************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonCompletion.js":
+/*!*************************************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonCompletion.js ***!
+  \*************************************************************************************************************************************************/
 /*! exports provided: JSONCompletion */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "JSONCompletion", function() { return JSONCompletion; });
-/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../parser/jsonParser.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/parser/jsonParser.js");
-/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../jsonc-parser/main.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/main.js");
-/* harmony import */ var _utils_json_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/json.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/json.js");
-/* harmony import */ var _utils_strings_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/strings.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/strings.js");
-/* harmony import */ var _utils_objects_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/objects.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/objects.js");
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../jsonLanguageTypes.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
-/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../fillers/vscode-nls.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/fillers/vscode-nls.js");
+/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../parser/jsonParser.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/parser/jsonParser.js");
+/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../jsonc-parser/main.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/main.js");
+/* harmony import */ var _utils_json_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/json.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/json.js");
+/* harmony import */ var _utils_strings_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/strings.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/strings.js");
+/* harmony import */ var _utils_objects_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/objects.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/objects.js");
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../jsonLanguageTypes.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
+/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../fillers/vscode-nls.js */ "../../node_modules/monaco-editor/esm/vs/language/json/fillers/vscode-nls.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13846,13 +13789,8 @@ var JSONCompletion = /** @class */ (function () {
                     proposed[label] = suggestion;
                     result.items.push(suggestion);
                 }
-                else {
-                    if (!existing.documentation) {
-                        existing.documentation = suggestion.documentation;
-                    }
-                    if (!existing.detail) {
-                        existing.detail = suggestion.detail;
-                    }
+                else if (!existing.documentation) {
+                    existing.documentation = suggestion.documentation;
                 }
             },
             setAsIncomplete: function () {
@@ -14693,20 +14631,118 @@ var JSONCompletion = /** @class */ (function () {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonDocumentSymbols.js":
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonDefinition.js":
 /*!*************************************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonDocumentSymbols.js ***!
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonDefinition.js ***!
   \*************************************************************************************************************************************************/
+/*! exports provided: findDefinition */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findDefinition", function() { return findDefinition; });
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../jsonLanguageTypes.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+function findDefinition(document, position, doc) {
+    var offset = document.offsetAt(position);
+    var node = doc.getNodeFromOffset(offset, true);
+    if (!node || !isRef(node)) {
+        return Promise.resolve([]);
+    }
+    var propertyNode = node.parent;
+    var valueNode = propertyNode.valueNode;
+    var path = valueNode.value;
+    var targetNode = findTargetNode(doc, path);
+    if (!targetNode) {
+        return Promise.resolve([]);
+    }
+    var definition = {
+        targetUri: document.uri,
+        originSelectionRange: createRange(document, valueNode),
+        targetRange: createRange(document, targetNode),
+        targetSelectionRange: createRange(document, targetNode)
+    };
+    return Promise.resolve([definition]);
+}
+function createRange(document, node) {
+    return _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_0__["Range"].create(document.positionAt(node.offset), document.positionAt(node.offset + node.length));
+}
+function isRef(node) {
+    return node.type === 'string' &&
+        node.parent &&
+        node.parent.type === 'property' &&
+        node.parent.valueNode === node &&
+        node.parent.keyNode.value === "$ref" ||
+        false;
+}
+function findTargetNode(doc, path) {
+    var tokens = parseJSONPointer(path);
+    if (!tokens) {
+        return null;
+    }
+    return findNode(tokens, doc.root);
+}
+function findNode(pointer, node) {
+    if (!node) {
+        return null;
+    }
+    if (pointer.length === 0) {
+        return node;
+    }
+    var token = pointer.shift();
+    if (node && node.type === 'object') {
+        var propertyNode = node.properties.find(function (propertyNode) { return propertyNode.keyNode.value === token; });
+        if (!propertyNode) {
+            return null;
+        }
+        return findNode(pointer, propertyNode.valueNode);
+    }
+    else if (node && node.type === 'array') {
+        if (token.match(/^(0|[1-9][0-9]*)$/)) {
+            var index = Number.parseInt(token);
+            var arrayItem = node.items[index];
+            if (!arrayItem) {
+                return null;
+            }
+            return findNode(pointer, arrayItem);
+        }
+    }
+    return null;
+}
+function parseJSONPointer(path) {
+    if (path === "#") {
+        return [];
+    }
+    if (path[0] !== '#' || path[1] !== '/') {
+        return null;
+    }
+    return path.substring(2).split(/\//).map(unescape);
+}
+function unescape(str) {
+    return str.replace(/~1/g, '/').replace(/~0/g, '~');
+}
+
+
+/***/ }),
+
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonDocumentSymbols.js":
+/*!******************************************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonDocumentSymbols.js ***!
+  \******************************************************************************************************************************************************/
 /*! exports provided: JSONDocumentSymbols */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "JSONDocumentSymbols", function() { return JSONDocumentSymbols; });
-/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../parser/jsonParser.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/parser/jsonParser.js");
-/* harmony import */ var _utils_strings_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/strings.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/strings.js");
-/* harmony import */ var _utils_colors_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/colors.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/colors.js");
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../jsonLanguageTypes.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
+/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../parser/jsonParser.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/parser/jsonParser.js");
+/* harmony import */ var _utils_strings_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/strings.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/strings.js");
+/* harmony import */ var _utils_colors_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/colors.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/colors.js");
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../jsonLanguageTypes.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -14865,10 +14901,9 @@ var JSONDocumentSymbols = /** @class */ (function () {
                             limit--;
                             var range = getRange(document, property);
                             var selectionRange = getRange(document, property.keyNode);
-                            var children = [];
-                            var symbol = { name: _this.getKeyLabel(property), kind: _this.getSymbolKind(valueNode.type), range: range, selectionRange: selectionRange, children: children, detail: _this.getDetail(valueNode) };
+                            var symbol = { name: _this.getKeyLabel(property), kind: _this.getSymbolKind(valueNode.type), range: range, selectionRange: selectionRange, children: [] };
                             result.push(symbol);
-                            toVisit.push({ result: children, node: valueNode });
+                            toVisit.push({ result: symbol.children, node: valueNode });
                         }
                         else {
                             limitExceeded = true;
@@ -14912,23 +14947,6 @@ var JSONDocumentSymbols = /** @class */ (function () {
             return name;
         }
         return "\"" + name + "\"";
-    };
-    JSONDocumentSymbols.prototype.getDetail = function (node) {
-        if (!node) {
-            return undefined;
-        }
-        if (node.type === 'boolean' || node.type === 'number' || node.type === 'null' || node.type === 'string') {
-            return String(node.value);
-        }
-        else {
-            if (node.type === 'array') {
-                return node.children.length ? undefined : '[]';
-            }
-            else if (node.type === 'object') {
-                return node.children.length ? undefined : '{}';
-            }
-        }
-        return undefined;
     };
     JSONDocumentSymbols.prototype.findDocumentColors = function (document, doc, context) {
         return this.schemaService.getSchemaForResource(document.uri, doc).then(function (schema) {
@@ -14989,18 +15007,18 @@ function getRange(document, node) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonFolding.js":
-/*!*****************************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonFolding.js ***!
-  \*****************************************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonFolding.js":
+/*!**********************************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonFolding.js ***!
+  \**********************************************************************************************************************************************/
 /*! exports provided: getFoldingRanges */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getFoldingRanges", function() { return getFoldingRanges; });
-/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../jsonc-parser/main.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/main.js");
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../jsonLanguageTypes.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
+/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../jsonc-parser/main.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/main.js");
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../jsonLanguageTypes.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -15126,18 +15144,18 @@ function getFoldingRanges(document, context) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonHover.js":
-/*!***************************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonHover.js ***!
-  \***************************************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonHover.js":
+/*!********************************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonHover.js ***!
+  \********************************************************************************************************************************************/
 /*! exports provided: JSONHover */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "JSONHover", function() { return JSONHover; });
-/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../parser/jsonParser.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/parser/jsonParser.js");
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../jsonLanguageTypes.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
+/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../parser/jsonParser.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/parser/jsonParser.js");
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../jsonLanguageTypes.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -15254,98 +15272,10 @@ function toMarkdownCodeBlock(content) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonLinks.js":
-/*!***************************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonLinks.js ***!
-  \***************************************************************************************************************************************/
-/*! exports provided: findLinks */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findLinks", function() { return findLinks; });
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../jsonLanguageTypes.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
-function findLinks(document, doc) {
-    var links = [];
-    doc.visit(function (node) {
-        var _a;
-        if (node.type === "property" && node.keyNode.value === "$ref" && ((_a = node.valueNode) === null || _a === void 0 ? void 0 : _a.type) === 'string') {
-            var path = node.valueNode.value;
-            var targetNode = findTargetNode(doc, path);
-            if (targetNode) {
-                var targetPos = document.positionAt(targetNode.offset);
-                links.push({
-                    target: document.uri + "#" + (targetPos.line + 1) + "," + (targetPos.character + 1),
-                    range: createRange(document, node.valueNode)
-                });
-            }
-        }
-        return true;
-    });
-    return Promise.resolve(links);
-}
-function createRange(document, node) {
-    return _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_0__["Range"].create(document.positionAt(node.offset + 1), document.positionAt(node.offset + node.length - 1));
-}
-function findTargetNode(doc, path) {
-    var tokens = parseJSONPointer(path);
-    if (!tokens) {
-        return null;
-    }
-    return findNode(tokens, doc.root);
-}
-function findNode(pointer, node) {
-    if (!node) {
-        return null;
-    }
-    if (pointer.length === 0) {
-        return node;
-    }
-    var token = pointer.shift();
-    if (node && node.type === 'object') {
-        var propertyNode = node.properties.find(function (propertyNode) { return propertyNode.keyNode.value === token; });
-        if (!propertyNode) {
-            return null;
-        }
-        return findNode(pointer, propertyNode.valueNode);
-    }
-    else if (node && node.type === 'array') {
-        if (token.match(/^(0|[1-9][0-9]*)$/)) {
-            var index = Number.parseInt(token);
-            var arrayItem = node.items[index];
-            if (!arrayItem) {
-                return null;
-            }
-            return findNode(pointer, arrayItem);
-        }
-    }
-    return null;
-}
-function parseJSONPointer(path) {
-    if (path === "#") {
-        return [];
-    }
-    if (path[0] !== '#' || path[1] !== '/') {
-        return null;
-    }
-    return path.substring(2).split(/\//).map(unescape);
-}
-function unescape(str) {
-    return str.replace(/~1/g, '/').replace(/~0/g, '~');
-}
-
-
-/***/ }),
-
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonSchemaService.js":
-/*!***********************************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonSchemaService.js ***!
-  \***********************************************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonSchemaService.js":
+/*!****************************************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonSchemaService.js ***!
+  \****************************************************************************************************************************************************/
 /*! exports provided: UnresolvedSchema, ResolvedSchema, JSONSchemaService */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -15354,11 +15284,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UnresolvedSchema", function() { return UnresolvedSchema; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ResolvedSchema", function() { return ResolvedSchema; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "JSONSchemaService", function() { return JSONSchemaService; });
-/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../jsonc-parser/main.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/main.js");
-/* harmony import */ var _vscode_uri_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../vscode-uri/index.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-uri/index.js");
-/* harmony import */ var _utils_strings_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/strings.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/strings.js");
-/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../parser/jsonParser.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/parser/jsonParser.js");
-/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../fillers/vscode-nls.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/fillers/vscode-nls.js");
+/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../jsonc-parser/main.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/main.js");
+/* harmony import */ var _vscode_uri_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../vscode-uri/index.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-uri/index.js");
+/* harmony import */ var _utils_strings_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/strings.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/strings.js");
+/* harmony import */ var _parser_jsonParser_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../parser/jsonParser.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/parser/jsonParser.js");
+/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../fillers/vscode-nls.js */ "../../node_modules/monaco-editor/esm/vs/language/json/fillers/vscode-nls.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -15806,10 +15736,9 @@ var JSONSchemaService = /** @class */ (function () {
         }
         var seen = Object.create(null);
         var schemas = [];
-        var normalizedResource = normalizeResourceForMatching(resource);
         for (var _i = 0, _a = this.filePatternAssociations; _i < _a.length; _i++) {
             var entry = _a[_i];
-            if (entry.matchesPattern(normalizedResource)) {
+            if (entry.matchesPattern(resource)) {
                 for (var _b = 0, _c = entry.getURIs(); _b < _c.length; _b++) {
                     var schemaId = _c[_b];
                     if (!seen[schemaId]) {
@@ -15862,15 +15791,6 @@ function normalizeId(id) {
         return id;
     }
 }
-function normalizeResourceForMatching(resource) {
-    // remove querues and fragments, normalize drive capitalization
-    try {
-        return _vscode_uri_index_js__WEBPACK_IMPORTED_MODULE_1__["URI"].parse(resource).with({ fragment: null, query: null }).toString();
-    }
-    catch (e) {
-        return resource;
-    }
-}
 function toDisplayString(url) {
     try {
         var uri = _vscode_uri_index_js__WEBPACK_IMPORTED_MODULE_1__["URI"].parse(url);
@@ -15887,18 +15807,18 @@ function toDisplayString(url) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonSelectionRanges.js":
-/*!*************************************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonSelectionRanges.js ***!
-  \*************************************************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonSelectionRanges.js":
+/*!******************************************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonSelectionRanges.js ***!
+  \******************************************************************************************************************************************************/
 /*! exports provided: getSelectionRanges */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSelectionRanges", function() { return getSelectionRanges; });
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../jsonLanguageTypes.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
-/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../jsonc-parser/main.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/jsonc-parser/main.js");
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../jsonLanguageTypes.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
+/* harmony import */ var _jsonc_parser_main_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../jsonc-parser/main.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/jsonc-parser/main.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -15964,20 +15884,20 @@ function getSelectionRanges(document, positions, doc) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonValidation.js":
-/*!********************************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonValidation.js ***!
-  \********************************************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonValidation.js":
+/*!*************************************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonValidation.js ***!
+  \*************************************************************************************************************************************************/
 /*! exports provided: JSONValidation */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "JSONValidation", function() { return JSONValidation; });
-/* harmony import */ var _jsonSchemaService_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./jsonSchemaService.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonSchemaService.js");
-/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../jsonLanguageTypes.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
-/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../fillers/vscode-nls.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/fillers/vscode-nls.js");
-/* harmony import */ var _utils_objects_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/objects.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/objects.js");
+/* harmony import */ var _jsonSchemaService_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./jsonSchemaService.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/services/jsonSchemaService.js");
+/* harmony import */ var _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../jsonLanguageTypes.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageTypes.js");
+/* harmony import */ var _fillers_vscode_nls_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../fillers/vscode-nls.js */ "../../node_modules/monaco-editor/esm/vs/language/json/fillers/vscode-nls.js");
+/* harmony import */ var _utils_objects_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/objects.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/objects.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -15995,7 +15915,7 @@ var JSONValidation = /** @class */ (function () {
     }
     JSONValidation.prototype.configure = function (raw) {
         if (raw) {
-            this.validationEnabled = raw.validate !== false;
+            this.validationEnabled = raw.validate;
             this.commentSeverity = raw.allowComments ? undefined : _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__["DiagnosticSeverity"].Error;
         }
     };
@@ -16017,24 +15937,22 @@ var JSONValidation = /** @class */ (function () {
         var getDiagnostics = function (schema) {
             var trailingCommaSeverity = documentSettings ? toDiagnosticSeverity(documentSettings.trailingCommas) : _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__["DiagnosticSeverity"].Error;
             var commentSeverity = documentSettings ? toDiagnosticSeverity(documentSettings.comments) : _this.commentSeverity;
-            var schemaValidation = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.schemaValidation) ? toDiagnosticSeverity(documentSettings.schemaValidation) : _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__["DiagnosticSeverity"].Warning;
-            var schemaRequest = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.schemaRequest) ? toDiagnosticSeverity(documentSettings.schemaRequest) : _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__["DiagnosticSeverity"].Warning;
             if (schema) {
-                if (schema.errors.length && jsonDocument.root && schemaRequest) {
+                if (schema.errors.length && jsonDocument.root) {
                     var astRoot = jsonDocument.root;
                     var property = astRoot.type === 'object' ? astRoot.properties[0] : undefined;
                     if (property && property.keyNode.value === '$schema') {
                         var node = property.valueNode || property;
                         var range = _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__["Range"].create(textDocument.positionAt(node.offset), textDocument.positionAt(node.offset + node.length));
-                        addProblem(_jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__["Diagnostic"].create(range, schema.errors[0], schemaRequest, _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__["ErrorCode"].SchemaResolveError));
+                        addProblem(_jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__["Diagnostic"].create(range, schema.errors[0], _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__["DiagnosticSeverity"].Warning, _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__["ErrorCode"].SchemaResolveError));
                     }
                     else {
                         var range = _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__["Range"].create(textDocument.positionAt(astRoot.offset), textDocument.positionAt(astRoot.offset + 1));
-                        addProblem(_jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__["Diagnostic"].create(range, schema.errors[0], schemaRequest, _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__["ErrorCode"].SchemaResolveError));
+                        addProblem(_jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__["Diagnostic"].create(range, schema.errors[0], _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__["DiagnosticSeverity"].Warning, _jsonLanguageTypes_js__WEBPACK_IMPORTED_MODULE_1__["ErrorCode"].SchemaResolveError));
                     }
                 }
-                else if (schemaValidation) {
-                    var semanticErrors = jsonDocument.validate(textDocument, schema.schema, schemaValidation);
+                else {
+                    var semanticErrors = jsonDocument.validate(textDocument, schema.schema);
                     if (semanticErrors) {
                         semanticErrors.forEach(addProblem);
                     }
@@ -16128,10 +16046,10 @@ function toDiagnosticSeverity(severityLevel) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/colors.js":
-/*!*********************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/colors.js ***!
-  \*********************************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/colors.js":
+/*!**************************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/colors.js ***!
+  \**************************************************************************************************************************************/
 /*! exports provided: hexDigit, colorFromHex, colorFrom256RGB */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -16213,10 +16131,10 @@ function colorFrom256RGB(red, green, blue, alpha) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/json.js":
-/*!*******************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/json.js ***!
-  \*******************************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/json.js":
+/*!************************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/json.js ***!
+  \************************************************************************************************************************************/
 /*! exports provided: stringifyObject */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -16269,10 +16187,10 @@ function stringifyObject(obj, indent, stringifyLiteral) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/objects.js":
-/*!**********************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/objects.js ***!
-  \**********************************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/objects.js":
+/*!***************************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/objects.js ***!
+  \***************************************************************************************************************************************/
 /*! exports provided: equals, isNumber, isDefined, isBoolean, isString */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -16352,10 +16270,10 @@ function isString(val) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/strings.js":
-/*!**********************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/strings.js ***!
-  \**********************************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/strings.js":
+/*!***************************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/utils/strings.js ***!
+  \***************************************************************************************************************************************/
 /*! exports provided: startsWith, endsWith, convertSimple2RegExpPattern, repeat */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -16413,10 +16331,10 @@ function repeat(value, count) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-languageserver-textdocument/lib/esm/main.js":
-/*!****************************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-languageserver-textdocument/lib/esm/main.js ***!
-  \****************************************************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-languageserver-textdocument/lib/esm/main.js":
+/*!*********************************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-languageserver-textdocument/lib/esm/main.js ***!
+  \*********************************************************************************************************************************************/
 /*! exports provided: TextDocument */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -16696,17 +16614,15 @@ function getWellformedEdit(textEdit) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-languageserver-types/main.js":
-/*!*************************************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-languageserver-types/main.js ***!
-  \*************************************************************************************************************************/
-/*! exports provided: integer, uinteger, Position, Range, Location, LocationLink, Color, ColorInformation, ColorPresentation, FoldingRangeKind, FoldingRange, DiagnosticRelatedInformation, DiagnosticSeverity, DiagnosticTag, CodeDescription, Diagnostic, Command, TextEdit, ChangeAnnotation, ChangeAnnotationIdentifier, AnnotatedTextEdit, TextDocumentEdit, CreateFile, RenameFile, DeleteFile, WorkspaceEdit, WorkspaceChange, TextDocumentIdentifier, VersionedTextDocumentIdentifier, OptionalVersionedTextDocumentIdentifier, TextDocumentItem, MarkupKind, MarkupContent, CompletionItemKind, InsertTextFormat, CompletionItemTag, InsertReplaceEdit, InsertTextMode, CompletionItem, CompletionList, MarkedString, Hover, ParameterInformation, SignatureInformation, DocumentHighlightKind, DocumentHighlight, SymbolKind, SymbolTag, SymbolInformation, DocumentSymbol, CodeActionKind, CodeActionContext, CodeAction, CodeLens, FormattingOptions, DocumentLink, SelectionRange, EOL, TextDocument */
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-languageserver-types/main.js":
+/*!******************************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-languageserver-types/main.js ***!
+  \******************************************************************************************************************************/
+/*! exports provided: Position, Range, Location, LocationLink, Color, ColorInformation, ColorPresentation, FoldingRangeKind, FoldingRange, DiagnosticRelatedInformation, DiagnosticSeverity, DiagnosticTag, Diagnostic, Command, TextEdit, TextDocumentEdit, CreateFile, RenameFile, DeleteFile, WorkspaceEdit, WorkspaceChange, TextDocumentIdentifier, VersionedTextDocumentIdentifier, TextDocumentItem, MarkupKind, MarkupContent, CompletionItemKind, InsertTextFormat, CompletionItemTag, CompletionItem, CompletionList, MarkedString, Hover, ParameterInformation, SignatureInformation, DocumentHighlightKind, DocumentHighlight, SymbolKind, SymbolTag, SymbolInformation, DocumentSymbol, CodeActionKind, CodeActionContext, CodeAction, CodeLens, FormattingOptions, DocumentLink, SelectionRange, EOL, TextDocument */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "integer", function() { return integer; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "uinteger", function() { return uinteger; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Position", function() { return Position; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Range", function() { return Range; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Location", function() { return Location; });
@@ -16719,13 +16635,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DiagnosticRelatedInformation", function() { return DiagnosticRelatedInformation; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DiagnosticSeverity", function() { return DiagnosticSeverity; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DiagnosticTag", function() { return DiagnosticTag; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CodeDescription", function() { return CodeDescription; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Diagnostic", function() { return Diagnostic; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Command", function() { return Command; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TextEdit", function() { return TextEdit; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeAnnotation", function() { return ChangeAnnotation; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeAnnotationIdentifier", function() { return ChangeAnnotationIdentifier; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AnnotatedTextEdit", function() { return AnnotatedTextEdit; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TextDocumentEdit", function() { return TextDocumentEdit; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CreateFile", function() { return CreateFile; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RenameFile", function() { return RenameFile; });
@@ -16734,15 +16646,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WorkspaceChange", function() { return WorkspaceChange; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TextDocumentIdentifier", function() { return TextDocumentIdentifier; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VersionedTextDocumentIdentifier", function() { return VersionedTextDocumentIdentifier; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OptionalVersionedTextDocumentIdentifier", function() { return OptionalVersionedTextDocumentIdentifier; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TextDocumentItem", function() { return TextDocumentItem; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MarkupKind", function() { return MarkupKind; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MarkupContent", function() { return MarkupContent; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CompletionItemKind", function() { return CompletionItemKind; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InsertTextFormat", function() { return InsertTextFormat; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CompletionItemTag", function() { return CompletionItemTag; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InsertReplaceEdit", function() { return InsertReplaceEdit; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InsertTextMode", function() { return InsertTextMode; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CompletionItem", function() { return CompletionItem; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CompletionList", function() { return CompletionList; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MarkedString", function() { return MarkedString; });
@@ -16769,16 +16678,6 @@ __webpack_require__.r(__webpack_exports__);
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-var integer;
-(function (integer) {
-    integer.MIN_VALUE = -2147483648;
-    integer.MAX_VALUE = 2147483647;
-})(integer || (integer = {}));
-var uinteger;
-(function (uinteger) {
-    uinteger.MIN_VALUE = 0;
-    uinteger.MAX_VALUE = 2147483647;
-})(uinteger || (uinteger = {}));
 /**
  * The Position namespace provides helper functions to work with
  * [Position](#Position) literals.
@@ -16791,21 +16690,15 @@ var Position;
      * @param character The position's character.
      */
     function create(line, character) {
-        if (line === Number.MAX_VALUE) {
-            line = uinteger.MAX_VALUE;
-        }
-        if (character === Number.MAX_VALUE) {
-            character = uinteger.MAX_VALUE;
-        }
         return { line: line, character: character };
     }
     Position.create = create;
     /**
-     * Checks whether the given literal conforms to the [Position](#Position) interface.
+     * Checks whether the given liternal conforms to the [Position](#Position) interface.
      */
     function is(value) {
         var candidate = value;
-        return Is.objectLiteral(candidate) && Is.uinteger(candidate.line) && Is.uinteger(candidate.character);
+        return Is.objectLiteral(candidate) && Is.number(candidate.line) && Is.number(candidate.character);
     }
     Position.is = is;
 })(Position || (Position = {}));
@@ -16816,7 +16709,7 @@ var Position;
 var Range;
 (function (Range) {
     function create(one, two, three, four) {
-        if (Is.uinteger(one) && Is.uinteger(two) && Is.uinteger(three) && Is.uinteger(four)) {
+        if (Is.number(one) && Is.number(two) && Is.number(three) && Is.number(four)) {
             return { start: Position.create(one, two), end: Position.create(three, four) };
         }
         else if (Position.is(one) && Position.is(two)) {
@@ -16911,10 +16804,10 @@ var Color;
      */
     function is(value) {
         var candidate = value;
-        return Is.numberRange(candidate.red, 0, 1)
-            && Is.numberRange(candidate.green, 0, 1)
-            && Is.numberRange(candidate.blue, 0, 1)
-            && Is.numberRange(candidate.alpha, 0, 1);
+        return Is.number(candidate.red)
+            && Is.number(candidate.green)
+            && Is.number(candidate.blue)
+            && Is.number(candidate.alpha);
     }
     Color.is = is;
 })(Color || (Color = {}));
@@ -17020,9 +16913,9 @@ var FoldingRange;
      */
     function is(value) {
         var candidate = value;
-        return Is.uinteger(candidate.startLine) && Is.uinteger(candidate.startLine)
-            && (Is.undefined(candidate.startCharacter) || Is.uinteger(candidate.startCharacter))
-            && (Is.undefined(candidate.endCharacter) || Is.uinteger(candidate.endCharacter))
+        return Is.number(candidate.startLine) && Is.number(candidate.startLine)
+            && (Is.undefined(candidate.startCharacter) || Is.number(candidate.startCharacter))
+            && (Is.undefined(candidate.endCharacter) || Is.number(candidate.endCharacter))
             && (Is.undefined(candidate.kind) || Is.string(candidate.kind));
     }
     FoldingRange.is = is;
@@ -17096,19 +16989,6 @@ var DiagnosticTag;
     DiagnosticTag.Deprecated = 2;
 })(DiagnosticTag || (DiagnosticTag = {}));
 /**
- * The CodeDescription namespace provides functions to deal with descriptions for diagnostic codes.
- *
- * @since 3.16.0
- */
-var CodeDescription;
-(function (CodeDescription) {
-    function is(value) {
-        var candidate = value;
-        return candidate !== undefined && candidate !== null && Is.string(candidate.href);
-    }
-    CodeDescription.is = is;
-})(CodeDescription || (CodeDescription = {}));
-/**
  * The Diagnostic namespace provides helper functions to work with
  * [Diagnostic](#Diagnostic) literals.
  */
@@ -17138,14 +17018,12 @@ var Diagnostic;
      * Checks whether the given literal conforms to the [Diagnostic](#Diagnostic) interface.
      */
     function is(value) {
-        var _a;
         var candidate = value;
         return Is.defined(candidate)
             && Range.is(candidate.range)
             && Is.string(candidate.message)
             && (Is.number(candidate.severity) || Is.undefined(candidate.severity))
-            && (Is.integer(candidate.code) || Is.string(candidate.code) || Is.undefined(candidate.code))
-            && (Is.undefined(candidate.codeDescription) || (Is.string((_a = candidate.codeDescription) === null || _a === void 0 ? void 0 : _a.href)))
+            && (Is.number(candidate.code) || Is.string(candidate.code) || Is.undefined(candidate.code))
             && (Is.string(candidate.source) || Is.undefined(candidate.source))
             && (Is.undefined(candidate.relatedInformation) || Is.typedArray(candidate.relatedInformation, DiagnosticRelatedInformation.is));
     }
@@ -17221,75 +17099,6 @@ var TextEdit;
     }
     TextEdit.is = is;
 })(TextEdit || (TextEdit = {}));
-var ChangeAnnotation;
-(function (ChangeAnnotation) {
-    function create(label, needsConfirmation, description) {
-        var result = { label: label };
-        if (needsConfirmation !== undefined) {
-            result.needsConfirmation = needsConfirmation;
-        }
-        if (description !== undefined) {
-            result.description = description;
-        }
-        return result;
-    }
-    ChangeAnnotation.create = create;
-    function is(value) {
-        var candidate = value;
-        return candidate !== undefined && Is.objectLiteral(candidate) && Is.string(candidate.label) &&
-            (Is.boolean(candidate.needsConfirmation) || candidate.needsConfirmation === undefined) &&
-            (Is.string(candidate.description) || candidate.description === undefined);
-    }
-    ChangeAnnotation.is = is;
-})(ChangeAnnotation || (ChangeAnnotation = {}));
-var ChangeAnnotationIdentifier;
-(function (ChangeAnnotationIdentifier) {
-    function is(value) {
-        var candidate = value;
-        return typeof candidate === 'string';
-    }
-    ChangeAnnotationIdentifier.is = is;
-})(ChangeAnnotationIdentifier || (ChangeAnnotationIdentifier = {}));
-var AnnotatedTextEdit;
-(function (AnnotatedTextEdit) {
-    /**
-     * Creates an annotated replace text edit.
-     *
-     * @param range The range of text to be replaced.
-     * @param newText The new text.
-     * @param annotation The annotation.
-     */
-    function replace(range, newText, annotation) {
-        return { range: range, newText: newText, annotationId: annotation };
-    }
-    AnnotatedTextEdit.replace = replace;
-    /**
-     * Creates an annotated insert text edit.
-     *
-     * @param position The position to insert the text at.
-     * @param newText The text to be inserted.
-     * @param annotation The annotation.
-     */
-    function insert(position, newText, annotation) {
-        return { range: { start: position, end: position }, newText: newText, annotationId: annotation };
-    }
-    AnnotatedTextEdit.insert = insert;
-    /**
-     * Creates an annotated delete text edit.
-     *
-     * @param range The range of text to be deleted.
-     * @param annotation The annotation.
-     */
-    function del(range, annotation) {
-        return { range: range, newText: '', annotationId: annotation };
-    }
-    AnnotatedTextEdit.del = del;
-    function is(value) {
-        var candidate = value;
-        return TextEdit.is(candidate) && (ChangeAnnotation.is(candidate.annotationId) || ChangeAnnotationIdentifier.is(candidate.annotationId));
-    }
-    AnnotatedTextEdit.is = is;
-})(AnnotatedTextEdit || (AnnotatedTextEdit = {}));
 /**
  * The TextDocumentEdit namespace provides helper function to create
  * an edit that manipulates a text document.
@@ -17306,78 +17115,72 @@ var TextDocumentEdit;
     function is(value) {
         var candidate = value;
         return Is.defined(candidate)
-            && OptionalVersionedTextDocumentIdentifier.is(candidate.textDocument)
+            && VersionedTextDocumentIdentifier.is(candidate.textDocument)
             && Array.isArray(candidate.edits);
     }
     TextDocumentEdit.is = is;
 })(TextDocumentEdit || (TextDocumentEdit = {}));
 var CreateFile;
 (function (CreateFile) {
-    function create(uri, options, annotation) {
+    function create(uri, options) {
         var result = {
             kind: 'create',
             uri: uri
         };
-        if (options !== undefined && (options.overwrite !== undefined || options.ignoreIfExists !== undefined)) {
+        if (options !== void 0 && (options.overwrite !== void 0 || options.ignoreIfExists !== void 0)) {
             result.options = options;
-        }
-        if (annotation !== undefined) {
-            result.annotationId = annotation;
         }
         return result;
     }
     CreateFile.create = create;
     function is(value) {
         var candidate = value;
-        return candidate && candidate.kind === 'create' && Is.string(candidate.uri) && (candidate.options === undefined ||
-            ((candidate.options.overwrite === undefined || Is.boolean(candidate.options.overwrite)) && (candidate.options.ignoreIfExists === undefined || Is.boolean(candidate.options.ignoreIfExists)))) && (candidate.annotationId === undefined || ChangeAnnotationIdentifier.is(candidate.annotationId));
+        return candidate && candidate.kind === 'create' && Is.string(candidate.uri) &&
+            (candidate.options === void 0 ||
+                ((candidate.options.overwrite === void 0 || Is.boolean(candidate.options.overwrite)) && (candidate.options.ignoreIfExists === void 0 || Is.boolean(candidate.options.ignoreIfExists))));
     }
     CreateFile.is = is;
 })(CreateFile || (CreateFile = {}));
 var RenameFile;
 (function (RenameFile) {
-    function create(oldUri, newUri, options, annotation) {
+    function create(oldUri, newUri, options) {
         var result = {
             kind: 'rename',
             oldUri: oldUri,
             newUri: newUri
         };
-        if (options !== undefined && (options.overwrite !== undefined || options.ignoreIfExists !== undefined)) {
+        if (options !== void 0 && (options.overwrite !== void 0 || options.ignoreIfExists !== void 0)) {
             result.options = options;
-        }
-        if (annotation !== undefined) {
-            result.annotationId = annotation;
         }
         return result;
     }
     RenameFile.create = create;
     function is(value) {
         var candidate = value;
-        return candidate && candidate.kind === 'rename' && Is.string(candidate.oldUri) && Is.string(candidate.newUri) && (candidate.options === undefined ||
-            ((candidate.options.overwrite === undefined || Is.boolean(candidate.options.overwrite)) && (candidate.options.ignoreIfExists === undefined || Is.boolean(candidate.options.ignoreIfExists)))) && (candidate.annotationId === undefined || ChangeAnnotationIdentifier.is(candidate.annotationId));
+        return candidate && candidate.kind === 'rename' && Is.string(candidate.oldUri) && Is.string(candidate.newUri) &&
+            (candidate.options === void 0 ||
+                ((candidate.options.overwrite === void 0 || Is.boolean(candidate.options.overwrite)) && (candidate.options.ignoreIfExists === void 0 || Is.boolean(candidate.options.ignoreIfExists))));
     }
     RenameFile.is = is;
 })(RenameFile || (RenameFile = {}));
 var DeleteFile;
 (function (DeleteFile) {
-    function create(uri, options, annotation) {
+    function create(uri, options) {
         var result = {
             kind: 'delete',
             uri: uri
         };
-        if (options !== undefined && (options.recursive !== undefined || options.ignoreIfNotExists !== undefined)) {
+        if (options !== void 0 && (options.recursive !== void 0 || options.ignoreIfNotExists !== void 0)) {
             result.options = options;
-        }
-        if (annotation !== undefined) {
-            result.annotationId = annotation;
         }
         return result;
     }
     DeleteFile.create = create;
     function is(value) {
         var candidate = value;
-        return candidate && candidate.kind === 'delete' && Is.string(candidate.uri) && (candidate.options === undefined ||
-            ((candidate.options.recursive === undefined || Is.boolean(candidate.options.recursive)) && (candidate.options.ignoreIfNotExists === undefined || Is.boolean(candidate.options.ignoreIfNotExists)))) && (candidate.annotationId === undefined || ChangeAnnotationIdentifier.is(candidate.annotationId));
+        return candidate && candidate.kind === 'delete' && Is.string(candidate.uri) &&
+            (candidate.options === void 0 ||
+                ((candidate.options.recursive === void 0 || Is.boolean(candidate.options.recursive)) && (candidate.options.ignoreIfNotExists === void 0 || Is.boolean(candidate.options.ignoreIfNotExists))));
     }
     DeleteFile.is = is;
 })(DeleteFile || (DeleteFile = {}));
@@ -17386,8 +17189,8 @@ var WorkspaceEdit;
     function is(value) {
         var candidate = value;
         return candidate &&
-            (candidate.changes !== undefined || candidate.documentChanges !== undefined) &&
-            (candidate.documentChanges === undefined || candidate.documentChanges.every(function (change) {
+            (candidate.changes !== void 0 || candidate.documentChanges !== void 0) &&
+            (candidate.documentChanges === void 0 || candidate.documentChanges.every(function (change) {
                 if (Is.string(change.kind)) {
                     return CreateFile.is(change) || RenameFile.is(change) || DeleteFile.is(change);
                 }
@@ -17399,69 +17202,17 @@ var WorkspaceEdit;
     WorkspaceEdit.is = is;
 })(WorkspaceEdit || (WorkspaceEdit = {}));
 var TextEditChangeImpl = /** @class */ (function () {
-    function TextEditChangeImpl(edits, changeAnnotations) {
+    function TextEditChangeImpl(edits) {
         this.edits = edits;
-        this.changeAnnotations = changeAnnotations;
     }
-    TextEditChangeImpl.prototype.insert = function (position, newText, annotation) {
-        var edit;
-        var id;
-        if (annotation === undefined) {
-            edit = TextEdit.insert(position, newText);
-        }
-        else if (ChangeAnnotationIdentifier.is(annotation)) {
-            id = annotation;
-            edit = AnnotatedTextEdit.insert(position, newText, annotation);
-        }
-        else {
-            this.assertChangeAnnotations(this.changeAnnotations);
-            id = this.changeAnnotations.manage(annotation);
-            edit = AnnotatedTextEdit.insert(position, newText, id);
-        }
-        this.edits.push(edit);
-        if (id !== undefined) {
-            return id;
-        }
+    TextEditChangeImpl.prototype.insert = function (position, newText) {
+        this.edits.push(TextEdit.insert(position, newText));
     };
-    TextEditChangeImpl.prototype.replace = function (range, newText, annotation) {
-        var edit;
-        var id;
-        if (annotation === undefined) {
-            edit = TextEdit.replace(range, newText);
-        }
-        else if (ChangeAnnotationIdentifier.is(annotation)) {
-            id = annotation;
-            edit = AnnotatedTextEdit.replace(range, newText, annotation);
-        }
-        else {
-            this.assertChangeAnnotations(this.changeAnnotations);
-            id = this.changeAnnotations.manage(annotation);
-            edit = AnnotatedTextEdit.replace(range, newText, id);
-        }
-        this.edits.push(edit);
-        if (id !== undefined) {
-            return id;
-        }
+    TextEditChangeImpl.prototype.replace = function (range, newText) {
+        this.edits.push(TextEdit.replace(range, newText));
     };
-    TextEditChangeImpl.prototype.delete = function (range, annotation) {
-        var edit;
-        var id;
-        if (annotation === undefined) {
-            edit = TextEdit.del(range);
-        }
-        else if (ChangeAnnotationIdentifier.is(annotation)) {
-            id = annotation;
-            edit = AnnotatedTextEdit.del(range, annotation);
-        }
-        else {
-            this.assertChangeAnnotations(this.changeAnnotations);
-            id = this.changeAnnotations.manage(annotation);
-            edit = AnnotatedTextEdit.del(range, id);
-        }
-        this.edits.push(edit);
-        if (id !== undefined) {
-            return id;
-        }
+    TextEditChangeImpl.prototype.delete = function (range) {
+        this.edits.push(TextEdit.del(range));
     };
     TextEditChangeImpl.prototype.add = function (edit) {
         this.edits.push(edit);
@@ -17472,56 +17223,7 @@ var TextEditChangeImpl = /** @class */ (function () {
     TextEditChangeImpl.prototype.clear = function () {
         this.edits.splice(0, this.edits.length);
     };
-    TextEditChangeImpl.prototype.assertChangeAnnotations = function (value) {
-        if (value === undefined) {
-            throw new Error("Text edit change is not configured to manage change annotations.");
-        }
-    };
     return TextEditChangeImpl;
-}());
-/**
- * A helper class
- */
-var ChangeAnnotations = /** @class */ (function () {
-    function ChangeAnnotations(annotations) {
-        this._annotations = annotations === undefined ? Object.create(null) : annotations;
-        this._counter = 0;
-        this._size = 0;
-    }
-    ChangeAnnotations.prototype.all = function () {
-        return this._annotations;
-    };
-    Object.defineProperty(ChangeAnnotations.prototype, "size", {
-        get: function () {
-            return this._size;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    ChangeAnnotations.prototype.manage = function (idOrAnnotation, annotation) {
-        var id;
-        if (ChangeAnnotationIdentifier.is(idOrAnnotation)) {
-            id = idOrAnnotation;
-        }
-        else {
-            id = this.nextId();
-            annotation = idOrAnnotation;
-        }
-        if (this._annotations[id] !== undefined) {
-            throw new Error("Id " + id + " is already in use.");
-        }
-        if (annotation === undefined) {
-            throw new Error("No annotation provided for id " + id);
-        }
-        this._annotations[id] = annotation;
-        this._size++;
-        return id;
-    };
-    ChangeAnnotations.prototype.nextId = function () {
-        this._counter++;
-        return this._counter.toString();
-    };
-    return ChangeAnnotations;
 }());
 /**
  * A workspace change helps constructing changes to a workspace.
@@ -17530,14 +17232,12 @@ var WorkspaceChange = /** @class */ (function () {
     function WorkspaceChange(workspaceEdit) {
         var _this = this;
         this._textEditChanges = Object.create(null);
-        if (workspaceEdit !== undefined) {
+        if (workspaceEdit) {
             this._workspaceEdit = workspaceEdit;
             if (workspaceEdit.documentChanges) {
-                this._changeAnnotations = new ChangeAnnotations(workspaceEdit.changeAnnotations);
-                workspaceEdit.changeAnnotations = this._changeAnnotations.all();
                 workspaceEdit.documentChanges.forEach(function (change) {
                     if (TextDocumentEdit.is(change)) {
-                        var textEditChange = new TextEditChangeImpl(change.edits, _this._changeAnnotations);
+                        var textEditChange = new TextEditChangeImpl(change.edits);
                         _this._textEditChanges[change.textDocument.uri] = textEditChange;
                     }
                 });
@@ -17549,9 +17249,6 @@ var WorkspaceChange = /** @class */ (function () {
                 });
             }
         }
-        else {
-            this._workspaceEdit = {};
-        }
     }
     Object.defineProperty(WorkspaceChange.prototype, "edit", {
         /**
@@ -17559,27 +17256,22 @@ var WorkspaceChange = /** @class */ (function () {
          * use to be returned from a workspace edit operation like rename.
          */
         get: function () {
-            this.initDocumentChanges();
-            if (this._changeAnnotations !== undefined) {
-                if (this._changeAnnotations.size === 0) {
-                    this._workspaceEdit.changeAnnotations = undefined;
-                }
-                else {
-                    this._workspaceEdit.changeAnnotations = this._changeAnnotations.all();
-                }
-            }
             return this._workspaceEdit;
         },
-        enumerable: false,
+        enumerable: true,
         configurable: true
     });
     WorkspaceChange.prototype.getTextEditChange = function (key) {
-        if (OptionalVersionedTextDocumentIdentifier.is(key)) {
-            this.initDocumentChanges();
-            if (this._workspaceEdit.documentChanges === undefined) {
+        if (VersionedTextDocumentIdentifier.is(key)) {
+            if (!this._workspaceEdit) {
+                this._workspaceEdit = {
+                    documentChanges: []
+                };
+            }
+            if (!this._workspaceEdit.documentChanges) {
                 throw new Error('Workspace edit is not configured for document changes.');
             }
-            var textDocument = { uri: key.uri, version: key.version };
+            var textDocument = key;
             var result = this._textEditChanges[textDocument.uri];
             if (!result) {
                 var edits = [];
@@ -17588,14 +17280,18 @@ var WorkspaceChange = /** @class */ (function () {
                     edits: edits
                 };
                 this._workspaceEdit.documentChanges.push(textDocumentEdit);
-                result = new TextEditChangeImpl(edits, this._changeAnnotations);
+                result = new TextEditChangeImpl(edits);
                 this._textEditChanges[textDocument.uri] = result;
             }
             return result;
         }
         else {
-            this.initChanges();
-            if (this._workspaceEdit.changes === undefined) {
+            if (!this._workspaceEdit) {
+                this._workspaceEdit = {
+                    changes: Object.create(null)
+                };
+            }
+            if (!this._workspaceEdit.changes) {
                 throw new Error('Workspace edit is not configured for normal text edit changes.');
             }
             var result = this._textEditChanges[key];
@@ -17608,94 +17304,21 @@ var WorkspaceChange = /** @class */ (function () {
             return result;
         }
     };
-    WorkspaceChange.prototype.initDocumentChanges = function () {
-        if (this._workspaceEdit.documentChanges === undefined && this._workspaceEdit.changes === undefined) {
-            this._changeAnnotations = new ChangeAnnotations();
-            this._workspaceEdit.documentChanges = [];
-            this._workspaceEdit.changeAnnotations = this._changeAnnotations.all();
-        }
+    WorkspaceChange.prototype.createFile = function (uri, options) {
+        this.checkDocumentChanges();
+        this._workspaceEdit.documentChanges.push(CreateFile.create(uri, options));
     };
-    WorkspaceChange.prototype.initChanges = function () {
-        if (this._workspaceEdit.documentChanges === undefined && this._workspaceEdit.changes === undefined) {
-            this._workspaceEdit.changes = Object.create(null);
-        }
+    WorkspaceChange.prototype.renameFile = function (oldUri, newUri, options) {
+        this.checkDocumentChanges();
+        this._workspaceEdit.documentChanges.push(RenameFile.create(oldUri, newUri, options));
     };
-    WorkspaceChange.prototype.createFile = function (uri, optionsOrAnnotation, options) {
-        this.initDocumentChanges();
-        if (this._workspaceEdit.documentChanges === undefined) {
+    WorkspaceChange.prototype.deleteFile = function (uri, options) {
+        this.checkDocumentChanges();
+        this._workspaceEdit.documentChanges.push(DeleteFile.create(uri, options));
+    };
+    WorkspaceChange.prototype.checkDocumentChanges = function () {
+        if (!this._workspaceEdit || !this._workspaceEdit.documentChanges) {
             throw new Error('Workspace edit is not configured for document changes.');
-        }
-        var annotation;
-        if (ChangeAnnotation.is(optionsOrAnnotation) || ChangeAnnotationIdentifier.is(optionsOrAnnotation)) {
-            annotation = optionsOrAnnotation;
-        }
-        else {
-            options = optionsOrAnnotation;
-        }
-        var operation;
-        var id;
-        if (annotation === undefined) {
-            operation = CreateFile.create(uri, options);
-        }
-        else {
-            id = ChangeAnnotationIdentifier.is(annotation) ? annotation : this._changeAnnotations.manage(annotation);
-            operation = CreateFile.create(uri, options, id);
-        }
-        this._workspaceEdit.documentChanges.push(operation);
-        if (id !== undefined) {
-            return id;
-        }
-    };
-    WorkspaceChange.prototype.renameFile = function (oldUri, newUri, optionsOrAnnotation, options) {
-        this.initDocumentChanges();
-        if (this._workspaceEdit.documentChanges === undefined) {
-            throw new Error('Workspace edit is not configured for document changes.');
-        }
-        var annotation;
-        if (ChangeAnnotation.is(optionsOrAnnotation) || ChangeAnnotationIdentifier.is(optionsOrAnnotation)) {
-            annotation = optionsOrAnnotation;
-        }
-        else {
-            options = optionsOrAnnotation;
-        }
-        var operation;
-        var id;
-        if (annotation === undefined) {
-            operation = RenameFile.create(oldUri, newUri, options);
-        }
-        else {
-            id = ChangeAnnotationIdentifier.is(annotation) ? annotation : this._changeAnnotations.manage(annotation);
-            operation = RenameFile.create(oldUri, newUri, options, id);
-        }
-        this._workspaceEdit.documentChanges.push(operation);
-        if (id !== undefined) {
-            return id;
-        }
-    };
-    WorkspaceChange.prototype.deleteFile = function (uri, optionsOrAnnotation, options) {
-        this.initDocumentChanges();
-        if (this._workspaceEdit.documentChanges === undefined) {
-            throw new Error('Workspace edit is not configured for document changes.');
-        }
-        var annotation;
-        if (ChangeAnnotation.is(optionsOrAnnotation) || ChangeAnnotationIdentifier.is(optionsOrAnnotation)) {
-            annotation = optionsOrAnnotation;
-        }
-        else {
-            options = optionsOrAnnotation;
-        }
-        var operation;
-        var id;
-        if (annotation === undefined) {
-            operation = DeleteFile.create(uri, options);
-        }
-        else {
-            id = ChangeAnnotationIdentifier.is(annotation) ? annotation : this._changeAnnotations.manage(annotation);
-            operation = DeleteFile.create(uri, options, id);
-        }
-        this._workspaceEdit.documentChanges.push(operation);
-        if (id !== undefined) {
-            return id;
         }
     };
     return WorkspaceChange;
@@ -17744,34 +17367,10 @@ var VersionedTextDocumentIdentifier;
      */
     function is(value) {
         var candidate = value;
-        return Is.defined(candidate) && Is.string(candidate.uri) && Is.integer(candidate.version);
+        return Is.defined(candidate) && Is.string(candidate.uri) && (candidate.version === null || Is.number(candidate.version));
     }
     VersionedTextDocumentIdentifier.is = is;
 })(VersionedTextDocumentIdentifier || (VersionedTextDocumentIdentifier = {}));
-/**
- * The OptionalVersionedTextDocumentIdentifier namespace provides helper functions to work with
- * [OptionalVersionedTextDocumentIdentifier](#OptionalVersionedTextDocumentIdentifier) literals.
- */
-var OptionalVersionedTextDocumentIdentifier;
-(function (OptionalVersionedTextDocumentIdentifier) {
-    /**
-     * Creates a new OptionalVersionedTextDocumentIdentifier literal.
-     * @param uri The document's uri.
-     * @param uri The document's text.
-     */
-    function create(uri, version) {
-        return { uri: uri, version: version };
-    }
-    OptionalVersionedTextDocumentIdentifier.create = create;
-    /**
-     * Checks whether the given literal conforms to the [OptionalVersionedTextDocumentIdentifier](#OptionalVersionedTextDocumentIdentifier) interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.defined(candidate) && Is.string(candidate.uri) && (candidate.version === null || Is.integer(candidate.version));
-    }
-    OptionalVersionedTextDocumentIdentifier.is = is;
-})(OptionalVersionedTextDocumentIdentifier || (OptionalVersionedTextDocumentIdentifier = {}));
 /**
  * The TextDocumentItem namespace provides helper functions to work with
  * [TextDocumentItem](#TextDocumentItem) literals.
@@ -17794,7 +17393,7 @@ var TextDocumentItem;
      */
     function is(value) {
         var candidate = value;
-        return Is.defined(candidate) && Is.string(candidate.uri) && Is.string(candidate.languageId) && Is.integer(candidate.version) && Is.string(candidate.text);
+        return Is.defined(candidate) && Is.string(candidate.uri) && Is.string(candidate.languageId) && Is.number(candidate.version) && Is.string(candidate.text);
     }
     TextDocumentItem.is = is;
 })(TextDocumentItem || (TextDocumentItem = {}));
@@ -17886,7 +17485,7 @@ var InsertTextFormat;
      * the end of the snippet. Placeholders with equal identifiers are linked,
      * that is typing in one will update others too.
      *
-     * See also: https://microsoft.github.io/language-server-protocol/specifications/specification-current/#snippet_syntax
+     * See also: https://github.com/Microsoft/vscode/blob/master/src/vs/editor/contrib/snippet/common/snippet.md
      */
     InsertTextFormat.Snippet = 2;
 })(InsertTextFormat || (InsertTextFormat = {}));
@@ -17903,56 +17502,6 @@ var CompletionItemTag;
      */
     CompletionItemTag.Deprecated = 1;
 })(CompletionItemTag || (CompletionItemTag = {}));
-/**
- * The InsertReplaceEdit namespace provides functions to deal with insert / replace edits.
- *
- * @since 3.16.0
- */
-var InsertReplaceEdit;
-(function (InsertReplaceEdit) {
-    /**
-     * Creates a new insert / replace edit
-     */
-    function create(newText, insert, replace) {
-        return { newText: newText, insert: insert, replace: replace };
-    }
-    InsertReplaceEdit.create = create;
-    /**
-     * Checks whether the given literal conforms to the [InsertReplaceEdit](#InsertReplaceEdit) interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return candidate && Is.string(candidate.newText) && Range.is(candidate.insert) && Range.is(candidate.replace);
-    }
-    InsertReplaceEdit.is = is;
-})(InsertReplaceEdit || (InsertReplaceEdit = {}));
-/**
- * How whitespace and indentation is handled during completion
- * item insertion.
- *
- * @since 3.16.0
- */
-var InsertTextMode;
-(function (InsertTextMode) {
-    /**
-     * The insertion or replace strings is taken as it is. If the
-     * value is multi line the lines below the cursor will be
-     * inserted using the indentation defined in the string value.
-     * The client will not apply any kind of adjustments to the
-     * string.
-     */
-    InsertTextMode.asIs = 1;
-    /**
-     * The editor adjusts leading whitespace of new lines so that
-     * they match the indentation up to the cursor of the line for
-     * which the item is accepted.
-     *
-     * Consider a line like this: <2tabs><cursor><3tabs>foo. Accepting a
-     * multi line completion item is indented using 2 tabs and all
-     * following lines inserted will be indented using 2 tabs as well.
-     */
-    InsertTextMode.adjustIndentation = 2;
-})(InsertTextMode || (InsertTextMode = {}));
 /**
  * The CompletionItem namespace provides functions to deal with
  * completion items.
@@ -18014,7 +17563,7 @@ var Hover;
         var candidate = value;
         return !!candidate && Is.objectLiteral(candidate) && (MarkupContent.is(candidate.contents) ||
             MarkedString.is(candidate.contents) ||
-            Is.typedArray(candidate.contents, MarkedString.is)) && (value.range === undefined || Range.is(value.range));
+            Is.typedArray(candidate.contents, MarkedString.is)) && (value.range === void 0 || Range.is(value.range));
     }
     Hover.is = is;
 })(Hover || (Hover = {}));
@@ -18131,7 +17680,7 @@ var SymbolKind;
 })(SymbolKind || (SymbolKind = {}));
 /**
  * Symbol tags are extra annotations that tweak the rendering of a symbol.
- * @since 3.16
+ * @since 3.15
  */
 var SymbolTag;
 (function (SymbolTag) {
@@ -18184,7 +17733,7 @@ var DocumentSymbol;
             range: range,
             selectionRange: selectionRange
         };
-        if (children !== undefined) {
+        if (children !== void 0) {
             result.children = children;
         }
         return result;
@@ -18198,10 +17747,9 @@ var DocumentSymbol;
         return candidate &&
             Is.string(candidate.name) && Is.number(candidate.kind) &&
             Range.is(candidate.range) && Range.is(candidate.selectionRange) &&
-            (candidate.detail === undefined || Is.string(candidate.detail)) &&
-            (candidate.deprecated === undefined || Is.boolean(candidate.deprecated)) &&
-            (candidate.children === undefined || Array.isArray(candidate.children)) &&
-            (candidate.tags === undefined || Array.isArray(candidate.tags));
+            (candidate.detail === void 0 || Is.string(candidate.detail)) &&
+            (candidate.deprecated === void 0 || Is.boolean(candidate.deprecated)) &&
+            (candidate.children === void 0 || Array.isArray(candidate.children));
     }
     DocumentSymbol.is = is;
 })(DocumentSymbol || (DocumentSymbol = {}));
@@ -18289,7 +17837,7 @@ var CodeActionContext;
      */
     function create(diagnostics, only) {
         var result = { diagnostics: diagnostics };
-        if (only !== undefined && only !== null) {
+        if (only !== void 0 && only !== null) {
             result.only = only;
         }
         return result;
@@ -18300,26 +17848,21 @@ var CodeActionContext;
      */
     function is(value) {
         var candidate = value;
-        return Is.defined(candidate) && Is.typedArray(candidate.diagnostics, Diagnostic.is) && (candidate.only === undefined || Is.typedArray(candidate.only, Is.string));
+        return Is.defined(candidate) && Is.typedArray(candidate.diagnostics, Diagnostic.is) && (candidate.only === void 0 || Is.typedArray(candidate.only, Is.string));
     }
     CodeActionContext.is = is;
 })(CodeActionContext || (CodeActionContext = {}));
 var CodeAction;
 (function (CodeAction) {
-    function create(title, kindOrCommandOrEdit, kind) {
+    function create(title, commandOrEdit, kind) {
         var result = { title: title };
-        var checkKind = true;
-        if (typeof kindOrCommandOrEdit === 'string') {
-            checkKind = false;
-            result.kind = kindOrCommandOrEdit;
-        }
-        else if (Command.is(kindOrCommandOrEdit)) {
-            result.command = kindOrCommandOrEdit;
+        if (Command.is(commandOrEdit)) {
+            result.command = commandOrEdit;
         }
         else {
-            result.edit = kindOrCommandOrEdit;
+            result.edit = commandOrEdit;
         }
-        if (checkKind && kind !== undefined) {
+        if (kind !== void 0) {
             result.kind = kind;
         }
         return result;
@@ -18328,12 +17871,12 @@ var CodeAction;
     function is(value) {
         var candidate = value;
         return candidate && Is.string(candidate.title) &&
-            (candidate.diagnostics === undefined || Is.typedArray(candidate.diagnostics, Diagnostic.is)) &&
-            (candidate.kind === undefined || Is.string(candidate.kind)) &&
-            (candidate.edit !== undefined || candidate.command !== undefined) &&
-            (candidate.command === undefined || Command.is(candidate.command)) &&
-            (candidate.isPreferred === undefined || Is.boolean(candidate.isPreferred)) &&
-            (candidate.edit === undefined || WorkspaceEdit.is(candidate.edit));
+            (candidate.diagnostics === void 0 || Is.typedArray(candidate.diagnostics, Diagnostic.is)) &&
+            (candidate.kind === void 0 || Is.string(candidate.kind)) &&
+            (candidate.edit !== void 0 || candidate.command !== void 0) &&
+            (candidate.command === void 0 || Command.is(candidate.command)) &&
+            (candidate.isPreferred === void 0 || Is.boolean(candidate.isPreferred)) &&
+            (candidate.edit === void 0 || WorkspaceEdit.is(candidate.edit));
     }
     CodeAction.is = is;
 })(CodeAction || (CodeAction = {}));
@@ -18381,7 +17924,7 @@ var FormattingOptions;
      */
     function is(value) {
         var candidate = value;
-        return Is.defined(candidate) && Is.uinteger(candidate.tabSize) && Is.boolean(candidate.insertSpaces);
+        return Is.defined(candidate) && Is.number(candidate.tabSize) && Is.boolean(candidate.insertSpaces);
     }
     FormattingOptions.is = is;
 })(FormattingOptions || (FormattingOptions = {}));
@@ -18449,7 +17992,7 @@ var TextDocument;
      */
     function is(value) {
         var candidate = value;
-        return Is.defined(candidate) && Is.string(candidate.uri) && (Is.undefined(candidate.languageId) || Is.string(candidate.languageId)) && Is.uinteger(candidate.lineCount)
+        return Is.defined(candidate) && Is.string(candidate.uri) && (Is.undefined(candidate.languageId) || Is.string(candidate.languageId)) && Is.number(candidate.lineCount)
             && Is.func(candidate.getText) && Is.func(candidate.positionAt) && Is.func(candidate.offsetAt) ? true : false;
     }
     TextDocument.is = is;
@@ -18511,9 +18054,6 @@ var TextDocument;
         return data;
     }
 })(TextDocument || (TextDocument = {}));
-/**
- * @deprecated Use the text document from the new vscode-languageserver-textdocument package.
- */
 var FullTextDocument = /** @class */ (function () {
     function FullTextDocument(uri, languageId, version, content) {
         this._uri = uri;
@@ -18526,21 +18066,21 @@ var FullTextDocument = /** @class */ (function () {
         get: function () {
             return this._uri;
         },
-        enumerable: false,
+        enumerable: true,
         configurable: true
     });
     Object.defineProperty(FullTextDocument.prototype, "languageId", {
         get: function () {
             return this._languageId;
         },
-        enumerable: false,
+        enumerable: true,
         configurable: true
     });
     Object.defineProperty(FullTextDocument.prototype, "version", {
         get: function () {
             return this._version;
         },
-        enumerable: false,
+        enumerable: true,
         configurable: true
     });
     FullTextDocument.prototype.getText = function (range) {
@@ -18616,7 +18156,7 @@ var FullTextDocument = /** @class */ (function () {
         get: function () {
             return this.getLineOffsets().length;
         },
-        enumerable: false,
+        enumerable: true,
         configurable: true
     });
     return FullTextDocument;
@@ -18644,18 +18184,6 @@ var Is;
         return toString.call(value) === '[object Number]';
     }
     Is.number = number;
-    function numberRange(value, min, max) {
-        return toString.call(value) === '[object Number]' && min <= value && value <= max;
-    }
-    Is.numberRange = numberRange;
-    function integer(value) {
-        return toString.call(value) === '[object Number]' && -2147483648 <= value && value <= 2147483647;
-    }
-    Is.integer = integer;
-    function uinteger(value) {
-        return toString.call(value) === '[object Number]' && 0 <= value && value <= 2147483647;
-    }
-    Is.uinteger = uinteger;
     function func(value) {
         return toString.call(value) === '[object Function]';
     }
@@ -18676,26 +18204,668 @@ var Is;
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-uri/index.js":
-/*!*********************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-uri/index.js ***!
-  \*********************************************************************************************************/
-/*! exports provided: URI, Utils */
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-uri/index.js":
+/*!**************************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-uri/index.js ***!
+  \**************************************************************************************************************/
+/*! exports provided: URI, uriToFsPath */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "URI", function() { return URI; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Utils", function() { return Utils; });
-var LIB;LIB=(()=>{"use strict";var t={470:t=>{function e(t){if("string"!=typeof t)throw new TypeError("Path must be a string. Received "+JSON.stringify(t))}function r(t,e){for(var r,n="",o=0,i=-1,a=0,h=0;h<=t.length;++h){if(h<t.length)r=t.charCodeAt(h);else{if(47===r)break;r=47}if(47===r){if(i===h-1||1===a);else if(i!==h-1&&2===a){if(n.length<2||2!==o||46!==n.charCodeAt(n.length-1)||46!==n.charCodeAt(n.length-2))if(n.length>2){var s=n.lastIndexOf("/");if(s!==n.length-1){-1===s?(n="",o=0):o=(n=n.slice(0,s)).length-1-n.lastIndexOf("/"),i=h,a=0;continue}}else if(2===n.length||1===n.length){n="",o=0,i=h,a=0;continue}e&&(n.length>0?n+="/..":n="..",o=2)}else n.length>0?n+="/"+t.slice(i+1,h):n=t.slice(i+1,h),o=h-i-1;i=h,a=0}else 46===r&&-1!==a?++a:a=-1}return n}var n={resolve:function(){for(var t,n="",o=!1,i=arguments.length-1;i>=-1&&!o;i--){var a;i>=0?a=arguments[i]:(void 0===t&&(t=process.cwd()),a=t),e(a),0!==a.length&&(n=a+"/"+n,o=47===a.charCodeAt(0))}return n=r(n,!o),o?n.length>0?"/"+n:"/":n.length>0?n:"."},normalize:function(t){if(e(t),0===t.length)return".";var n=47===t.charCodeAt(0),o=47===t.charCodeAt(t.length-1);return 0!==(t=r(t,!n)).length||n||(t="."),t.length>0&&o&&(t+="/"),n?"/"+t:t},isAbsolute:function(t){return e(t),t.length>0&&47===t.charCodeAt(0)},join:function(){if(0===arguments.length)return".";for(var t,r=0;r<arguments.length;++r){var o=arguments[r];e(o),o.length>0&&(void 0===t?t=o:t+="/"+o)}return void 0===t?".":n.normalize(t)},relative:function(t,r){if(e(t),e(r),t===r)return"";if((t=n.resolve(t))===(r=n.resolve(r)))return"";for(var o=1;o<t.length&&47===t.charCodeAt(o);++o);for(var i=t.length,a=i-o,h=1;h<r.length&&47===r.charCodeAt(h);++h);for(var s=r.length-h,f=a<s?a:s,u=-1,c=0;c<=f;++c){if(c===f){if(s>f){if(47===r.charCodeAt(h+c))return r.slice(h+c+1);if(0===c)return r.slice(h+c)}else a>f&&(47===t.charCodeAt(o+c)?u=c:0===c&&(u=0));break}var l=t.charCodeAt(o+c);if(l!==r.charCodeAt(h+c))break;47===l&&(u=c)}var p="";for(c=o+u+1;c<=i;++c)c!==i&&47!==t.charCodeAt(c)||(0===p.length?p+="..":p+="/..");return p.length>0?p+r.slice(h+u):(h+=u,47===r.charCodeAt(h)&&++h,r.slice(h))},_makeLong:function(t){return t},dirname:function(t){if(e(t),0===t.length)return".";for(var r=t.charCodeAt(0),n=47===r,o=-1,i=!0,a=t.length-1;a>=1;--a)if(47===(r=t.charCodeAt(a))){if(!i){o=a;break}}else i=!1;return-1===o?n?"/":".":n&&1===o?"//":t.slice(0,o)},basename:function(t,r){if(void 0!==r&&"string"!=typeof r)throw new TypeError('"ext" argument must be a string');e(t);var n,o=0,i=-1,a=!0;if(void 0!==r&&r.length>0&&r.length<=t.length){if(r.length===t.length&&r===t)return"";var h=r.length-1,s=-1;for(n=t.length-1;n>=0;--n){var f=t.charCodeAt(n);if(47===f){if(!a){o=n+1;break}}else-1===s&&(a=!1,s=n+1),h>=0&&(f===r.charCodeAt(h)?-1==--h&&(i=n):(h=-1,i=s))}return o===i?i=s:-1===i&&(i=t.length),t.slice(o,i)}for(n=t.length-1;n>=0;--n)if(47===t.charCodeAt(n)){if(!a){o=n+1;break}}else-1===i&&(a=!1,i=n+1);return-1===i?"":t.slice(o,i)},extname:function(t){e(t);for(var r=-1,n=0,o=-1,i=!0,a=0,h=t.length-1;h>=0;--h){var s=t.charCodeAt(h);if(47!==s)-1===o&&(i=!1,o=h+1),46===s?-1===r?r=h:1!==a&&(a=1):-1!==r&&(a=-1);else if(!i){n=h+1;break}}return-1===r||-1===o||0===a||1===a&&r===o-1&&r===n+1?"":t.slice(r,o)},format:function(t){if(null===t||"object"!=typeof t)throw new TypeError('The "pathObject" argument must be of type Object. Received type '+typeof t);return function(t,e){var r=e.dir||e.root,n=e.base||(e.name||"")+(e.ext||"");return r?r===e.root?r+n:r+"/"+n:n}(0,t)},parse:function(t){e(t);var r={root:"",dir:"",base:"",ext:"",name:""};if(0===t.length)return r;var n,o=t.charCodeAt(0),i=47===o;i?(r.root="/",n=1):n=0;for(var a=-1,h=0,s=-1,f=!0,u=t.length-1,c=0;u>=n;--u)if(47!==(o=t.charCodeAt(u)))-1===s&&(f=!1,s=u+1),46===o?-1===a?a=u:1!==c&&(c=1):-1!==a&&(c=-1);else if(!f){h=u+1;break}return-1===a||-1===s||0===c||1===c&&a===s-1&&a===h+1?-1!==s&&(r.base=r.name=0===h&&i?t.slice(1,s):t.slice(h,s)):(0===h&&i?(r.name=t.slice(1,a),r.base=t.slice(1,s)):(r.name=t.slice(h,a),r.base=t.slice(h,s)),r.ext=t.slice(a,s)),h>0?r.dir=t.slice(0,h-1):i&&(r.dir="/"),r},sep:"/",delimiter:":",win32:null,posix:null};n.posix=n,t.exports=n},447:(t,e,r)=>{var n;if(r.r(e),r.d(e,{URI:()=>g,Utils:()=>O}),"object"==typeof process)n="win32"===process.platform;else if("object"==typeof navigator){var o=navigator.userAgent;n=o.indexOf("Windows")>=0}var i,a,h=(i=function(t,e){return(i=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var r in e)Object.prototype.hasOwnProperty.call(e,r)&&(t[r]=e[r])})(t,e)},function(t,e){function r(){this.constructor=t}i(t,e),t.prototype=null===e?Object.create(e):(r.prototype=e.prototype,new r)}),s=/^\w[\w\d+.-]*$/,f=/^\//,u=/^\/\//,c="",l="/",p=/^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/,g=function(){function t(t,e,r,n,o,i){void 0===i&&(i=!1),"object"==typeof t?(this.scheme=t.scheme||c,this.authority=t.authority||c,this.path=t.path||c,this.query=t.query||c,this.fragment=t.fragment||c):(this.scheme=function(t,e){return t||e?t:"file"}(t,i),this.authority=e||c,this.path=function(t,e){switch(t){case"https":case"http":case"file":e?e[0]!==l&&(e=l+e):e=l}return e}(this.scheme,r||c),this.query=n||c,this.fragment=o||c,function(t,e){if(!t.scheme&&e)throw new Error('[UriError]: Scheme is missing: {scheme: "", authority: "'+t.authority+'", path: "'+t.path+'", query: "'+t.query+'", fragment: "'+t.fragment+'"}');if(t.scheme&&!s.test(t.scheme))throw new Error("[UriError]: Scheme contains illegal characters.");if(t.path)if(t.authority){if(!f.test(t.path))throw new Error('[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash ("/") character')}else if(u.test(t.path))throw new Error('[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters ("//")')}(this,i))}return t.isUri=function(e){return e instanceof t||!!e&&"string"==typeof e.authority&&"string"==typeof e.fragment&&"string"==typeof e.path&&"string"==typeof e.query&&"string"==typeof e.scheme&&"function"==typeof e.fsPath&&"function"==typeof e.with&&"function"==typeof e.toString},Object.defineProperty(t.prototype,"fsPath",{get:function(){return C(this,!1)},enumerable:!1,configurable:!0}),t.prototype.with=function(t){if(!t)return this;var e=t.scheme,r=t.authority,n=t.path,o=t.query,i=t.fragment;return void 0===e?e=this.scheme:null===e&&(e=c),void 0===r?r=this.authority:null===r&&(r=c),void 0===n?n=this.path:null===n&&(n=c),void 0===o?o=this.query:null===o&&(o=c),void 0===i?i=this.fragment:null===i&&(i=c),e===this.scheme&&r===this.authority&&n===this.path&&o===this.query&&i===this.fragment?this:new v(e,r,n,o,i)},t.parse=function(t,e){void 0===e&&(e=!1);var r=p.exec(t);return r?new v(r[2]||c,x(r[4]||c),x(r[5]||c),x(r[7]||c),x(r[9]||c),e):new v(c,c,c,c,c)},t.file=function(t){var e=c;if(n&&(t=t.replace(/\\/g,l)),t[0]===l&&t[1]===l){var r=t.indexOf(l,2);-1===r?(e=t.substring(2),t=l):(e=t.substring(2,r),t=t.substring(r)||l)}return new v("file",e,t,c,c)},t.from=function(t){return new v(t.scheme,t.authority,t.path,t.query,t.fragment)},t.prototype.toString=function(t){return void 0===t&&(t=!1),A(this,t)},t.prototype.toJSON=function(){return this},t.revive=function(e){if(e){if(e instanceof t)return e;var r=new v(e);return r._formatted=e.external,r._fsPath=e._sep===d?e.fsPath:null,r}return e},t}(),d=n?1:void 0,v=function(t){function e(){var e=null!==t&&t.apply(this,arguments)||this;return e._formatted=null,e._fsPath=null,e}return h(e,t),Object.defineProperty(e.prototype,"fsPath",{get:function(){return this._fsPath||(this._fsPath=C(this,!1)),this._fsPath},enumerable:!1,configurable:!0}),e.prototype.toString=function(t){return void 0===t&&(t=!1),t?A(this,!0):(this._formatted||(this._formatted=A(this,!1)),this._formatted)},e.prototype.toJSON=function(){var t={$mid:1};return this._fsPath&&(t.fsPath=this._fsPath,t._sep=d),this._formatted&&(t.external=this._formatted),this.path&&(t.path=this.path),this.scheme&&(t.scheme=this.scheme),this.authority&&(t.authority=this.authority),this.query&&(t.query=this.query),this.fragment&&(t.fragment=this.fragment),t},e}(g),m=((a={})[58]="%3A",a[47]="%2F",a[63]="%3F",a[35]="%23",a[91]="%5B",a[93]="%5D",a[64]="%40",a[33]="%21",a[36]="%24",a[38]="%26",a[39]="%27",a[40]="%28",a[41]="%29",a[42]="%2A",a[43]="%2B",a[44]="%2C",a[59]="%3B",a[61]="%3D",a[32]="%20",a);function y(t,e){for(var r=void 0,n=-1,o=0;o<t.length;o++){var i=t.charCodeAt(o);if(i>=97&&i<=122||i>=65&&i<=90||i>=48&&i<=57||45===i||46===i||95===i||126===i||e&&47===i)-1!==n&&(r+=encodeURIComponent(t.substring(n,o)),n=-1),void 0!==r&&(r+=t.charAt(o));else{void 0===r&&(r=t.substr(0,o));var a=m[i];void 0!==a?(-1!==n&&(r+=encodeURIComponent(t.substring(n,o)),n=-1),r+=a):-1===n&&(n=o)}}return-1!==n&&(r+=encodeURIComponent(t.substring(n))),void 0!==r?r:t}function b(t){for(var e=void 0,r=0;r<t.length;r++){var n=t.charCodeAt(r);35===n||63===n?(void 0===e&&(e=t.substr(0,r)),e+=m[n]):void 0!==e&&(e+=t[r])}return void 0!==e?e:t}function C(t,e){var r;return r=t.authority&&t.path.length>1&&"file"===t.scheme?"//"+t.authority+t.path:47===t.path.charCodeAt(0)&&(t.path.charCodeAt(1)>=65&&t.path.charCodeAt(1)<=90||t.path.charCodeAt(1)>=97&&t.path.charCodeAt(1)<=122)&&58===t.path.charCodeAt(2)?e?t.path.substr(1):t.path[1].toLowerCase()+t.path.substr(2):t.path,n&&(r=r.replace(/\//g,"\\")),r}function A(t,e){var r=e?b:y,n="",o=t.scheme,i=t.authority,a=t.path,h=t.query,s=t.fragment;if(o&&(n+=o,n+=":"),(i||"file"===o)&&(n+=l,n+=l),i){var f=i.indexOf("@");if(-1!==f){var u=i.substr(0,f);i=i.substr(f+1),-1===(f=u.indexOf(":"))?n+=r(u,!1):(n+=r(u.substr(0,f),!1),n+=":",n+=r(u.substr(f+1),!1)),n+="@"}-1===(f=(i=i.toLowerCase()).indexOf(":"))?n+=r(i,!1):(n+=r(i.substr(0,f),!1),n+=i.substr(f))}if(a){if(a.length>=3&&47===a.charCodeAt(0)&&58===a.charCodeAt(2))(c=a.charCodeAt(1))>=65&&c<=90&&(a="/"+String.fromCharCode(c+32)+":"+a.substr(3));else if(a.length>=2&&58===a.charCodeAt(1)){var c;(c=a.charCodeAt(0))>=65&&c<=90&&(a=String.fromCharCode(c+32)+":"+a.substr(2))}n+=r(a,!0)}return h&&(n+="?",n+=r(h,!1)),s&&(n+="#",n+=e?s:y(s,!1)),n}function w(t){try{return decodeURIComponent(t)}catch(e){return t.length>3?t.substr(0,3)+w(t.substr(3)):t}}var _=/(%[0-9A-Za-z][0-9A-Za-z])+/g;function x(t){return t.match(_)?t.replace(_,(function(t){return w(t)})):t}var O,P=r(470),j=function(){for(var t=0,e=0,r=arguments.length;e<r;e++)t+=arguments[e].length;var n=Array(t),o=0;for(e=0;e<r;e++)for(var i=arguments[e],a=0,h=i.length;a<h;a++,o++)n[o]=i[a];return n},U=P.posix||P;!function(t){t.joinPath=function(t){for(var e=[],r=1;r<arguments.length;r++)e[r-1]=arguments[r];return t.with({path:U.join.apply(U,j([t.path],e))})},t.resolvePath=function(t){for(var e=[],r=1;r<arguments.length;r++)e[r-1]=arguments[r];var n=t.path||"/";return t.with({path:U.resolve.apply(U,j([n],e))})},t.dirname=function(t){var e=U.dirname(t.path);return 1===e.length&&46===e.charCodeAt(0)?t:t.with({path:e})},t.basename=function(t){return U.basename(t.path)},t.extname=function(t){return U.extname(t.path)}}(O||(O={}))}},e={};function r(n){if(e[n])return e[n].exports;var o=e[n]={exports:{}};return t[n](o,o.exports,r),o.exports}return r.d=(t,e)=>{for(var n in e)r.o(e,n)&&!r.o(t,n)&&Object.defineProperty(t,n,{enumerable:!0,get:e[n]})},r.o=(t,e)=>Object.prototype.hasOwnProperty.call(t,e),r.r=t=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},r(447)})();const{URI,Utils}=LIB;
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "uriToFsPath", function() { return uriToFsPath; });
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+var __extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var _a;
+var isWindows;
+if (typeof process === 'object') {
+    isWindows = process.platform === 'win32';
+}
+else if (typeof navigator === 'object') {
+    var userAgent = navigator.userAgent;
+    isWindows = userAgent.indexOf('Windows') >= 0;
+}
+function isHighSurrogate(charCode) {
+    return (0xD800 <= charCode && charCode <= 0xDBFF);
+}
+function isLowSurrogate(charCode) {
+    return (0xDC00 <= charCode && charCode <= 0xDFFF);
+}
+function isLowerAsciiHex(code) {
+    return code >= 97 /* a */ && code <= 102 /* f */;
+}
+function isLowerAsciiLetter(code) {
+    return code >= 97 /* a */ && code <= 122 /* z */;
+}
+function isUpperAsciiLetter(code) {
+    return code >= 65 /* A */ && code <= 90 /* Z */;
+}
+function isAsciiLetter(code) {
+    return isLowerAsciiLetter(code) || isUpperAsciiLetter(code);
+}
+//#endregion
+var _schemePattern = /^\w[\w\d+.-]*$/;
+var _singleSlashStart = /^\//;
+var _doubleSlashStart = /^\/\//;
+function _validateUri(ret, _strict) {
+    // scheme, must be set
+    if (!ret.scheme && _strict) {
+        throw new Error("[UriError]: Scheme is missing: {scheme: \"\", authority: \"" + ret.authority + "\", path: \"" + ret.path + "\", query: \"" + ret.query + "\", fragment: \"" + ret.fragment + "\"}");
+    }
+    // scheme, https://tools.ietf.org/html/rfc3986#section-3.1
+    // ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+    if (ret.scheme && !_schemePattern.test(ret.scheme)) {
+        throw new Error('[UriError]: Scheme contains illegal characters.');
+    }
+    // path, http://tools.ietf.org/html/rfc3986#section-3.3
+    // If a URI contains an authority component, then the path component
+    // must either be empty or begin with a slash ("/") character.  If a URI
+    // does not contain an authority component, then the path cannot begin
+    // with two slash characters ("//").
+    if (ret.path) {
+        if (ret.authority) {
+            if (!_singleSlashStart.test(ret.path)) {
+                throw new Error('[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash ("/") character');
+            }
+        }
+        else {
+            if (_doubleSlashStart.test(ret.path)) {
+                throw new Error('[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters ("//")');
+            }
+        }
+    }
+}
+// for a while we allowed uris *without* schemes and this is the migration
+// for them, e.g. an uri without scheme and without strict-mode warns and falls
+// back to the file-scheme. that should cause the least carnage and still be a
+// clear warning
+function _schemeFix(scheme, _strict) {
+    if (!scheme && !_strict) {
+        return 'file';
+    }
+    return scheme;
+}
+// implements a bit of https://tools.ietf.org/html/rfc3986#section-5
+function _referenceResolution(scheme, path) {
+    // the slash-character is our 'default base' as we don't
+    // support constructing URIs relative to other URIs. This
+    // also means that we alter and potentially break paths.
+    // see https://tools.ietf.org/html/rfc3986#section-5.1.4
+    switch (scheme) {
+        case 'https':
+        case 'http':
+        case 'file':
+            if (!path) {
+                path = _slash;
+            }
+            else if (path[0] !== _slash) {
+                path = _slash + path;
+            }
+            break;
+    }
+    return path;
+}
+var _empty = '';
+var _slash = '/';
+var _regexp = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
+/**
+ * Uniform Resource Identifier (URI) http://tools.ietf.org/html/rfc3986.
+ * This class is a simple parser which creates the basic component parts
+ * (http://tools.ietf.org/html/rfc3986#section-3) with minimal validation
+ * and encoding.
+ *
+ * ```txt
+ *       foo://example.com:8042/over/there?name=ferret#nose
+ *       \_/   \______________/\_________/ \_________/ \__/
+ *        |           |            |            |        |
+ *     scheme     authority       path        query   fragment
+ *        |   _____________________|__
+ *       / \ /                        \
+ *       urn:example:animal:ferret:nose
+ * ```
+ */
+var URI = /** @class */ (function () {
+    /**
+     * @internal
+     */
+    function URI(schemeOrData, authority, path, query, fragment, _strict) {
+        if (_strict === void 0) { _strict = false; }
+        if (typeof schemeOrData === 'object') {
+            this.scheme = schemeOrData.scheme || _empty;
+            this.authority = schemeOrData.authority || _empty;
+            this.path = schemeOrData.path || _empty;
+            this.query = schemeOrData.query || _empty;
+            this.fragment = schemeOrData.fragment || _empty;
+            // no validation because it's this URI
+            // that creates uri components.
+            // _validateUri(this);
+        }
+        else {
+            this.scheme = _schemeFix(schemeOrData, _strict);
+            this.authority = authority || _empty;
+            this.path = _referenceResolution(this.scheme, path || _empty);
+            this.query = query || _empty;
+            this.fragment = fragment || _empty;
+            _validateUri(this, _strict);
+        }
+    }
+    URI.isUri = function (thing) {
+        if (thing instanceof URI) {
+            return true;
+        }
+        if (!thing) {
+            return false;
+        }
+        return typeof thing.authority === 'string'
+            && typeof thing.fragment === 'string'
+            && typeof thing.path === 'string'
+            && typeof thing.query === 'string'
+            && typeof thing.scheme === 'string'
+            && typeof thing.fsPath === 'function'
+            && typeof thing.with === 'function'
+            && typeof thing.toString === 'function';
+    };
+    Object.defineProperty(URI.prototype, "fsPath", {
+        // ---- filesystem path -----------------------
+        /**
+         * Returns a string representing the corresponding file system path of this URI.
+         * Will handle UNC paths, normalizes windows drive letters to lower-case, and uses the
+         * platform specific path separator.
+         *
+         * * Will *not* validate the path for invalid characters and semantics.
+         * * Will *not* look at the scheme of this URI.
+         * * The result shall *not* be used for display purposes but for accessing a file on disk.
+         *
+         *
+         * The *difference* to `URI#path` is the use of the platform specific separator and the handling
+         * of UNC paths. See the below sample of a file-uri with an authority (UNC path).
+         *
+         * ```ts
+            const u = URI.parse('file://server/c$/folder/file.txt')
+            u.authority === 'server'
+            u.path === '/shares/c$/file.txt'
+            u.fsPath === '\\server\c$\folder\file.txt'
+        ```
+         *
+         * Using `URI#path` to read a file (using fs-apis) would not be enough because parts of the path,
+         * namely the server name, would be missing. Therefore `URI#fsPath` exists - it's sugar to ease working
+         * with URIs that represent files on disk (`file` scheme).
+         */
+        get: function () {
+            // if (this.scheme !== 'file') {
+            // 	console.warn(`[UriError] calling fsPath with scheme ${this.scheme}`);
+            // }
+            return uriToFsPath(this, false);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    // ---- modify to new -------------------------
+    URI.prototype.with = function (change) {
+        if (!change) {
+            return this;
+        }
+        var scheme = change.scheme, authority = change.authority, path = change.path, query = change.query, fragment = change.fragment;
+        if (scheme === undefined) {
+            scheme = this.scheme;
+        }
+        else if (scheme === null) {
+            scheme = _empty;
+        }
+        if (authority === undefined) {
+            authority = this.authority;
+        }
+        else if (authority === null) {
+            authority = _empty;
+        }
+        if (path === undefined) {
+            path = this.path;
+        }
+        else if (path === null) {
+            path = _empty;
+        }
+        if (query === undefined) {
+            query = this.query;
+        }
+        else if (query === null) {
+            query = _empty;
+        }
+        if (fragment === undefined) {
+            fragment = this.fragment;
+        }
+        else if (fragment === null) {
+            fragment = _empty;
+        }
+        if (scheme === this.scheme
+            && authority === this.authority
+            && path === this.path
+            && query === this.query
+            && fragment === this.fragment) {
+            return this;
+        }
+        return new _URI(scheme, authority, path, query, fragment);
+    };
+    // ---- parse & validate ------------------------
+    /**
+     * Creates a new URI from a string, e.g. `http://www.msft.com/some/path`,
+     * `file:///usr/home`, or `scheme:with/path`.
+     *
+     * @param value A string which represents an URI (see `URI#toString`).
+     */
+    URI.parse = function (value, _strict) {
+        if (_strict === void 0) { _strict = false; }
+        var match = _regexp.exec(value);
+        if (!match) {
+            return new _URI(_empty, _empty, _empty, _empty, _empty);
+        }
+        return new _URI(match[2] || _empty, percentDecode(match[4] || _empty), percentDecode(match[5] || _empty), percentDecode(match[7] || _empty), percentDecode(match[9] || _empty), _strict);
+    };
+    /**
+     * Creates a new URI from a file system path, e.g. `c:\my\files`,
+     * `/usr/home`, or `\\server\share\some\path`.
+     *
+     * The *difference* between `URI#parse` and `URI#file` is that the latter treats the argument
+     * as path, not as stringified-uri. E.g. `URI.file(path)` is **not the same as**
+     * `URI.parse('file://' + path)` because the path might contain characters that are
+     * interpreted (# and ?). See the following sample:
+     * ```ts
+    const good = URI.file('/coding/c#/project1');
+    good.scheme === 'file';
+    good.path === '/coding/c#/project1';
+    good.fragment === '';
+    const bad = URI.parse('file://' + '/coding/c#/project1');
+    bad.scheme === 'file';
+    bad.path === '/coding/c'; // path is now broken
+    bad.fragment === '/project1';
+    ```
+     *
+     * @param path A file system path (see `URI#fsPath`)
+     */
+    URI.file = function (path) {
+        var authority = _empty;
+        // normalize to fwd-slashes on windows,
+        // on other systems bwd-slashes are valid
+        // filename character, eg /f\oo/ba\r.txt
+        if (isWindows) {
+            path = path.replace(/\\/g, _slash);
+        }
+        // check for authority as used in UNC shares
+        // or use the path as given
+        if (path[0] === _slash && path[1] === _slash) {
+            var idx = path.indexOf(_slash, 2);
+            if (idx === -1) {
+                authority = path.substring(2);
+                path = _slash;
+            }
+            else {
+                authority = path.substring(2, idx);
+                path = path.substring(idx) || _slash;
+            }
+        }
+        return new _URI('file', authority, path, _empty, _empty);
+    };
+    URI.from = function (components) {
+        return new _URI(components.scheme, components.authority, components.path, components.query, components.fragment);
+    };
+    // /**
+    //  * Join a URI path with path fragments and normalizes the resulting path.
+    //  *
+    //  * @param uri The input URI.
+    //  * @param pathFragment The path fragment to add to the URI path.
+    //  * @returns The resulting URI.
+    //  */
+    // static joinPath(uri: URI, ...pathFragment: string[]): URI {
+    // 	if (!uri.path) {
+    // 		throw new Error(`[UriError]: cannot call joinPaths on URI without path`);
+    // 	}
+    // 	let newPath: string;
+    // 	if (isWindows && uri.scheme === 'file') {
+    // 		newPath = URI.file(paths.win32.join(uriToFsPath(uri, true), ...pathFragment)).path;
+    // 	} else {
+    // 		newPath = paths.posix.join(uri.path, ...pathFragment);
+    // 	}
+    // 	return uri.with({ path: newPath });
+    // }
+    // ---- printing/externalize ---------------------------
+    /**
+     * Creates a string representation for this URI. It's guaranteed that calling
+     * `URI.parse` with the result of this function creates an URI which is equal
+     * to this URI.
+     *
+     * * The result shall *not* be used for display purposes but for externalization or transport.
+     * * The result will be encoded using the percentage encoding and encoding happens mostly
+     * ignore the scheme-specific encoding rules.
+     *
+     * @param skipEncoding Do not encode the result, default is `false`
+     */
+    URI.prototype.toString = function (skipEncoding) {
+        if (skipEncoding === void 0) { skipEncoding = false; }
+        return _asFormatted(this, skipEncoding);
+    };
+    URI.prototype.toJSON = function () {
+        return this;
+    };
+    URI.revive = function (data) {
+        if (!data) {
+            return data;
+        }
+        else if (data instanceof URI) {
+            return data;
+        }
+        else {
+            var result = new _URI(data);
+            result._formatted = data.external;
+            result._fsPath = data._sep === _pathSepMarker ? data.fsPath : null;
+            return result;
+        }
+    };
+    return URI;
+}());
+
+var _pathSepMarker = isWindows ? 1 : undefined;
+// eslint-disable-next-line @typescript-eslint/class-name-casing
+var _URI = /** @class */ (function (_super) {
+    __extends(_URI, _super);
+    function _URI() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this._formatted = null;
+        _this._fsPath = null;
+        return _this;
+    }
+    Object.defineProperty(_URI.prototype, "fsPath", {
+        get: function () {
+            if (!this._fsPath) {
+                this._fsPath = uriToFsPath(this, false);
+            }
+            return this._fsPath;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    _URI.prototype.toString = function (skipEncoding) {
+        if (skipEncoding === void 0) { skipEncoding = false; }
+        if (!skipEncoding) {
+            if (!this._formatted) {
+                this._formatted = _asFormatted(this, false);
+            }
+            return this._formatted;
+        }
+        else {
+            // we don't cache that
+            return _asFormatted(this, true);
+        }
+    };
+    _URI.prototype.toJSON = function () {
+        var res = {
+            $mid: 1
+        };
+        // cached state
+        if (this._fsPath) {
+            res.fsPath = this._fsPath;
+            res._sep = _pathSepMarker;
+        }
+        if (this._formatted) {
+            res.external = this._formatted;
+        }
+        // uri components
+        if (this.path) {
+            res.path = this.path;
+        }
+        if (this.scheme) {
+            res.scheme = this.scheme;
+        }
+        if (this.authority) {
+            res.authority = this.authority;
+        }
+        if (this.query) {
+            res.query = this.query;
+        }
+        if (this.fragment) {
+            res.fragment = this.fragment;
+        }
+        return res;
+    };
+    return _URI;
+}(URI));
+// reserved characters: https://tools.ietf.org/html/rfc3986#section-2.2
+var encodeTable = (_a = {},
+    _a[58 /* Colon */] = '%3A',
+    _a[47 /* Slash */] = '%2F',
+    _a[63 /* QuestionMark */] = '%3F',
+    _a[35 /* Hash */] = '%23',
+    _a[91 /* OpenSquareBracket */] = '%5B',
+    _a[93 /* CloseSquareBracket */] = '%5D',
+    _a[64 /* AtSign */] = '%40',
+    _a[33 /* ExclamationMark */] = '%21',
+    _a[36 /* DollarSign */] = '%24',
+    _a[38 /* Ampersand */] = '%26',
+    _a[39 /* SingleQuote */] = '%27',
+    _a[40 /* OpenParen */] = '%28',
+    _a[41 /* CloseParen */] = '%29',
+    _a[42 /* Asterisk */] = '%2A',
+    _a[43 /* Plus */] = '%2B',
+    _a[44 /* Comma */] = '%2C',
+    _a[59 /* Semicolon */] = '%3B',
+    _a[61 /* Equals */] = '%3D',
+    _a[32 /* Space */] = '%20',
+    _a);
+function encodeURIComponentFast(uriComponent, allowSlash) {
+    var res = undefined;
+    var nativeEncodePos = -1;
+    for (var pos = 0; pos < uriComponent.length; pos++) {
+        var code = uriComponent.charCodeAt(pos);
+        // unreserved characters: https://tools.ietf.org/html/rfc3986#section-2.3
+        if ((code >= 97 /* a */ && code <= 122 /* z */)
+            || (code >= 65 /* A */ && code <= 90 /* Z */)
+            || (code >= 48 /* Digit0 */ && code <= 57 /* Digit9 */)
+            || code === 45 /* Dash */
+            || code === 46 /* Period */
+            || code === 95 /* Underline */
+            || code === 126 /* Tilde */
+            || (allowSlash && code === 47 /* Slash */)) {
+            // check if we are delaying native encode
+            if (nativeEncodePos !== -1) {
+                res += encodeURIComponent(uriComponent.substring(nativeEncodePos, pos));
+                nativeEncodePos = -1;
+            }
+            // check if we write into a new string (by default we try to return the param)
+            if (res !== undefined) {
+                res += uriComponent.charAt(pos);
+            }
+        }
+        else {
+            // encoding needed, we need to allocate a new string
+            if (res === undefined) {
+                res = uriComponent.substr(0, pos);
+            }
+            // check with default table first
+            var escaped = encodeTable[code];
+            if (escaped !== undefined) {
+                // check if we are delaying native encode
+                if (nativeEncodePos !== -1) {
+                    res += encodeURIComponent(uriComponent.substring(nativeEncodePos, pos));
+                    nativeEncodePos = -1;
+                }
+                // append escaped variant to result
+                res += escaped;
+            }
+            else if (nativeEncodePos === -1) {
+                // use native encode only when needed
+                nativeEncodePos = pos;
+            }
+        }
+    }
+    if (nativeEncodePos !== -1) {
+        res += encodeURIComponent(uriComponent.substring(nativeEncodePos));
+    }
+    return res !== undefined ? res : uriComponent;
+}
+function encodeURIComponentMinimal(path) {
+    var res = undefined;
+    for (var pos = 0; pos < path.length; pos++) {
+        var code = path.charCodeAt(pos);
+        if (code === 35 /* Hash */ || code === 63 /* QuestionMark */) {
+            if (res === undefined) {
+                res = path.substr(0, pos);
+            }
+            res += encodeTable[code];
+        }
+        else {
+            if (res !== undefined) {
+                res += path[pos];
+            }
+        }
+    }
+    return res !== undefined ? res : path;
+}
+/**
+ * Compute `fsPath` for the given uri
+ */
+function uriToFsPath(uri, keepDriveLetterCasing) {
+    var value;
+    if (uri.authority && uri.path.length > 1 && uri.scheme === 'file') {
+        // unc path: file://shares/c$/far/boo
+        value = "//" + uri.authority + uri.path;
+    }
+    else if (uri.path.charCodeAt(0) === 47 /* Slash */
+        && (uri.path.charCodeAt(1) >= 65 /* A */ && uri.path.charCodeAt(1) <= 90 /* Z */ || uri.path.charCodeAt(1) >= 97 /* a */ && uri.path.charCodeAt(1) <= 122 /* z */)
+        && uri.path.charCodeAt(2) === 58 /* Colon */) {
+        if (!keepDriveLetterCasing) {
+            // windows drive letter: file:///c:/far/boo
+            value = uri.path[1].toLowerCase() + uri.path.substr(2);
+        }
+        else {
+            value = uri.path.substr(1);
+        }
+    }
+    else {
+        // other path
+        value = uri.path;
+    }
+    if (isWindows) {
+        value = value.replace(/\//g, '\\');
+    }
+    return value;
+}
+/**
+ * Create the external version of a uri
+ */
+function _asFormatted(uri, skipEncoding) {
+    var encoder = !skipEncoding
+        ? encodeURIComponentFast
+        : encodeURIComponentMinimal;
+    var res = '';
+    var scheme = uri.scheme, authority = uri.authority, path = uri.path, query = uri.query, fragment = uri.fragment;
+    if (scheme) {
+        res += scheme;
+        res += ':';
+    }
+    if (authority || scheme === 'file') {
+        res += _slash;
+        res += _slash;
+    }
+    if (authority) {
+        var idx = authority.indexOf('@');
+        if (idx !== -1) {
+            // <user>@<auth>
+            var userinfo = authority.substr(0, idx);
+            authority = authority.substr(idx + 1);
+            idx = userinfo.indexOf(':');
+            if (idx === -1) {
+                res += encoder(userinfo, false);
+            }
+            else {
+                // <user>:<pass>@<auth>
+                res += encoder(userinfo.substr(0, idx), false);
+                res += ':';
+                res += encoder(userinfo.substr(idx + 1), false);
+            }
+            res += '@';
+        }
+        authority = authority.toLowerCase();
+        idx = authority.indexOf(':');
+        if (idx === -1) {
+            res += encoder(authority, false);
+        }
+        else {
+            // <auth>:<port>
+            res += encoder(authority.substr(0, idx), false);
+            res += authority.substr(idx);
+        }
+    }
+    if (path) {
+        // lower-case windows drive letters in /C:/fff or C:/fff
+        if (path.length >= 3 && path.charCodeAt(0) === 47 /* Slash */ && path.charCodeAt(2) === 58 /* Colon */) {
+            var code = path.charCodeAt(1);
+            if (code >= 65 /* A */ && code <= 90 /* Z */) {
+                path = "/" + String.fromCharCode(code + 32) + ":" + path.substr(3); // "/c:".length === 3
+            }
+        }
+        else if (path.length >= 2 && path.charCodeAt(1) === 58 /* Colon */) {
+            var code = path.charCodeAt(0);
+            if (code >= 65 /* A */ && code <= 90 /* Z */) {
+                path = String.fromCharCode(code + 32) + ":" + path.substr(2); // "/c:".length === 3
+            }
+        }
+        // encode the rest of the path
+        res += encoder(path, true);
+    }
+    if (query) {
+        res += '?';
+        res += encoder(query, false);
+    }
+    if (fragment) {
+        res += '#';
+        res += !skipEncoding ? encodeURIComponentFast(fragment, false) : fragment;
+    }
+    return res;
+}
+// --- decode
+function decodeURIComponentGraceful(str) {
+    try {
+        return decodeURIComponent(str);
+    }
+    catch (_a) {
+        if (str.length > 3) {
+            return str.substr(0, 3) + decodeURIComponentGraceful(str.substr(3));
+        }
+        else {
+            return str;
+        }
+    }
+}
+var _rEncodedAsHex = /(%[0-9A-Za-z][0-9A-Za-z])+/g;
+function percentDecode(str) {
+    if (!str.match(_rEncodedAsHex)) {
+        return str;
+    }
+    return str.replace(_rEncodedAsHex, function (match) { return decodeURIComponentGraceful(match); });
+}
 
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/fillers/vscode-nls.js":
-/*!*****************************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/fillers/vscode-nls.js ***!
-  \*****************************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/fillers/vscode-nls.js":
+/*!**********************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/fillers/vscode-nls.js ***!
+  \**********************************************************************************************************/
 /*! exports provided: loadMessageBundle, config */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -18737,17 +18907,17 @@ function config(opt) {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/json.worker.js":
-/*!**********************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/json.worker.js ***!
-  \**********************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/json.worker.js":
+/*!***************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/json.worker.js ***!
+  \***************************************************************************************************/
 /*! no exports provided */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _editor_editor_worker_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../editor/editor.worker.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/editor/editor.worker.js");
-/* harmony import */ var _jsonWorker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./jsonWorker.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/jsonWorker.js");
+/* harmony import */ var _editor_editor_worker_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../editor/editor.worker.js */ "../../node_modules/monaco-editor/esm/vs/editor/editor.worker.js");
+/* harmony import */ var _jsonWorker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./jsonWorker.js */ "../../node_modules/monaco-editor/esm/vs/language/json/jsonWorker.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -18764,10 +18934,10 @@ self.onmessage = function () {
 
 /***/ }),
 
-/***/ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/jsonWorker.js":
-/*!*********************************************************************************************!*\
-  !*** ./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/jsonWorker.js ***!
-  \*********************************************************************************************/
+/***/ "../../node_modules/monaco-editor/esm/vs/language/json/jsonWorker.js":
+/*!**************************************************************************************************!*\
+  !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/json/jsonWorker.js ***!
+  \**************************************************************************************************/
 /*! exports provided: JSONWorker, create */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -18775,8 +18945,8 @@ self.onmessage = function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "JSONWorker", function() { return JSONWorker; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "create", function() { return create; });
-/* harmony import */ var _deps_vscode_json_languageservice_jsonLanguageService_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_deps/vscode-json-languageservice/jsonLanguageService.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageService.js");
-/* harmony import */ var _deps_vscode_uri_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_deps/vscode-uri/index.js */ "./node_modules/_monaco-editor@0.26.1@monaco-editor/esm/vs/language/json/_deps/vscode-uri/index.js");
+/* harmony import */ var _deps_vscode_json_languageservice_jsonLanguageService_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_deps/vscode-json-languageservice/jsonLanguageService.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-json-languageservice/jsonLanguageService.js");
+/* harmony import */ var _deps_vscode_uri_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_deps/vscode-uri/index.js */ "../../node_modules/monaco-editor/esm/vs/language/json/_deps/vscode-uri/index.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -18848,7 +19018,7 @@ var JSONWorker = /** @class */ (function () {
                 document = this._getTextDocument(uri);
                 if (document) {
                     jsonDocument = this._languageService.parseJSONDocument(document);
-                    return [2 /*return*/, this._languageService.doValidation(document, jsonDocument, this._languageSettings)];
+                    return [2 /*return*/, this._languageService.doValidation(document, jsonDocument)];
                 }
                 return [2 /*return*/, Promise.resolve([])];
             });
