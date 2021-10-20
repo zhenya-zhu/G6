@@ -5,7 +5,7 @@ exports.modules = {
 /*!**************************************************************************************************************!*\
   !*** /Users/shiwu/code/G6-2021/G6/node_modules/monaco-editor/esm/vs/language/typescript/languageFeatures.js ***!
   \**************************************************************************************************************/
-/*! exports provided: flattenDiagnosticMessageText, Adapter, LibFiles, DiagnosticsAdapter, SuggestAdapter, SignatureHelpAdapter, QuickInfoAdapter, OccurrencesAdapter, DefinitionAdapter, ReferenceAdapter, OutlineAdapter, Kind, FormatHelper, FormatAdapter, FormatOnTypeAdapter, CodeActionAdaptor, RenameAdapter */
+/*! exports provided: flattenDiagnosticMessageText, Adapter, LibFiles, DiagnosticsAdapter, SuggestAdapter, SignatureHelpAdapter, QuickInfoAdapter, OccurrencesAdapter, DefinitionAdapter, ReferenceAdapter, OutlineAdapter, Kind, FormatHelper, FormatAdapter, FormatOnTypeAdapter, CodeActionAdaptor, RenameAdapter, InlayHintsAdapter */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -27,8 +27,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FormatOnTypeAdapter", function() { return FormatOnTypeAdapter; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CodeActionAdaptor", function() { return CodeActionAdaptor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RenameAdapter", function() { return RenameAdapter; });
-/* harmony import */ var _lib_lib_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/lib.index.js */ "../../node_modules/monaco-editor/esm/vs/language/typescript/lib/lib.index.js");
-/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "../../node_modules/monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InlayHintsAdapter", function() { return InlayHintsAdapter; });
+/* harmony import */ var _monaco_contribution_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./monaco.contribution.js */ "../../node_modules/monaco-editor/esm/vs/language/typescript/monaco.contribution.js");
+/* harmony import */ var _lib_lib_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./lib/lib.index.js */ "../../node_modules/monaco-editor/esm/vs/language/typescript/lib/lib.index.js");
+/* harmony import */ var _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./fillers/monaco-editor-core.js */ "../../node_modules/monaco-editor/esm/vs/language/typescript/fillers/monaco-editor-core.js");
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -42,11 +44,24 @@ var __extends = (undefined && undefined.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -83,6 +98,7 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+
 
 
 //#region utils copied from typescript to prevent loading the entire typescriptServices ---
@@ -157,17 +173,22 @@ var LibFiles = /** @class */ (function () {
             return false;
         }
         if (uri.path.indexOf('/lib.') === 0) {
-            return !!_lib_lib_index_js__WEBPACK_IMPORTED_MODULE_0__["libFileSet"][uri.path.slice(1)];
+            return !!_lib_lib_index_js__WEBPACK_IMPORTED_MODULE_1__["libFileSet"][uri.path.slice(1)];
         }
         return false;
     };
-    LibFiles.prototype.getOrCreateModel = function (uri) {
-        var model = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].getModel(uri);
+    LibFiles.prototype.getOrCreateModel = function (fileName) {
+        var uri = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["Uri"].parse(fileName);
+        var model = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["editor"].getModel(uri);
         if (model) {
             return model;
         }
         if (this.isLibFile(uri) && this._hasFetchedLibFiles) {
-            return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].createModel(this._libFiles[uri.path.slice(1)], 'javascript', uri);
+            return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["editor"].createModel(this._libFiles[uri.path.slice(1)], 'typescript', uri);
+        }
+        var matchedLibFile = _monaco_contribution_js__WEBPACK_IMPORTED_MODULE_0__["typescriptDefaults"].getExtraLibs()[fileName];
+        if (matchedLibFile) {
+            return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["editor"].createModel(matchedLibFile.content, 'typescript', uri);
         }
         return null;
     };
@@ -233,36 +254,63 @@ var DiagnosticsAdapter = /** @class */ (function (_super) {
             if (model.getModeId() !== _selector) {
                 return;
             }
+            var maybeValidate = function () {
+                var onlyVisible = _this._defaults.getDiagnosticsOptions().onlyVisible;
+                if (onlyVisible) {
+                    if (model.isAttachedToEditor()) {
+                        _this._doValidate(model);
+                    }
+                }
+                else {
+                    _this._doValidate(model);
+                }
+            };
             var handle;
             var changeSubscription = model.onDidChangeContent(function () {
                 clearTimeout(handle);
-                handle = setTimeout(function () { return _this._doValidate(model); }, 500);
+                handle = setTimeout(maybeValidate, 500);
+            });
+            var visibleSubscription = model.onDidChangeAttached(function () {
+                var onlyVisible = _this._defaults.getDiagnosticsOptions().onlyVisible;
+                if (onlyVisible) {
+                    if (model.isAttachedToEditor()) {
+                        // this model is now attached to an editor
+                        // => compute diagnostics
+                        maybeValidate();
+                    }
+                    else {
+                        // this model is no longer attached to an editor
+                        // => clear existing diagnostics
+                        _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["editor"].setModelMarkers(model, _this._selector, []);
+                    }
+                }
             });
             _this._listener[model.uri.toString()] = {
                 dispose: function () {
                     changeSubscription.dispose();
+                    visibleSubscription.dispose();
                     clearTimeout(handle);
                 }
             };
-            _this._doValidate(model);
+            maybeValidate();
         };
         var onModelRemoved = function (model) {
-            _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].setModelMarkers(model, _this._selector, []);
+            _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["editor"].setModelMarkers(model, _this._selector, []);
             var key = model.uri.toString();
             if (_this._listener[key]) {
                 _this._listener[key].dispose();
                 delete _this._listener[key];
             }
         };
-        _this._disposables.push(_fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].onDidCreateModel(onModelAdd));
-        _this._disposables.push(_fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].onWillDisposeModel(onModelRemoved));
-        _this._disposables.push(_fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].onDidChangeModelLanguage(function (event) {
+        _this._disposables.push(_fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["editor"].onDidCreateModel(function (model) { return onModelAdd(model); }));
+        _this._disposables.push(_fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["editor"].onWillDisposeModel(onModelRemoved));
+        _this._disposables.push(_fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["editor"].onDidChangeModelLanguage(function (event) {
             onModelRemoved(event.model);
             onModelAdd(event.model);
         }));
         _this._disposables.push({
             dispose: function () {
-                for (var _i = 0, _a = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].getModels(); _i < _a.length; _i++) {
+                for (var _i = 0, _a = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["editor"].getModels(); _i < _a.length; _i++) {
                     var model = _a[_i];
                     onModelRemoved(model);
                 }
@@ -270,7 +318,7 @@ var DiagnosticsAdapter = /** @class */ (function (_super) {
         });
         var recomputeDiagostics = function () {
             // redo diagnostics when options change
-            for (var _i = 0, _a = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].getModels(); _i < _a.length; _i++) {
+            for (var _i = 0, _a = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["editor"].getModels(); _i < _a.length; _i++) {
                 var model = _a[_i];
                 onModelRemoved(model);
                 onModelAdd(model);
@@ -278,7 +326,7 @@ var DiagnosticsAdapter = /** @class */ (function (_super) {
         };
         _this._disposables.push(_this._defaults.onDidChange(recomputeDiagostics));
         _this._disposables.push(_this._defaults.onDidExtraLibsChange(recomputeDiagostics));
-        _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].getModels().forEach(onModelAdd);
+        _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["editor"].getModels().forEach(function (model) { return onModelAdd(model); });
         return _this;
     }
     DiagnosticsAdapter.prototype.dispose = function () {
@@ -326,7 +374,7 @@ var DiagnosticsAdapter = /** @class */ (function (_super) {
                             .map(function (d) { return d.relatedInformation || []; })
                             .reduce(function (p, c) { return c.concat(p); }, [])
                             .map(function (relatedInformation) {
-                            return relatedInformation.file ? _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["Uri"].parse(relatedInformation.file.fileName) : null;
+                            return relatedInformation.file ? _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["Uri"].parse(relatedInformation.file.fileName) : null;
                         });
                         return [4 /*yield*/, this._libFiles.fetchLibFilesIfNecessary(relatedUris)];
                     case 3:
@@ -335,7 +383,7 @@ var DiagnosticsAdapter = /** @class */ (function (_super) {
                             // model was disposed in the meantime
                             return [2 /*return*/];
                         }
-                        _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["editor"].setModelMarkers(model, this._selector, diagnostics.map(function (d) { return _this._convertDiagnostics(model, d); }));
+                        _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["editor"].setModelMarkers(model, this._selector, diagnostics.map(function (d) { return _this._convertDiagnostics(model, d); }));
                         return [2 /*return*/];
                 }
             });
@@ -348,10 +396,10 @@ var DiagnosticsAdapter = /** @class */ (function (_super) {
         var _b = model.getPositionAt(diagStart + diagLength), endLineNumber = _b.lineNumber, endColumn = _b.column;
         var tags = [];
         if (diag.reportsUnnecessary) {
-            tags.push(_fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["MarkerTag"].Unnecessary);
+            tags.push(_fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["MarkerTag"].Unnecessary);
         }
         if (diag.reportsDeprecated) {
-            tags.push(_fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["MarkerTag"].Deprecated);
+            tags.push(_fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["MarkerTag"].Deprecated);
         }
         return {
             severity: this._tsDiagnosticCategoryToMarkerSeverity(diag.category),
@@ -368,14 +416,13 @@ var DiagnosticsAdapter = /** @class */ (function (_super) {
     DiagnosticsAdapter.prototype._convertRelatedInformation = function (model, relatedInformation) {
         var _this = this;
         if (!relatedInformation) {
-            return;
+            return [];
         }
         var result = [];
         relatedInformation.forEach(function (info) {
             var relatedResource = model;
             if (info.file) {
-                var relatedResourceUri = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["Uri"].parse(info.file.fileName);
-                relatedResource = _this._libFiles.getOrCreateModel(relatedResourceUri);
+                relatedResource = _this._libFiles.getOrCreateModel(info.file.fileName);
             }
             if (!relatedResource) {
                 return;
@@ -398,15 +445,15 @@ var DiagnosticsAdapter = /** @class */ (function (_super) {
     DiagnosticsAdapter.prototype._tsDiagnosticCategoryToMarkerSeverity = function (category) {
         switch (category) {
             case DiagnosticCategory.Error:
-                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["MarkerSeverity"].Error;
+                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["MarkerSeverity"].Error;
             case DiagnosticCategory.Message:
-                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["MarkerSeverity"].Info;
+                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["MarkerSeverity"].Info;
             case DiagnosticCategory.Warning:
-                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["MarkerSeverity"].Warning;
+                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["MarkerSeverity"].Warning;
             case DiagnosticCategory.Suggestion:
-                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["MarkerSeverity"].Hint;
+                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["MarkerSeverity"].Hint;
         }
-        return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["MarkerSeverity"].Info;
+        return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["MarkerSeverity"].Info;
     };
     return DiagnosticsAdapter;
 }(Adapter));
@@ -430,12 +477,15 @@ var SuggestAdapter = /** @class */ (function (_super) {
                 switch (_a.label) {
                     case 0:
                         wordInfo = model.getWordUntilPosition(position);
-                        wordRange = new _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["Range"](position.lineNumber, wordInfo.startColumn, position.lineNumber, wordInfo.endColumn);
+                        wordRange = new _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["Range"](position.lineNumber, wordInfo.startColumn, position.lineNumber, wordInfo.endColumn);
                         resource = model.uri;
                         offset = model.getOffsetAt(position);
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getCompletionsAtPosition(resource.toString(), offset)];
                     case 2:
                         info = _a.sent();
@@ -448,11 +498,11 @@ var SuggestAdapter = /** @class */ (function (_super) {
                             if (entry.replacementSpan) {
                                 var p1 = model.getPositionAt(entry.replacementSpan.start);
                                 var p2 = model.getPositionAt(entry.replacementSpan.start + entry.replacementSpan.length);
-                                range = new _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["Range"](p1.lineNumber, p1.column, p2.lineNumber, p2.column);
+                                range = new _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["Range"](p1.lineNumber, p1.column, p2.lineNumber, p2.column);
                             }
                             var tags = [];
                             if (((_a = entry.kindModifiers) === null || _a === void 0 ? void 0 : _a.indexOf('deprecated')) !== -1) {
-                                tags.push(_fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].CompletionItemTag.Deprecated);
+                                tags.push(_fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].CompletionItemTag.Deprecated);
                             }
                             return {
                                 uri: resource,
@@ -510,32 +560,32 @@ var SuggestAdapter = /** @class */ (function (_super) {
         switch (kind) {
             case Kind.primitiveType:
             case Kind.keyword:
-                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].CompletionItemKind.Keyword;
+                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].CompletionItemKind.Keyword;
             case Kind.variable:
             case Kind.localVariable:
-                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].CompletionItemKind.Variable;
+                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].CompletionItemKind.Variable;
             case Kind.memberVariable:
             case Kind.memberGetAccessor:
             case Kind.memberSetAccessor:
-                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].CompletionItemKind.Field;
+                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].CompletionItemKind.Field;
             case Kind.function:
             case Kind.memberFunction:
             case Kind.constructSignature:
             case Kind.callSignature:
             case Kind.indexSignature:
-                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].CompletionItemKind.Function;
+                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].CompletionItemKind.Function;
             case Kind.enum:
-                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].CompletionItemKind.Enum;
+                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].CompletionItemKind.Enum;
             case Kind.module:
-                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].CompletionItemKind.Module;
+                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].CompletionItemKind.Module;
             case Kind.class:
-                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].CompletionItemKind.Class;
+                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].CompletionItemKind.Class;
             case Kind.interface:
-                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].CompletionItemKind.Interface;
+                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].CompletionItemKind.Interface;
             case Kind.warning:
-                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].CompletionItemKind.File;
+                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].CompletionItemKind.File;
         }
-        return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].CompletionItemKind.Property;
+        return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].CompletionItemKind.Property;
     };
     SuggestAdapter.createDocumentationString = function (details) {
         var documentationString = displayPartsToString(details.documentation);
@@ -553,10 +603,13 @@ var SuggestAdapter = /** @class */ (function (_super) {
 function tagToString(tag) {
     var tagLabel = "*@" + tag.name + "*";
     if (tag.name === 'param' && tag.text) {
-        var _a = tag.text.split(' '), paramName = _a[0], rest = _a.slice(1);
-        tagLabel += "`" + paramName + "`";
+        var _a = tag.text, paramName = _a[0], rest = _a.slice(1);
+        tagLabel += "`" + paramName.text + "`";
         if (rest.length > 0)
-            tagLabel += " \u2014 " + rest.join(' ');
+            tagLabel += " \u2014 " + rest.map(function (r) { return r.text; }).join(' ');
+    }
+    else if (Array.isArray(tag.text)) {
+        tagLabel += " \u2014 " + tag.text.map(function (r) { return r.text; }).join(' ');
     }
     else if (tag.text) {
         tagLabel += " \u2014 " + tag.text;
@@ -570,7 +623,28 @@ var SignatureHelpAdapter = /** @class */ (function (_super) {
         _this.signatureHelpTriggerCharacters = ['(', ','];
         return _this;
     }
-    SignatureHelpAdapter.prototype.provideSignatureHelp = function (model, position, token) {
+    SignatureHelpAdapter._toSignatureHelpTriggerReason = function (context) {
+        switch (context.triggerKind) {
+            case _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SignatureHelpTriggerKind.TriggerCharacter:
+                if (context.triggerCharacter) {
+                    if (context.isRetrigger) {
+                        return { kind: 'retrigger', triggerCharacter: context.triggerCharacter };
+                    }
+                    else {
+                        return { kind: 'characterTyped', triggerCharacter: context.triggerCharacter };
+                    }
+                }
+                else {
+                    return { kind: 'invoked' };
+                }
+            case _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SignatureHelpTriggerKind.ContentChange:
+                return context.isRetrigger ? { kind: 'retrigger' } : { kind: 'invoked' };
+            case _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SignatureHelpTriggerKind.Invoke:
+            default:
+                return { kind: 'invoked' };
+        }
+    };
+    SignatureHelpAdapter.prototype.provideSignatureHelp = function (model, position, token, context) {
         return __awaiter(this, void 0, void 0, function () {
             var resource, offset, worker, info, ret;
             return __generator(this, function (_a) {
@@ -581,7 +655,12 @@ var SignatureHelpAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
-                        return [4 /*yield*/, worker.getSignatureHelpItems(resource.toString(), offset)];
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
+                        return [4 /*yield*/, worker.getSignatureHelpItems(resource.toString(), offset, {
+                                triggerReason: SignatureHelpAdapter._toSignatureHelpTriggerReason(context)
+                            })];
                     case 2:
                         info = _a.sent();
                         if (!info || model.isDisposed()) {
@@ -646,6 +725,9 @@ var QuickInfoAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getQuickInfoAtPosition(resource.toString(), offset)];
                     case 2:
                         info = _a.sent();
@@ -691,6 +773,9 @@ var OccurrencesAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getOccurrencesAtPosition(resource.toString(), offset)];
                     case 2:
                         entries = _a.sent();
@@ -701,8 +786,8 @@ var OccurrencesAdapter = /** @class */ (function (_super) {
                                 return {
                                     range: _this._textSpanToRange(model, entry.textSpan),
                                     kind: entry.isWriteAccess
-                                        ? _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].DocumentHighlightKind.Write
-                                        : _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].DocumentHighlightKind.Text
+                                        ? _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].DocumentHighlightKind.Write
+                                        : _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].DocumentHighlightKind.Text
                                 };
                             })];
                 }
@@ -722,7 +807,7 @@ var DefinitionAdapter = /** @class */ (function (_super) {
     }
     DefinitionAdapter.prototype.provideDefinition = function (model, position, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var resource, offset, worker, entries, result, _i, entries_1, entry, uri, refModel;
+            var resource, offset, worker, entries, result, _i, entries_1, entry, refModel;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -731,6 +816,9 @@ var DefinitionAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getDefinitionAtPosition(resource.toString(), offset)];
                     case 2:
                         entries = _a.sent();
@@ -738,7 +826,7 @@ var DefinitionAdapter = /** @class */ (function (_super) {
                             return [2 /*return*/];
                         }
                         // Fetch lib files if necessary
-                        return [4 /*yield*/, this._libFiles.fetchLibFilesIfNecessary(entries.map(function (entry) { return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["Uri"].parse(entry.fileName); }))];
+                        return [4 /*yield*/, this._libFiles.fetchLibFilesIfNecessary(entries.map(function (entry) { return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["Uri"].parse(entry.fileName); }))];
                     case 3:
                         // Fetch lib files if necessary
                         _a.sent();
@@ -748,11 +836,10 @@ var DefinitionAdapter = /** @class */ (function (_super) {
                         result = [];
                         for (_i = 0, entries_1 = entries; _i < entries_1.length; _i++) {
                             entry = entries_1[_i];
-                            uri = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["Uri"].parse(entry.fileName);
-                            refModel = this._libFiles.getOrCreateModel(uri);
+                            refModel = this._libFiles.getOrCreateModel(entry.fileName);
                             if (refModel) {
                                 result.push({
-                                    uri: uri,
+                                    uri: refModel.uri,
                                     range: this._textSpanToRange(refModel, entry.textSpan)
                                 });
                             }
@@ -775,7 +862,7 @@ var ReferenceAdapter = /** @class */ (function (_super) {
     }
     ReferenceAdapter.prototype.provideReferences = function (model, position, context, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var resource, offset, worker, entries, result, _i, entries_2, entry, uri, refModel;
+            var resource, offset, worker, entries, result, _i, entries_2, entry, refModel;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -784,6 +871,9 @@ var ReferenceAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getReferencesAtPosition(resource.toString(), offset)];
                     case 2:
                         entries = _a.sent();
@@ -791,7 +881,7 @@ var ReferenceAdapter = /** @class */ (function (_super) {
                             return [2 /*return*/];
                         }
                         // Fetch lib files if necessary
-                        return [4 /*yield*/, this._libFiles.fetchLibFilesIfNecessary(entries.map(function (entry) { return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["Uri"].parse(entry.fileName); }))];
+                        return [4 /*yield*/, this._libFiles.fetchLibFilesIfNecessary(entries.map(function (entry) { return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["Uri"].parse(entry.fileName); }))];
                     case 3:
                         // Fetch lib files if necessary
                         _a.sent();
@@ -801,11 +891,10 @@ var ReferenceAdapter = /** @class */ (function (_super) {
                         result = [];
                         for (_i = 0, entries_2 = entries; _i < entries_2.length; _i++) {
                             entry = entries_2[_i];
-                            uri = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["Uri"].parse(entry.fileName);
-                            refModel = this._libFiles.getOrCreateModel(uri);
+                            refModel = this._libFiles.getOrCreateModel(entry.fileName);
                             if (refModel) {
                                 result.push({
-                                    uri: uri,
+                                    uri: refModel.uri,
                                     range: this._textSpanToRange(refModel, entry.textSpan)
                                 });
                             }
@@ -835,6 +924,9 @@ var OutlineAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getNavigationBarItems(resource.toString())];
                     case 2:
                         items = _a.sent();
@@ -845,12 +937,13 @@ var OutlineAdapter = /** @class */ (function (_super) {
                             var result = {
                                 name: item.text,
                                 detail: '',
-                                kind: (outlineTypeTable[item.kind] || _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SymbolKind.Variable),
+                                kind: (outlineTypeTable[item.kind] || _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SymbolKind.Variable),
                                 range: _this._textSpanToRange(model, item.spans[0]),
                                 selectionRange: _this._textSpanToRange(model, item.spans[0]),
-                                tags: [],
-                                containerName: containerLabel
+                                tags: []
                             };
+                            if (containerLabel)
+                                result.containerName = containerLabel;
                             if (item.childItems && item.childItems.length > 0) {
                                 for (var _i = 0, _a = item.childItems; _i < _a.length; _i++) {
                                     var child = _a[_i];
@@ -904,20 +997,20 @@ var Kind = /** @class */ (function () {
 }());
 
 var outlineTypeTable = Object.create(null);
-outlineTypeTable[Kind.module] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SymbolKind.Module;
-outlineTypeTable[Kind.class] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SymbolKind.Class;
-outlineTypeTable[Kind.enum] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SymbolKind.Enum;
-outlineTypeTable[Kind.interface] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SymbolKind.Interface;
-outlineTypeTable[Kind.memberFunction] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SymbolKind.Method;
-outlineTypeTable[Kind.memberVariable] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SymbolKind.Property;
-outlineTypeTable[Kind.memberGetAccessor] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SymbolKind.Property;
-outlineTypeTable[Kind.memberSetAccessor] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SymbolKind.Property;
-outlineTypeTable[Kind.variable] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SymbolKind.Variable;
-outlineTypeTable[Kind.const] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SymbolKind.Variable;
-outlineTypeTable[Kind.localVariable] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SymbolKind.Variable;
-outlineTypeTable[Kind.variable] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SymbolKind.Variable;
-outlineTypeTable[Kind.function] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SymbolKind.Function;
-outlineTypeTable[Kind.localFunction] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["languages"].SymbolKind.Function;
+outlineTypeTable[Kind.module] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SymbolKind.Module;
+outlineTypeTable[Kind.class] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SymbolKind.Class;
+outlineTypeTable[Kind.enum] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SymbolKind.Enum;
+outlineTypeTable[Kind.interface] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SymbolKind.Interface;
+outlineTypeTable[Kind.memberFunction] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SymbolKind.Method;
+outlineTypeTable[Kind.memberVariable] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SymbolKind.Property;
+outlineTypeTable[Kind.memberGetAccessor] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SymbolKind.Property;
+outlineTypeTable[Kind.memberSetAccessor] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SymbolKind.Property;
+outlineTypeTable[Kind.variable] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SymbolKind.Variable;
+outlineTypeTable[Kind.const] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SymbolKind.Variable;
+outlineTypeTable[Kind.localVariable] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SymbolKind.Variable;
+outlineTypeTable[Kind.variable] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SymbolKind.Variable;
+outlineTypeTable[Kind.function] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SymbolKind.Function;
+outlineTypeTable[Kind.localFunction] = _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].SymbolKind.Function;
 // --- formatting ----
 var FormatHelper = /** @class */ (function (_super) {
     __extends(FormatHelper, _super);
@@ -976,6 +1069,9 @@ var FormatAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getFormattingEditsForRange(resource.toString(), startOffset, endOffset, FormatHelper._convertOptions(options))];
                     case 2:
                         edits = _a.sent();
@@ -1014,6 +1110,9 @@ var FormatOnTypeAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getFormattingEditsAfterKeystroke(resource.toString(), offset, ch, FormatHelper._convertOptions(options))];
                     case 2:
                         edits = _a.sent();
@@ -1058,6 +1157,9 @@ var CodeActionAdaptor = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getCodeFixesAtPosition(resource.toString(), start, end, errorCodes, formatOptions)];
                     case 2:
                         codeFixes = _a.sent();
@@ -1109,12 +1211,14 @@ var CodeActionAdaptor = /** @class */ (function (_super) {
 // --- rename ----
 var RenameAdapter = /** @class */ (function (_super) {
     __extends(RenameAdapter, _super);
-    function RenameAdapter() {
-        return _super !== null && _super.apply(this, arguments) || this;
+    function RenameAdapter(_libFiles, worker) {
+        var _this = _super.call(this, worker) || this;
+        _this._libFiles = _libFiles;
+        return _this;
     }
     RenameAdapter.prototype.provideRenameEdits = function (model, position, newName, token) {
         return __awaiter(this, void 0, void 0, function () {
-            var resource, fileName, offset, worker, renameInfo, renameLocations, edits, _i, renameLocations_1, renameLocation;
+            var resource, fileName, offset, worker, renameInfo, renameLocations, edits, _i, renameLocations_1, renameLocation, model_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1124,6 +1228,9 @@ var RenameAdapter = /** @class */ (function (_super) {
                         return [4 /*yield*/, this._worker(resource)];
                     case 1:
                         worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/];
+                        }
                         return [4 /*yield*/, worker.getRenameInfo(fileName, offset, {
                                 allowRenameOfImportPath: false
                             })];
@@ -1151,13 +1258,19 @@ var RenameAdapter = /** @class */ (function (_super) {
                         edits = [];
                         for (_i = 0, renameLocations_1 = renameLocations; _i < renameLocations_1.length; _i++) {
                             renameLocation = renameLocations_1[_i];
-                            edits.push({
-                                resource: _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_1__["Uri"].parse(renameLocation.fileName),
-                                edit: {
-                                    range: this._textSpanToRange(model, renameLocation.textSpan),
-                                    text: newName
-                                }
-                            });
+                            model_1 = this._libFiles.getOrCreateModel(renameLocation.fileName);
+                            if (model_1) {
+                                edits.push({
+                                    resource: model_1.uri,
+                                    edit: {
+                                        range: this._textSpanToRange(model_1, renameLocation.textSpan),
+                                        text: newName
+                                    }
+                                });
+                            }
+                            else {
+                                throw new Error("Unknown file " + renameLocation.fileName + ".");
+                            }
                         }
                         return [2 /*return*/, { edits: edits }];
                 }
@@ -1165,6 +1278,58 @@ var RenameAdapter = /** @class */ (function (_super) {
         });
     };
     return RenameAdapter;
+}(Adapter));
+
+// --- inlay hints ----
+var InlayHintsAdapter = /** @class */ (function (_super) {
+    __extends(InlayHintsAdapter, _super);
+    function InlayHintsAdapter() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    InlayHintsAdapter.prototype.provideInlayHints = function (model, range, token) {
+        return __awaiter(this, void 0, void 0, function () {
+            var resource, fileName, start, end, worker, hints;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        resource = model.uri;
+                        fileName = resource.toString();
+                        start = model.getOffsetAt({
+                            lineNumber: range.startLineNumber,
+                            column: range.startColumn
+                        });
+                        end = model.getOffsetAt({
+                            lineNumber: range.endLineNumber,
+                            column: range.endColumn
+                        });
+                        return [4 /*yield*/, this._worker(resource)];
+                    case 1:
+                        worker = _a.sent();
+                        if (model.isDisposed()) {
+                            return [2 /*return*/, []];
+                        }
+                        return [4 /*yield*/, worker.provideInlayHints(fileName, start, end)];
+                    case 2:
+                        hints = _a.sent();
+                        return [2 /*return*/, hints.map(function (hint) {
+                                return __assign(__assign({}, hint), { position: model.getPositionAt(hint.position), kind: _this._convertHintKind(hint.kind) });
+                            })];
+                }
+            });
+        });
+    };
+    InlayHintsAdapter.prototype._convertHintKind = function (kind) {
+        switch (kind) {
+            case 'Parameter':
+                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].InlayHintKind.Parameter;
+            case 'Type':
+                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].InlayHintKind.Type;
+            default:
+                return _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].InlayHintKind.Other;
+        }
+    };
+    return InlayHintsAdapter;
 }(Adapter));
 
 
@@ -1231,8 +1396,14 @@ libFileSet['lib.es2020.d.ts'] = true;
 libFileSet['lib.es2020.full.d.ts'] = true;
 libFileSet['lib.es2020.intl.d.ts'] = true;
 libFileSet['lib.es2020.promise.d.ts'] = true;
+libFileSet['lib.es2020.sharedmemory.d.ts'] = true;
 libFileSet['lib.es2020.string.d.ts'] = true;
 libFileSet['lib.es2020.symbol.wellknown.d.ts'] = true;
+libFileSet['lib.es2021.d.ts'] = true;
+libFileSet['lib.es2021.full.d.ts'] = true;
+libFileSet['lib.es2021.promise.d.ts'] = true;
+libFileSet['lib.es2021.string.d.ts'] = true;
+libFileSet['lib.es2021.weakref.d.ts'] = true;
 libFileSet['lib.es5.d.ts'] = true;
 libFileSet['lib.es6.d.ts'] = true;
 libFileSet['lib.esnext.d.ts'] = true;
@@ -1240,9 +1411,11 @@ libFileSet['lib.esnext.full.d.ts'] = true;
 libFileSet['lib.esnext.intl.d.ts'] = true;
 libFileSet['lib.esnext.promise.d.ts'] = true;
 libFileSet['lib.esnext.string.d.ts'] = true;
+libFileSet['lib.esnext.weakref.d.ts'] = true;
 libFileSet['lib.scripthost.d.ts'] = true;
 libFileSet['lib.webworker.d.ts'] = true;
 libFileSet['lib.webworker.importscripts.d.ts'] = true;
+libFileSet['lib.webworker.iterable.d.ts'] = true;
 
 
 /***/ }),
@@ -1315,7 +1488,8 @@ function setupMode(defaults, modeId) {
     _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].registerDocumentRangeFormattingEditProvider(modeId, new _languageFeatures_js__WEBPACK_IMPORTED_MODULE_1__["FormatAdapter"](worker));
     _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].registerOnTypeFormattingEditProvider(modeId, new _languageFeatures_js__WEBPACK_IMPORTED_MODULE_1__["FormatOnTypeAdapter"](worker));
     _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].registerCodeActionProvider(modeId, new _languageFeatures_js__WEBPACK_IMPORTED_MODULE_1__["CodeActionAdaptor"](worker));
-    _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].registerRenameProvider(modeId, new _languageFeatures_js__WEBPACK_IMPORTED_MODULE_1__["RenameAdapter"](worker));
+    _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].registerRenameProvider(modeId, new _languageFeatures_js__WEBPACK_IMPORTED_MODULE_1__["RenameAdapter"](libFiles, worker));
+    _fillers_monaco_editor_core_js__WEBPACK_IMPORTED_MODULE_2__["languages"].registerInlayHintsProvider(modeId, new _languageFeatures_js__WEBPACK_IMPORTED_MODULE_1__["InlayHintsAdapter"](worker));
     new _languageFeatures_js__WEBPACK_IMPORTED_MODULE_1__["DiagnosticsAdapter"](libFiles, defaults, modeId, worker);
     return worker;
 }
@@ -1436,7 +1610,8 @@ var WorkerManager = /** @class */ (function () {
                 createData: {
                     compilerOptions: this._defaults.getCompilerOptions(),
                     extraLibs: this._defaults.getExtraLibs(),
-                    customWorkerPath: this._defaults.workerOptions.customWorkerPath
+                    customWorkerPath: this._defaults.workerOptions.customWorkerPath,
+                    inlayHintsOptions: this._defaults.inlayHintsOptions
                 }
             });
             var p = this._worker.getProxy();
