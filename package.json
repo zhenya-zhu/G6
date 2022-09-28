@@ -89,6 +89,7 @@
     "monaco-editor-webpack-plugin": "5.0.0",
     "react-monaco-editor": "^0.40.0",
     "normalize-url": "^4.1.0",
-    "sharp": "^0.30.4"
+    "sharp": "^0.30.4",
+    "minipass": "2.7.0"
   }
 }

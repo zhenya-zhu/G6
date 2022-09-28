@@ -144,9 +144,12 @@ export default class LayoutController extends AbstractLayout {
       }
 
       let enableTick = false;
+
+      // !布局类型
       let layoutMethod;
 
       try {
+        // !动态的所以搜不到
         layoutMethod = new Layout[layoutType](layoutCfg);
         if (this.layoutMethods[order]) {
           this.layoutMethods[order].destroy()
@@ -158,6 +161,7 @@ export default class LayoutController extends AbstractLayout {
       }
 
       // 是否需要迭代的方式完成布局。这里是来自布局对象的实例属性，是由布局的定义者在布局类定义的。
+      // !这块是实现布局动画的关键，layoutMethod.enableTick需要实现
       enableTick = layoutMethod.enableTick;
       if (enableTick) {
         const { onTick } = layoutCfg;

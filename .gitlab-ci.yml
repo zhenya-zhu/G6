@@ -1,5 +1,5 @@
 # 不要修改该文件, 会自动生成, 详见 http://gitlab.alibaba-inc.com/node/ci
-# 不要使用 ci 生成，直接按照 gitlab 文档自己写吧！
+# 不要使用 ci 生成，直接按照 gitlab 文档自己写吧！env
 before_script:
   - export PATH=$PWD/node_modules/.bin:$PWD/.node/bin:$PATH
   - time enclose install tnpm:tnpm
